@@ -600,10 +600,18 @@ export const getConnections = async (req, res) => {
 
     logger.info(`Returning ${connections.length} total accounts (${clientAccounts.length} clients, ${managerAccounts.length} managers)`);
 
-    // Persist to MongoDB cache so the next /connections call (within TTL) skips
-    // all the Google Ads API hits. Only cache when we actually got data —
-    // empty arrays from a rate-limited fetch would just keep showing nothing.
-    if (connections.length > 0) {
+    // Persist to MongoDB cache only when the data is actually useful — i.e.
+    // we got accounts AND at least some of them have real names (not all
+    // "Account 12345" placeholders from a rate-limited fetch). This stops us
+    // from poisoning the cache with garbage data after a Google Ads API
+    // throttle, then serving that garbage for an hour.
+    const placeholderRegex = /^Account \d+$/;
+    const accountsWithRealNames = connections.filter(
+      (a) => !placeholderRegex.test(a.account_name)
+    ).length;
+    const hasRealData = connections.length > 0 && accountsWithRealNames > 0;
+
+    if (hasRealData) {
       try {
         tokenDoc.connectionsCache = {
           connections,
@@ -613,9 +621,15 @@ export const getConnections = async (req, res) => {
           cachedAt: new Date(),
         };
         await tokenDoc.save();
+        logger.info(`Cached ${connections.length} connections (${accountsWithRealNames} with real names)`);
       } catch (cacheErr) {
         logger.warn(`Failed to write connections cache: ${cacheErr.message}`);
       }
+    } else {
+      logger.warn(
+        `Skipped cache write: ${connections.length} accounts but only ${accountsWithRealNames} have real names ` +
+        `(probably hit Google Ads API rate limit — will retry on next request)`
+      );
     }
 
     return res.json({
