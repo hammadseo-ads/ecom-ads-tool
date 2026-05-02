@@ -1,6 +1,10 @@
 
 // server.js
 import dotenv from "dotenv";
+import dns from "dns";
+
+// Use public DNS resolvers — local/ISP DNS often blocks MongoDB SRV lookups
+dns.setServers(["8.8.8.8", "1.1.1.1", "8.8.4.4"]);
 
 import express from "express";
 
@@ -14,6 +18,7 @@ import authRoutes from "./routes/authRoutes.js";
 import googleAdsRoutes from "./routes/googleAdsRoutes.js";
 import performanceRoutes from "./routes/performance.js";
 import onDemandReportRoutes from "./routes/onDemandReportRoutes.js";
+import keywordReportRoutes from "./routes/keywordReportRoutes.js";
 
 import logger from "./config/logger.js";
 import { morganMiddleware } from "./config/logger.js"; // assuming you export morganMiddleware as `morgan`
@@ -24,29 +29,35 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// LOAD .env MANUALLY — THIS FIXES EVERYTHING
-dotenv.config({ path: path.join(__dirname, "../.env") });
+// LOAD .env MANUALLY
+dotenv.config({ path: path.join(__dirname, ".env") });
 
 // Load Passport Google Strategy (session: false inside)
 import "./config/passport.js";
 
 const app = express();
 
-// ========== CORS - Perfect for localhost:8080 + production ==========
-const allowedOrigins = [
-  "http://localhost:8080",     // Vite/React frontend
-  "http://127.0.0.1:8080",
-  "http://localhost:3000",     // fallback for CRA
-];
+// Trust proxy headers (X-Forwarded-*) — needed when running behind nginx/Cloudflare
+// so `secure` cookies and req.ip work correctly.
+app.set("trust proxy", 1);
+
+// ========== CORS ==========
+// ALLOWED_ORIGINS env var is a comma-separated list, e.g.
+//   ALLOWED_ORIGINS=http://localhost:8080,https://test.managingseo.com
+// Falls back to common localhost dev origins if unset.
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "http://localhost:8080,http://127.0.0.1:8080,http://localhost:3000")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow non-browser tools (Postman, mobile, etc.)
+      // Allow non-browser tools (Postman, curl, server-to-server, same-origin)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new Error(`CORS: origin ${origin} not allowed`));
       }
     },
     credentials: true, // Required for HttpOnly cookies
@@ -78,6 +89,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/google-ads", googleAdsRoutes);
 app.use("/api/performance", performanceRoutes);
 app.use("/api/on-demand-report", onDemandReportRoutes);
+app.use("/api/keyword-report", keywordReportRoutes);
 
 // Health check
 app.get("/", (req, res) => {

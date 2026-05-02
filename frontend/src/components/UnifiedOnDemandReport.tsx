@@ -117,47 +117,80 @@ const UnifiedOnDemandReport: React.FC<UnifiedOnDemandReportProps> = ({
     },
   });
 
-  // Load cached reports on mount
+  // Empty report shape for resetting between accounts
+  const emptyReportData = () => ({
+    LAST_30_DAYS: { product_details: [], summary_table: [], campaign_list: [], total_products: 0 },
+    LAST_60_DAYS: { product_details: [], summary_table: [], campaign_list: [], total_products: 0 },
+    LAST_90_DAYS: { product_details: [], summary_table: [], campaign_list: [], total_products: 0 },
+  });
+
+  // Load cached reports on mount and whenever the selected account changes.
+  // Critically: reset state FIRST so the previous account's data is never shown
+  // for the new account.
   const checkCachedDataAvailability = React.useCallback(async () => {
-    if (!userId || !selectedAccountId) return;
+    if (!userId || !selectedAccountId) {
+      setReportData(emptyReportData());
+      return;
+    }
+
+    // Reset before fetching so a switch to an account with no data shows nothing
+    // (instead of the previous account's stale data).
+    setReportData(emptyReportData());
+    setSelectedCampaign('all');
+    setSelectedCategory('all');
+    setCurrentPage(1);
 
     const types = ['LAST_30_DAYS', 'LAST_60_DAYS', 'LAST_90_DAYS'];
+    const customerToQuery = selectedChildAccount || selectedAccountId;
     let firstAvailable: string | null = null;
 
-    for (const type of types) {
-      try {
-        const customerToQuery = selectedChildAccount || selectedAccountId;
-        const { data } = await axios.post(
-          `${API_BASE}/cached`,
-          { user_id: userId, customer_id: customerToQuery, report_type: type },
-          getAuthHeaders()
-        );
+    // Fetch all three periods in parallel; only update state for periods that
+    // actually returned data for THIS account.
+    const results = await Promise.all(
+      types.map(async (type) => {
+        try {
+          const { data } = await axios.post(
+            `${API_BASE}/cached`,
+            { user_id: userId, customer_id: customerToQuery, report_type: type },
+            getAuthHeaders()
+          );
+          return { type, data };
+        } catch {
+          return { type, data: null };
+        }
+      })
+    );
 
+    setReportData((prev) => {
+      const next = { ...prev };
+      for (const { type, data } of results) {
         if (data?.product_details?.length > 0) {
           const backendCampaigns = data.campaign_list || [];
           const campaignList = [{ id: 'all', name: 'All Campaigns' }, ...backendCampaigns.filter((c: any) => c?.id !== 'all')];
-
-          setReportData(prev => ({
-            ...prev,
-            [type]: {
-              product_details: data.product_details || [],
-              summary_table: data.summary_table || [],
-              campaign_list: campaignList,
-              total_products: data.total_products || 0,
-              message: data.message,
-            },
-          }));
+          next[type] = {
+            product_details: data.product_details,
+            summary_table: data.summary_table || [],
+            campaign_list: campaignList,
+            total_products: data.total_products || 0,
+            message: data.message,
+          };
           if (!firstAvailable) firstAvailable = type;
         }
-      } catch (err) {
-        // Silent — no cached data for this period
       }
-    }
+      return next;
+    });
 
     if (firstAvailable && !userSelectedTabRef.current) {
       setActiveTab(firstAvailable);
     }
-  }, [userId, selectedAccountId, selectedChildAccount, activeTab]);
+  }, [userId, selectedAccountId, selectedChildAccount]);
+
+  // Sync selectedChildAccount when the parent's selectedAccountId changes
+  useEffect(() => {
+    setSelectedChildAccount(selectedAccountId);
+    // Reset the "user manually picked a tab" flag so auto-switching works again
+    userSelectedTabRef.current = false;
+  }, [selectedAccountId]);
 
   useEffect(() => {
     checkCachedDataAvailability();
@@ -377,9 +410,12 @@ const UnifiedOnDemandReport: React.FC<UnifiedOnDemandReportProps> = ({
   const handleClearAllReports = async () => {
     setIsClearing(true);
     try {
+      // Clear reports for the currently-selected account only.
+      // To wipe everything, use "Delete all data" in Account Settings.
       await axios.delete(`${API_BASE}/clear`, {
         data: { user_id: userId, customer_id: selectedAccountId },
         ...getAuthHeaders(),
+        withCredentials: true,
       });
 
       setReportData({
@@ -547,7 +583,10 @@ const UnifiedOnDemandReport: React.FC<UnifiedOnDemandReportProps> = ({
       <CardContent>
         {selectedAccountId ? (
           <div className="space-y-6">
-            {childAccounts.length > 0 && (
+            {/* Only show this drill-down when the selected account is an MCC
+                with children other than itself. If list-accounts only returns
+                the selected account, it's a leaf — no need to ask again. */}
+            {childAccounts.filter((a) => a.id !== selectedAccountId).length > 0 && (
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Select Child Account (MCC)

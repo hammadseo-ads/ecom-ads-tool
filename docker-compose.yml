@@ -1,0 +1,42 @@
+# docker-compose.yml
+# Usage:
+#   docker compose up -d --build       # start everything
+#   docker compose logs -f backend     # tail backend logs
+#   docker compose down                # stop everything
+#
+# To switch domain (e.g. localhost → test.managingseo.com):
+#   1) Edit backend/.env: set FRONTEND_URL, BACKEND_API_URL, ALLOWED_ORIGINS,
+#      GOOGLE_CALLBACK_URL, GOOGLE_ADS_REDIRECT_URI to the new domain.
+#   2) Run: docker compose up -d --build
+# Frontend has no domain in its build — it uses relative /api URLs.
+
+services:
+  backend:
+    build: ./backend
+    container_name: ecomads-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      # Override NODE_ENV here so the same .env works for local + Docker dev.
+      # Set to "production" only when deploying with HTTPS in front.
+      NODE_ENV: ${NODE_ENV:-development}
+    expose:
+      - "5000"          # only visible on the docker network, not host
+    networks:
+      - ecomads-net
+
+  frontend:
+    build: ./frontend
+    container_name: ecomads-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"       # browse the app at http://localhost:8080
+    depends_on:
+      - backend
+    networks:
+      - ecomads-net
+
+networks:
+  ecomads-net:
+    driver: bridge

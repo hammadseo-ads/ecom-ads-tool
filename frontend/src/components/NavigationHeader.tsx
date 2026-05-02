@@ -43,8 +43,9 @@ interface NavigationHeaderProps {
   selectedAccountName: string;
 }
 
+// VITE_API_URL is the API root (includes /api), e.g. "/api" or "http://localhost:5000/api"
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE || "", // e.g. http://localhost:5000
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
   withCredentials: true, // send cookies
 });
 
@@ -84,7 +85,7 @@ const NavigationHeader: React.FC<NavigationHeaderProps> = ({
   // Check connection status (uses cookies or Authorization header)
   const checkConnectionStatus = async () => {
     try {
-      const res = await api.get("/api/google-ads/status", {
+      const res = await api.get("/google-ads/status", {
         headers: getAuthHeader(),
       });
       setHasConnection(res.data?.hasConnection || false);
@@ -98,7 +99,7 @@ const NavigationHeader: React.FC<NavigationHeaderProps> = ({
   const fetchConnections = async () => {
     try {
       const res = await api.post(
-        "/api/google-ads/connections",
+        "/google-ads/connections",
         {}, // body empty — server should use req.user from protect
         { headers: getAuthHeader() }
       );
@@ -261,7 +262,7 @@ const NavigationHeader: React.FC<NavigationHeaderProps> = ({
 
     // Tell backend to clear tokens / revoke refresh token
     try {
-      await api.post("/api/auth/logout", {}, { headers: getAuthHeader() });
+      await api.post("/auth/logout", {}, { headers: getAuthHeader() });
     } catch (err) {
       console.warn("Logout API error", err);
     }

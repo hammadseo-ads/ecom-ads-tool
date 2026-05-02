@@ -1,0 +1,23 @@
+# Root-level ignores (per-folder .gitignore files in backend/ and frontend/ cover their own concerns)
+
+# OS junk
+.DS_Store
+__MACOSX/
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+
+# Environment files at root (should never have any, but just in case)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Local Claude/agent files
+.claude/

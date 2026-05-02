@@ -10,7 +10,7 @@ import PasswordInput from "./PasswordInput";
 import { Loader2 } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = import.meta.env.VITE_API_AUTH_URL || "http://localhost:5000/api/auth";
 
 const SignupForm = () => {
   const [formData, setFormData] = useState({
@@ -25,7 +25,8 @@ const SignupForm = () => {
   const navigate = useNavigate();
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/api/auth/google";
+    const googleAuthUrl = `${API_URL}/google`;
+    window.location.href = googleAuthUrl;
   };
 
   const handleChange = (field: string, value: string) => {

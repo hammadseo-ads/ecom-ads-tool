@@ -135,7 +135,7 @@ const Dashboard = () => {
 
   setIsConnecting(true);
   try {
-    const res = await fetch("http://localhost:5000/api/google-ads/auth-url", {
+    const res = await fetch(`${import.meta.env.VITE_API_GOOGLE_ADS_URL || "http://localhost:5000/api/google-ads"}/auth-url`, {
       method: "POST", // ← WAS GET → WRONG
       credentials: "include",
       headers: { "Content-Type": "application/json" },

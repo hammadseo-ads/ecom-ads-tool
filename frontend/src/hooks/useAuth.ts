@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api/auth",
+  baseURL: import.meta.env.VITE_API_AUTH_URL || "http://localhost:5000/api/auth",
   withCredentials: true, // Critical for cookies
 });
 
@@ -30,7 +30,7 @@ export const useAuth = () => {
   const signIn = (email: string, password: string) => api.post("/login", { email, password });
   const signUp = (username: string, email: string, password: string) => api.post("/register", { username, email, password });
   const signOut = () => api.post("/logout").then(() => window.location.href = "/login");
-  const googleLogin = () => window.location.href = "http://localhost:5000/api/auth/google";
+  const googleLogin = () => window.location.href = `${import.meta.env.VITE_API_AUTH_URL || "http://localhost:5000/api/auth"}/google`;
 
   return { user, loading, signIn, signUp, signOut, googleLogin, refresh };
 };

@@ -9,7 +9,7 @@ import { useToast } from "../../hooks/use-toast.ts";
 import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = import.meta.env.VITE_API_AUTH_URL || "http://localhost:5000/api/auth";
 
 const AuthForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +29,8 @@ const AuthForm = () => {
   });
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/api/auth/google";
+    const googleAuthUrl = `${API_URL}/google`;
+    window.location.href = googleAuthUrl;
   };
 
   const handleLogin = async (e: React.FormEvent) => {

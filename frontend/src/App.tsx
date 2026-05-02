@@ -12,7 +12,9 @@ import { useUser } from "./hooks/useUser";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
+import DashboardHome from "./pages/DashboardHome";
+import ProductsReportPage from "./pages/ProductsReportPage";
+import KeywordsReportPage from "./pages/KeywordsReportPage";
 import Account from "./pages/Account";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -75,7 +77,9 @@ const App = () => {
                   <Route path="/reset-password/:token" element={<ResetPassword />} />
 
                   {/* Protected */}
-                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/dashboard" element={<DashboardHome />} />
+                  <Route path="/dashboard/products" element={<ProductsReportPage />} />
+                  <Route path="/dashboard/keywords" element={<KeywordsReportPage />} />
                   <Route path="/account" element={<Account />} />
 
                   {/* Public */}

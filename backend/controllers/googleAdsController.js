@@ -1,8 +1,13 @@
 import GoogleAdsToken from "../models/GoogleAdsToken.js";
+import OnDemandProductReport from "../models/OnDemandProductReport.js";
+import KeywordSearchTermReport from "../models/KeywordSearchTermReport.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../utils/googleAdsClient.js";
 import logger from "../config/logger.js";
 
-const REDIRECT_URI = process.env.REDIRECT_URI || "http://localhost:5000/api/google-ads/callback";
+const REDIRECT_URI =
+  process.env.GOOGLE_ADS_REDIRECT_URI ||
+  process.env.REDIRECT_URI ||
+  `${process.env.BACKEND_API_URL || "http://localhost:5000/api"}/google-ads/callback`;
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:8080";
 
 async function exchangeCodeForTokens(code) {
@@ -431,44 +436,144 @@ export const getConnections = async (req, res) => {
       });
     }
 
-    // If no rows returned from customer_client, fall back to allCustomerIds
-    if (rows.length === 0 && tokenDoc.allCustomerIds && tokenDoc.allCustomerIds.length > 0) {
-      logger.info(`Falling back to allCustomerIds: ${tokenDoc.allCustomerIds}`);
-      const fallbackConnections = tokenDoc.allCustomerIds.map(id => ({
-        id,
-        customer_id: id,
-        account_name: id === rootCustomerId ? `MCC ${id}` : `Account ${id}`,
-        is_manager_account: id === rootCustomerId,
-      }));
-      const fallbackClientAccounts = fallbackConnections.filter(acc => !acc.is_manager_account);
-      return res.json({
-        connections: fallbackConnections,
-        clientAccounts: fallbackClientAccounts,
-        hierarchy: { managerAccounts: fallbackConnections.filter(a => a.is_manager_account), clientAccounts: fallbackClientAccounts },
-        hasConnection: true,
-      });
-    }
-
-    const connections = [];
-    const clientAccounts = [];
+    // Build connections list, starting from any accounts GAQL returned
+    // (these include nice descriptive names when available).
+    const seen = new Map(); // id -> connection object
 
     for (const row of rows) {
       const clientData = row.customerClient || row.customer_client || row;
       const idRaw = clientData?.id ?? clientData?.resource_name ?? null;
       const id = idRaw ? String(idRaw).replace("customers/", "").trim() : null;
+      if (!id) continue;
       const name = clientData?.descriptive_name ?? clientData?.descriptiveName ?? `Account ${id}`;
       const managerFlag = clientData?.manager ?? clientData?.manager_account ?? false;
       const level = clientData?.level ?? null;
-      if (!id) continue;
-      const acc = { id, customer_id: id, account_name: name, is_manager_account: !!managerFlag, level };
-      connections.push(acc);
-      if (!acc.is_manager_account) clientAccounts.push(acc);
+      seen.set(id, { id, customer_id: id, account_name: name, is_manager_account: !!managerFlag, level });
     }
+
+    // Merge in every directly-accessible customer that GAQL didn't list.
+    // listAccessibleCustomers can return separate top-level accounts that aren't
+    // children of rootCustomerId's MCC, so we'd lose them otherwise.
+    if (tokenDoc.allCustomerIds && tokenDoc.allCustomerIds.length > 0) {
+      for (const id of tokenDoc.allCustomerIds) {
+        if (seen.has(id)) continue;
+        seen.set(id, {
+          id,
+          customer_id: id,
+          account_name: `Account ${id}`,
+          is_manager_account: false,
+          level: null,
+        });
+      }
+    }
+
+    // For every account we only have an ID for, fetch its real name + manager flag in parallel.
+    // Each account is queried with login_customer_id == its own id (no MCC needed for direct access).
+    const refreshTokenForLookup = tokenDoc.refreshToken || tokenDoc.accessToken;
+    const accountsNeedingName = Array.from(seen.values()).filter(
+      (acc) => /^Account \d+$/.test(acc.account_name)
+    );
+
+    if (refreshTokenForLookup && accountsNeedingName.length > 0) {
+      logger.info(`Fetching names for ${accountsNeedingName.length} accounts in parallel`);
+      await Promise.all(
+        accountsNeedingName.map(async (acc) => {
+          try {
+            const c = getGoogleAdsClient(refreshTokenForLookup, acc.id, acc.id);
+            const result = await c.query(
+              "SELECT customer.descriptive_name, customer.manager FROM customer LIMIT 1"
+            );
+            const rowsArr = Array.isArray(result)
+              ? result
+              : Array.isArray(result?.results)
+              ? result.results
+              : [];
+            const cust = rowsArr[0]?.customer || rowsArr[0];
+            if (cust?.descriptive_name) {
+              acc.account_name = cust.descriptive_name;
+            } else if (cust?.descriptiveName) {
+              acc.account_name = cust.descriptiveName;
+            }
+            const isManager = cust?.manager ?? cust?.manager_account;
+            if (typeof isManager === "boolean") acc.is_manager_account = isManager;
+          } catch (err) {
+            logger.warn(`Name lookup failed for ${acc.id}: ${err.message?.slice(0, 120)}`);
+          }
+        })
+      );
+    }
+
+    // Build hierarchy { mccId: [childCustomerIds] } so the frontend can show
+    // sub-accounts when an MCC is selected. Query each manager in parallel.
+    const hierarchy = {};
+    const managers = Array.from(seen.values()).filter((a) => a.is_manager_account);
+
+    if (refreshTokenForLookup && managers.length > 0) {
+      logger.info(`Fetching children for ${managers.length} manager accounts in parallel`);
+      await Promise.all(
+        managers.map(async (mgr) => {
+          try {
+            const c = getGoogleAdsClient(refreshTokenForLookup, mgr.id, mgr.id);
+            const result = await c.query(`
+              SELECT customer_client.id, customer_client.descriptive_name, customer_client.manager, customer_client.level
+              FROM customer_client
+              WHERE customer_client.status = 'ENABLED'
+            `);
+            const childRows = Array.isArray(result)
+              ? result
+              : Array.isArray(result?.results)
+              ? result.results
+              : [];
+
+            const childIds = [];
+            for (const row of childRows) {
+              const cd = row.customerClient || row.customer_client || row;
+              const idRaw = cd?.id ?? cd?.resource_name ?? null;
+              const childId = idRaw ? String(idRaw).replace("customers/", "").trim() : null;
+              if (!childId || childId === mgr.id) continue; // skip the manager itself
+              const childName = cd?.descriptive_name ?? cd?.descriptiveName ?? `Account ${childId}`;
+              const childIsManager = !!(cd?.manager ?? cd?.manager_account);
+
+              childIds.push(childId);
+
+              // Add the child to seen so it appears in connections too (with name).
+              // Don't overwrite a directly-accessible top-level entry.
+              if (!seen.has(childId)) {
+                seen.set(childId, {
+                  id: childId,
+                  customer_id: childId,
+                  account_name: childName,
+                  is_manager_account: childIsManager,
+                  level: cd?.level ?? null,
+                });
+              } else {
+                // upgrade name if we still had a placeholder
+                const existing = seen.get(childId);
+                if (/^Account \d+$/.test(existing.account_name) && childName) {
+                  existing.account_name = childName;
+                }
+              }
+            }
+            hierarchy[mgr.id] = childIds;
+          } catch (err) {
+            logger.warn(`Children lookup failed for MCC ${mgr.id}: ${err.message?.slice(0, 120)}`);
+            hierarchy[mgr.id] = [];
+          }
+        })
+      );
+    }
+
+    const connections = Array.from(seen.values());
+    const clientAccounts = connections.filter((acc) => !acc.is_manager_account);
+    const managerAccounts = connections.filter((acc) => acc.is_manager_account);
+
+    logger.info(`Returning ${connections.length} total accounts (${clientAccounts.length} clients, ${managerAccounts.length} managers)`);
 
     return res.json({
       connections,
       clientAccounts,
-      hierarchy: { managerAccounts: connections.filter(a => a.is_manager_account), clientAccounts },
+      managerAccounts,
+      hierarchy,
       hasConnection: true,
     });
   } catch (error) {
@@ -542,8 +647,23 @@ export const checkConnection = async (req, res) => {
 
 export const disconnectGoogleAds = async (req, res) => {
   try {
-    await GoogleAdsToken.deleteOne({ user: req.user._id || req.user.id });
-    res.json({ success: true });
+    const userId = req.user._id || req.user.id;
+    // Delete OAuth tokens AND every cached report for this user.
+    // Disconnecting from Google Ads should fully wipe the local copy of their data.
+    const [tokenRes, productRes, keywordRes] = await Promise.all([
+      GoogleAdsToken.deleteOne({ user: userId }),
+      OnDemandProductReport.deleteMany({ user: userId }),
+      KeywordSearchTermReport.deleteMany({ user: userId }),
+    ]);
+    logger.info(
+      `Disconnected user ${userId}: removed ${tokenRes.deletedCount} token doc, ` +
+      `${productRes.deletedCount} product reports, ${keywordRes.deletedCount} keyword reports`
+    );
+    res.json({
+      success: true,
+      deletedProductReports: productRes.deletedCount,
+      deletedKeywordReports: keywordRes.deletedCount,
+    });
   } catch (error) {
     logger.error("disconnectGoogleAds Error:", error);
     res.status(500).json({ error: error.message });

@@ -2,8 +2,9 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 
+// VITE_API_URL is the API root (includes /api), e.g. "/api" or "http://localhost:5000/api"
 const api = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
   withCredentials: true,
 });
 
@@ -21,25 +22,36 @@ export const useUser = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchUser = useCallback(async () => {
-    try {
-      // Try to use stored token first for faster initial load
+    const tryFetchMe = async () => {
       const token = localStorage.getItem("accessToken");
-      const config = token 
-        ? { headers: { Authorization: `Bearer ${token}` } }
-        : {};
-      
-      const res = await api.get("/api/auth/me", config);
+      const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+      return api.get("/auth/me", config);
+    };
+
+    try {
+      const res = await tryFetchMe();
       setUser(res.data.user);
-      
-      // Store token from response if provided
-      if (res.data.token) {
-        localStorage.setItem("accessToken", res.data.token);
+      if (res.data.token) localStorage.setItem("accessToken", res.data.token);
+    } catch (err: any) {
+      // Access token expired? Try refresh once using the 7-day refresh cookie.
+      if (err?.response?.status === 401) {
+        try {
+          const refreshed = await api.post("/auth/refresh-token");
+          if (refreshed.data?.accessToken) {
+            localStorage.setItem("accessToken", refreshed.data.accessToken);
+          }
+          const retry = await tryFetchMe();
+          setUser(retry.data.user);
+          return;
+        } catch (refreshErr) {
+          // Refresh failed too — really not logged in.
+          localStorage.removeItem("accessToken");
+          setUser(null);
+        }
+      } else {
+        console.error("Failed to fetch user:", err);
+        setUser(null);
       }
-    } catch (err) {
-      console.error("Failed to fetch user:", err);
-      // Clear invalid token
-      localStorage.removeItem("accessToken");
-      setUser(null);
     } finally {
       setLoading(false);
     }

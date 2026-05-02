@@ -190,10 +190,8 @@ const getClientAccounts = async (tokenDoc, managerCustomerId) => {
               ?.filter(Boolean) || [];
             if (childAccountsAlt.length > 0) {
               console.log(`✅ MCC SUCCESS: ${childAccountsAlt.length} client accounts with login header ${candidateLogin}`);
-              // Lock in this login header for future calls - save it as the rootCustomerId
-              tokenDoc.rootCustomerId = candidate;
-              await tokenDoc.save();
-              console.log(`💾 Saved valid login_customer_id: ${candidateLogin}`);
+              // NOTE: do NOT overwrite tokenDoc.rootCustomerId here — that mutates
+              // shared state based on a guess and causes wrong-account analysis later.
               return childAccountsAlt;
             }
           }
@@ -232,32 +230,53 @@ export const generateReports = async (req, res) => {
       await tokenDoc.save();
     }
 
-    // Use the requested customer_id as the manager to list children when provided;
-    // otherwise fall back to the stored rootCustomerId (MCC)
-    const managerIdForListing = customer_id ? formattedCustomerId : (tokenDoc.rootCustomerId ? formatCustomerId(tokenDoc.rootCustomerId) : formattedCustomerId);
-    const clientAccounts = await getClientAccounts(tokenDoc, managerIdForListing);
-    console.log(`🚀 Found ${clientAccounts.length} accounts to process (listed from manager ${managerIdForListing})`);
+    // The user picked a specific leaf account in the navbar — just analyze that.
+    // Don't run getClientAccounts (it has a destructive retry loop that overwrites
+    // tokenDoc.rootCustomerId with whatever account "worked", corrupting state and
+    // running analysis on the wrong account).
+    const accountsToProcess = [formattedCustomerId];
+    console.log(`🚀 Processing requested account: ${formattedCustomerId}`);
+
+    // Build candidate login_customer_ids. Try in order:
+    //   1) no login header (works when customer is directly accessible)
+    //   2) every directly-accessible customer (one of them is the parent MCC)
+    const candidateLogins = [
+      null,
+      ...(tokenDoc.allCustomerIds || []).map(formatCustomerId).filter(
+        (id) => id && id !== formattedCustomerId
+      ),
+    ];
 
     const allReports = [];
-    for (const clientObj of clientAccounts) {
-      const clientId = clientObj?.id || String(clientObj);
-      const clientName = clientObj?.name || `Account ${clientId}`;
-      console.log(`\n📂 PROCESSING: ${clientId} (${clientName})`);
-      
+    for (const clientId of accountsToProcess) {
+      console.log(`\n📂 PROCESSING: ${clientId}`);
+
       for (const rpt of REPORT_TYPES) {
-        try {
-          // ✅ ALWAYS use tokenDoc.rootCustomerId as the login_customer_id (the top-level MCC that granted access)
-          const loginCustomerId = tokenDoc.rootCustomerId ? formatCustomerId(tokenDoc.rootCustomerId) : null;
-          const result = await generateSingleAccountReport(tokenDoc, clientId, loginCustomerId, userId, rpt);
-          allReports.push(result);
-          
-        } catch (err) {
-          console.error(`❌ ${clientId} ${rpt.type}:`, err.message);
-          allReports.push({ 
-            customer_id: clientId, 
-            report_type: rpt.type, 
-            count: 0, 
-            error: err.message 
+        let lastErr = null;
+        let succeeded = false;
+        for (const loginCustomerId of candidateLogins) {
+          try {
+            const result = await generateSingleAccountReport(tokenDoc, clientId, loginCustomerId, userId, rpt);
+            allReports.push(result);
+            succeeded = true;
+            break;
+          } catch (err) {
+            lastErr = err;
+            const msg = err?.errors?.[0]?.message || err.message || "";
+            // Only retry with a different login on permission/auth errors
+            if (!/permission|not allowed|authorization|access/i.test(msg)) {
+              break;
+            }
+            console.log(`  ↩️  Retrying ${clientId} ${rpt.type} with different login_customer_id (last error: ${msg.slice(0, 80)})`);
+          }
+        }
+        if (!succeeded) {
+          console.error(`❌ ${clientId} ${rpt.type}:`, lastErr?.message);
+          allReports.push({
+            customer_id: clientId,
+            report_type: rpt.type,
+            count: 0,
+            error: lastErr?.message,
           });
         }
       }
@@ -269,7 +288,7 @@ export const generateReports = async (req, res) => {
     res.json({ 
       success: true, 
       reports: allReports,
-      total_accounts: clientAccounts.length,
+      total_accounts: accountsToProcess.length,
       total_products: totalProducts 
     });
 

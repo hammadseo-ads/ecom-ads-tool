@@ -13,7 +13,7 @@ import {
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = import.meta.env.VITE_API_AUTH_URL || "http://localhost:5000/api/auth";
 
 // Reusable password input with show/hide icon
 const PasswordInput = ({

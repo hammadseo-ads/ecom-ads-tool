@@ -1,5 +1,5 @@
 // src/pages/Signup.tsx ← FINAL VERSION WITH GOOGLE + EYE TOGGLE
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,8 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/hooks/useUser";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = import.meta.env.VITE_API_AUTH_URL || "http://localhost:5000/api/auth";
 
 const PasswordInput = ({
   id,
@@ -59,9 +60,18 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useUser();
+
+  // Already logged in? Skip the signup form, go straight to dashboard.
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [authLoading, user, navigate]);
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/api/auth/google";
+    const googleAuthUrl = `${API_URL}/google`;
+    window.location.href = googleAuthUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

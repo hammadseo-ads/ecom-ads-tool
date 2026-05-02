@@ -9,9 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/useUser";
 import { useAppData } from "@/contexts/AppData";
-import { ArrowLeft, User, Link, Unlink2, RefreshCw, CheckCircle, AlertCircle } from "lucide-react";
+import { ArrowLeft, User, Link, Unlink2, RefreshCw, CheckCircle, AlertCircle, Trash2 } from "lucide-react";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const Account = () => {
   const { user, loading: userLoading, refreshUser } = useUser();
@@ -21,6 +21,7 @@ const Account = () => {
 
   const [isConnecting, setIsConnecting] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const [isDeletingData, setIsDeletingData] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [hasConnection, setHasConnection] = useState(false);
   const [isLoadingConnection, setIsLoadingConnection] = useState(true);
@@ -128,7 +129,7 @@ const Account = () => {
   const handleConnectGoogleAds = async () => {
   setIsConnecting(true);
   try {
-    const res = await fetch("http://localhost:5000/api/google-ads/auth-url", {
+    const res = await fetch(`${import.meta.env.VITE_API_GOOGLE_ADS_URL || "http://localhost:5000/api/google-ads"}/auth-url`, {
       method: "POST", // ← WAS GET → WRONG
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -200,6 +201,47 @@ const Account = () => {
       });
     } finally {
       setIsDisconnecting(false);
+    }
+  };
+
+  // Delete all generated report data (keeps Google Ads connection intact)
+  const handleDeleteAllData = async () => {
+    if (!confirm("Delete all generated report data for every account? This cannot be undone. Your Google Ads connection will stay intact.")) {
+      return;
+    }
+    setIsDeletingData(true);
+    try {
+      const token = getToken();
+      const opts = {
+        method: "DELETE",
+        credentials: "include" as const,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      };
+      // Wipe both product reports AND keyword reports for this user.
+      const [prodRes, kwRes] = await Promise.all([
+        fetch(`${API_URL}/on-demand-report/clear`, opts),
+        fetch(`${API_URL}/keyword-report/clear`, opts),
+      ]);
+      if (!prodRes.ok && !kwRes.ok) throw new Error("Failed to delete data");
+      const prod = prodRes.ok ? await prodRes.json() : { deleted: 0 };
+      const kw = kwRes.ok ? await kwRes.json() : { deleted: 0 };
+      try { clearCache(); } catch {}
+      toast({
+        title: "Deleted",
+        description: `Removed ${prod.deleted ?? 0} product + ${kw.deleted ?? 0} keyword reports.`,
+      });
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Failed to delete data",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeletingData(false);
     }
   };
 
@@ -332,19 +374,41 @@ const Account = () => {
             ) : (
               <>
                 {hasConnection ? (
-                  <Button
-                    onClick={handleDisconnectGoogleAds}
-                    disabled={isDisconnecting}
-                    variant="destructive"
-                    className="w-full"
-                  >
-                    {isDisconnecting ? (
-                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                    ) : (
-                      <Unlink2 className="w-4 h-4 mr-2" />
-                    )}
-                    Disconnect Google Ads Account
-                  </Button>
+                  <>
+                    <Button
+                      onClick={handleDisconnectGoogleAds}
+                      disabled={isDisconnecting}
+                      variant="destructive"
+                      className="w-full"
+                    >
+                      {isDisconnecting ? (
+                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Unlink2 className="w-4 h-4 mr-2" />
+                      )}
+                      Disconnect Google Ads Account
+                    </Button>
+                    <p className="text-xs text-gray-500 -mt-2">
+                      Disconnecting also removes all stored report data for your account.
+                    </p>
+
+                    <Button
+                      onClick={handleDeleteAllData}
+                      disabled={isDeletingData}
+                      variant="outline"
+                      className="w-full border-red-300 text-red-600 hover:bg-red-50"
+                    >
+                      {isDeletingData ? (
+                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4 mr-2" />
+                      )}
+                      Delete All Report Data
+                    </Button>
+                    <p className="text-xs text-gray-500 -mt-2">
+                      Wipes generated reports for every account but keeps the Google Ads connection.
+                    </p>
+                  </>
                 ) : (
                   <Button
                     onClick={handleConnectGoogleAds}

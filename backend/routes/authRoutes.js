@@ -36,17 +36,17 @@ router.get(
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "http://localhost:8080/login",
-    session: false, // This is crucial!
-  }),
+  (req, res, next) => {
+    const frontend = process.env.FRONTEND_URL || "http://localhost:8080";
+    passport.authenticate("google", {
+      failureRedirect: `${frontend}/login`,
+      session: false,
+    })(req, res, next);
+  },
   async (req, res) => {
-    // req.user is now available → generate JWT cookies
     await generateToken(req.user, res);
-
-    // // Redirect to your frontend
-    // res.redirect("http://localhost:8080/dashboard");
-    res.redirect("http://localhost:8080");
+    const frontend = process.env.FRONTEND_URL || "http://localhost:8080";
+    res.redirect(frontend);
   }
 );
 
@@ -88,7 +88,8 @@ router.post("/forgot-password", authLimiter, async (req, res) => {
   user.passwordResetExpires = Date.now() + 15 * 60 * 1000; // 15 mins
   await user.save();
 
-  const resetURL = `http://localhost:8080/reset-password/${resetToken}`;
+  const frontend = process.env.FRONTEND_URL || "http://localhost:8080";
+  const resetURL = `${frontend}/reset-password/${resetToken}`;
 
   try {
     await transporter.sendMail({

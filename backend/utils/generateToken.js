@@ -20,21 +20,24 @@ const generateToken = async (user, res) => {
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
   });
 
-  // Set HttpOnly Cookies
-  // THIS IS THE KEY — SAME SITE NONE + SECURE
-  res.cookie("accessToken", accessToken, {
+  // Cookie security driven by NODE_ENV:
+  //  - development (HTTP localhost): secure:false, sameSite:lax
+  //  - production (HTTPS):           secure:true,  sameSite:lax (same-origin via nginx)
+  const isProd = process.env.NODE_ENV === "production";
+  const cookieOpts = {
     httpOnly: true,
-    secure: false,           // localhost = no HTTPS
-    sameSite: "lax",          // ← CHANGE TO "lax" (not "none")
+    secure: isProd,
+    sameSite: "lax",
     path: "/",
+  };
+
+  res.cookie("accessToken", accessToken, {
+    ...cookieOpts,
     maxAge: 15 * 60 * 1000,
   });
 
   res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-  secure: false,           // localhost = no HTTPS
-    sameSite: "lax",          // ← CHANGE TO "lax" (not "none")
-    path: "/",
+    ...cookieOpts,
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
