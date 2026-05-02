@@ -199,19 +199,19 @@ const PublicHeader = () => {
                     {/* Guides Mega Menu — wrapper provides hoverable bridge */}
                     {isGuidesDropdownOpen && (
                       <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
-                      <Card className="w-[900px] max-w-[90vw] bg-white border shadow-xl p-6">
-                        <div className="grid grid-cols-2 gap-6">
+                      <Card className="w-[640px] max-w-[calc(100vw-2rem)] bg-white border shadow-xl p-4">
+                        <div className="grid grid-cols-2 gap-4 max-h-[65vh] overflow-y-auto pr-1">
                           {/* Product Performance Guides Column */}
                           <div>
-                            <h3 className="text-sm font-semibold text-green-900 border-b border-primary/20 pb-2 mb-3">
+                            <h3 className="text-xs font-semibold text-green-900 border-b border-primary/20 pb-2 mb-2 sticky top-0 bg-white">
                               Product Performance Guides
                             </h3>
-                            <div className="space-y-2">
+                            <div className="space-y-1">
                               {productPerformanceGuides.map((guide, index) => (
                                 <Link key={index} to={guide.link} className="block">
-                                  <div className="p-3 rounded-lg hover:bg-muted/50 transition-colors duration-200 cursor-pointer">
-                                    <h4 className="font-semibold text-sm mb-1">{guide.name}</h4>
-                                    <p className="text-xs text-muted-foreground">{guide.description}</p>
+                                  <div className="p-2 rounded-md hover:bg-muted/50 transition-colors duration-200 cursor-pointer">
+                                    <h4 className="font-semibold text-xs mb-0.5 leading-tight">{guide.name}</h4>
+                                    <p className="text-[11px] text-muted-foreground leading-snug">{guide.description}</p>
                                   </div>
                                 </Link>
                               ))}
@@ -220,15 +220,15 @@ const PublicHeader = () => {
 
                           {/* Google Ads Guides Column */}
                           <div>
-                            <h3 className="text-sm font-semibold text-green-600 border-b border-green-600/20 pb-2 mb-3">
+                            <h3 className="text-xs font-semibold text-green-600 border-b border-green-600/20 pb-2 mb-2 sticky top-0 bg-white">
                               Google Ads Guides
                             </h3>
-                            <div className="space-y-2">
+                            <div className="space-y-1">
                               {googleAdsGuides.map((guide, index) => (
                                 <Link key={index} to={guide.link} className="block">
-                                  <div className="p-3 rounded-lg hover:bg-muted/50 transition-colors duration-200 cursor-pointer">
-                                    <h4 className="font-semibold text-sm mb-1">{guide.name}</h4>
-                                    <p className="text-xs text-muted-foreground">{guide.description}</p>
+                                  <div className="p-2 rounded-md hover:bg-muted/50 transition-colors duration-200 cursor-pointer">
+                                    <h4 className="font-semibold text-xs mb-0.5 leading-tight">{guide.name}</h4>
+                                    <p className="text-[11px] text-muted-foreground leading-snug">{guide.description}</p>
                                   </div>
                                 </Link>
                               ))}
@@ -236,7 +236,7 @@ const PublicHeader = () => {
                           </div>
                         </div>
 
-                        <div className="mt-4 pt-4 border-t">
+                        <div className="mt-3 pt-3 border-t">
                           <Link to="/guides">
                             <Button variant="outline" size="sm" className="w-full text-xs">
                               View All Guides →
