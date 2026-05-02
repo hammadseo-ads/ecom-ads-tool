@@ -34,6 +34,7 @@ import CampaignStructureGuide from "./pages/CampaignStructureGuide";
 import ProductTitleOptimizationGuide from "./pages/ProductTitleOptimizationGuide";
 import StrategicNegativeKeywordsGuide from "./pages/StrategicNegativeKeywordsGuide";
 import EcommerceCROAuditGuide from "./pages/EcommerceCROAuditGuide";
+import NegativeKeywordsAndTitlesGuide from "./pages/NegativeKeywordsAndTitlesGuide";
 import Guides from "./pages/Guides";
 
 // Portfolio
@@ -91,6 +92,7 @@ const App = () => {
                   <Route path="/product-title-optimization-guide" element={<ProductTitleOptimizationGuide />} />
                   <Route path="/strategic-negative-keywords-guide" element={<StrategicNegativeKeywordsGuide />} />
                   <Route path="/guides/ecommerce-cro-audit" element={<EcommerceCROAuditGuide />} />
+                  <Route path="/guides/negative-keywords-and-titles" element={<NegativeKeywordsAndTitlesGuide />} />
 
                   {/* Portfolio */}
                   <Route path="/portfolio" element={<Portfolio />} />

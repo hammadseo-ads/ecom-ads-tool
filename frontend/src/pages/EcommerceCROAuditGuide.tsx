@@ -32,7 +32,12 @@ import {
   Layout,
   PlayCircle,
   Sparkles,
+  Download,
 } from "lucide-react";
+
+// Skill bundle served from /public — see frontend/public/lovable-uploads/skills/
+const CRO_SKILL_HREF = "/lovable-uploads/skills/ecommerce-cro-audit.skill";
+const CRO_SKILL_NAME = "ecommerce-cro-audit.skill";
 
 interface AuditItem {
   id: string;
@@ -305,14 +310,15 @@ export default function EcommerceCROAuditGuide() {
             >
               <PlayCircle className="w-4 h-4 mr-2" /> Start the audit
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-white/40 text-white bg-white/10 hover:bg-white/20"
-              onClick={() => navigate("/dashboard")}
-            >
-              Go to Dashboard <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+            <a href={CRO_SKILL_HREF} download={CRO_SKILL_NAME}>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white/40 text-white bg-white/10 hover:bg-white/20"
+              >
+                <Download className="w-4 h-4 mr-2" /> Download skill
+              </Button>
+            </a>
           </div>
         </div>
       </section>
@@ -360,6 +366,27 @@ export default function EcommerceCROAuditGuide() {
             </div>
           </CardContent>
         </Card>
+      </section>
+
+      {/* Skill download callout */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <div className="bg-emerald-50 border border-emerald-300 rounded-lg p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex-1">
+            <div className="font-semibold text-emerald-900 mb-1">
+              Want Claude to do the audit for you?
+            </div>
+            <p className="text-sm text-emerald-900/85">
+              Download the <span className="font-mono">{CRO_SKILL_NAME}</span> skill bundle and
+              upload it to your Claude skills (Settings → Skills → Add). Then drop your store URL
+              into Claude with the skill, and it'll run the same audit automatically.
+            </p>
+          </div>
+          <a href={CRO_SKILL_HREF} download={CRO_SKILL_NAME}>
+            <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
+              <Download className="w-4 h-4 mr-2" /> Download skill
+            </Button>
+          </a>
+        </div>
       </section>
 
       {/* Sections */}

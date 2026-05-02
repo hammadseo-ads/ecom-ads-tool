@@ -59,6 +59,15 @@ const guides = [
     color: "from-emerald-500/10 to-emerald-600/10",
     iconColor: "text-emerald-600",
     borderColor: "border-emerald-500/20 hover:border-emerald-500/50"
+  },
+  {
+    title: "Negative Keywords & Product Titles Analysis",
+    description: "3-part workflow: pull 30 days of search-term + product-title data from Google Ads, run them through our Claude skill, get back a negatives list and a title audit.",
+    icon: TrendingUp,
+    path: "/guides/negative-keywords-and-titles",
+    color: "from-emerald-500/10 to-green-500/10",
+    iconColor: "text-emerald-700",
+    borderColor: "border-emerald-500/20 hover:border-emerald-500/50"
   }
 ];
 

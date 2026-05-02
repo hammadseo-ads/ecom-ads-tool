@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Search, ArrowRight, Layout } from "lucide-react";
+import { ShoppingBag, Search, ArrowRight, Layout, FileSpreadsheet } from "lucide-react";
 import DashboardShell from "@/components/DashboardShell";
 
 const DashboardHome = () => {
@@ -76,6 +76,25 @@ const DashboardHome = () => {
                 <CardContent>
                   <Button className="w-full bg-green-600 hover:bg-green-700">
                     Start Manual Audit <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Negative Keywords & Product Titles (manual workflow with Claude skill) */}
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-emerald-500" onClick={() => navigate("/guides/negative-keywords-and-titles")}>
+                <CardHeader>
+                  <div className="bg-emerald-100 rounded-full w-14 h-14 flex items-center justify-center mb-4">
+                    <FileSpreadsheet className="w-7 h-7 text-emerald-700" />
+                  </div>
+                  <CardTitle className="text-2xl">Negative Keywords &amp; Titles</CardTitle>
+                  <CardDescription className="text-base mt-2">
+                    Pull 30 days of search-term + product-title data, run through our Claude skill,
+                    get back a negatives list and a product-title audit.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
+                    Open Workflow <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </CardContent>
               </Card>
