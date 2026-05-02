@@ -2,6 +2,7 @@ import GoogleAdsToken from "../models/GoogleAdsToken.js";
 import OnDemandProductReport from "../models/OnDemandProductReport.js";
 import KeywordSearchTermReport from "../models/KeywordSearchTermReport.js";
 import ProductPerformanceReport from "../models/ProductPerformanceReport.js";
+import HeatMapReport from "../models/HeatMapReport.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../utils/googleAdsClient.js";
 import logger from "../config/logger.js";
 
@@ -804,11 +805,12 @@ export const disconnectGoogleAds = async (req, res) => {
     const preservedMetadata = existing?.accountMetadata || {};
 
     // Wipe credentials + connection cache + reports across all analysis tools
-    const [tokenRes, productRes, keywordRes, productRoasRes] = await Promise.all([
+    const [tokenRes, productRes, keywordRes, productRoasRes, heatMapRes] = await Promise.all([
       GoogleAdsToken.deleteOne({ user: userId }),
       OnDemandProductReport.deleteMany({ user: userId }),
       KeywordSearchTermReport.deleteMany({ user: userId }),
       ProductPerformanceReport.deleteMany({ user: userId }),
+      HeatMapReport.deleteMany({ user: userId }),
     ]);
 
     // Re-create a stub doc holding only the preserved metadata (no tokens),
@@ -827,6 +829,7 @@ export const disconnectGoogleAds = async (req, res) => {
       `Disconnected user ${userId}: removed ${tokenRes.deletedCount} token doc, ` +
       `${productRes.deletedCount} product reports, ${keywordRes.deletedCount} keyword reports, ` +
       `${productRoasRes.deletedCount} product-ROAS reports, ` +
+      `${heatMapRes.deletedCount} heat-map reports, ` +
       `preserved ${Object.keys(preservedMetadata).length} account metadata entries`
     );
     res.json({
@@ -834,6 +837,7 @@ export const disconnectGoogleAds = async (req, res) => {
       deletedProductReports: productRes.deletedCount,
       deletedKeywordReports: keywordRes.deletedCount,
       deletedProductRoasReports: productRoasRes.deletedCount,
+      deletedHeatMapReports: heatMapRes.deletedCount,
       preservedAccountMetadata: Object.keys(preservedMetadata).length,
     });
   } catch (error) {
