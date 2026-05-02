@@ -121,30 +121,10 @@ const PublicHeader = () => {
           {/* Desktop Navigation */}
           {!isMobile && (
             <div className="flex items-center space-x-4">
-              {isAuthenticated ? (
-                <>
-                  <Link to="/dashboard">
-                    <Button className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-200">
-                      <LayoutDashboard className="h-4 w-4 mr-2" />
-                      Dashboard
-                    </Button>
-                  </Link>
-                  <Link to="/account">
-                    <Button variant="ghost" size="icon" className="hover:bg-muted">
-                      <User className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleLogout}
-                    className="hover:bg-muted text-destructive hover:text-destructive"
-                  >
-                    <LogOut className="h-4 w-4" />
-                  </Button>
-                </>
-              ) : (
-                <>
+              {/* Always-visible public nav (Case Studies / Analysis Tool / Guides)
+                  — shown regardless of auth state. Auth-specific buttons (Dashboard
+                  vs Sign In / Get Started) live in the conditional block below. */}
+              <>
                   <div
                     className="relative"
                     onMouseEnter={() => setIsDropdownOpen(true)}
@@ -251,13 +231,39 @@ const PublicHeader = () => {
                       </Card>
                     )}
                   </div>
+              </>
+
+              {/* Auth-state buttons — Dashboard for logged-in users; Sign In / Get Started otherwise */}
+              {isAuthenticated ? (
+                <>
+                  <Link to="/dashboard">
+                    <Button className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-200">
+                      <LayoutDashboard className="h-4 w-4 mr-2" />
+                      Dashboard
+                    </Button>
+                  </Link>
+                  <Link to="/account">
+                    <Button variant="ghost" size="icon" className="hover:bg-muted">
+                      <User className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleLogout}
+                    className="hover:bg-muted text-destructive hover:text-destructive"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </Button>
+                </>
+              ) : (
+                <>
                   <Link to="/login">
                     <Button variant="outline" className="border-primary/20 hover:bg-gray-100 transition-all duration-200">
                       Sign In
                     </Button>
                   </Link>
                   <Link to="/signup" className="block">
-                  
                     <Button className="w-full bg-transparent bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-500 h-full">
                       Get Started
                     </Button>
@@ -283,31 +289,8 @@ const PublicHeader = () => {
         {/* Mobile Menu */}
         {isMobile && isMobileMenuOpen && (
           <div className="py-4 border-t space-y-3">
-            {isAuthenticated ? (
-              <>
-                <Link to="/dashboard" className="block">
-                  <Button variant="ghost" className="w-full justify-start text-left">
-                    <LayoutDashboard className="h-4 w-4 mr-2" />
-                    Dashboard
-                  </Button>
-                </Link>
-                <Link to="/account" className="block">
-                  <Button variant="ghost" className="w-full justify-start text-left">
-                    <User className="h-4 w-4 mr-2" />
-                    Account
-                  </Button>
-                </Link>
-                <Button
-                  variant="ghost"
-                  onClick={handleLogout}
-                  className="w-full justify-start text-left text-destructive hover:text-destructive"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <>
+            {/* Always-visible public nav (matches desktop behavior) */}
+            <>
                 <Link to="/case-studies" className="block">
                   <Button variant="ghost" className="w-full justify-start text-left">
                     Case Studies
@@ -369,6 +352,34 @@ const PublicHeader = () => {
                     </div>
                   )}
                 </div>
+            </>
+
+            {/* Auth-state buttons swap */}
+            {isAuthenticated ? (
+              <>
+                <Link to="/dashboard" className="block" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full bg-primary hover:bg-primary/90 justify-start text-left">
+                    <LayoutDashboard className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </Button>
+                </Link>
+                <Link to="/account" className="block" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start text-left">
+                    <User className="h-4 w-4 mr-2" />
+                    Account
+                  </Button>
+                </Link>
+                <Button
+                  variant="ghost"
+                  onClick={handleLogout}
+                  className="w-full justify-start text-left text-destructive hover:text-destructive"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
                 <Link to="/login" className="block">
                   <Button variant="outline" className="w-full border-primary/20 hover:bg-primary/5">
                     Sign In
