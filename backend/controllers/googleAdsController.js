@@ -782,6 +782,135 @@ export const getCampaigns = async (req, res) => {
   }
 };
 
+// ============================================================================
+// DEBUG ENDPOINT — returns raw output from Google with no caching, no GAQL,
+// no MCC drilling. Use this to figure out WHY accounts aren't showing up.
+// Hit it from browser console:
+//   fetch('/api/google-ads/debug-accounts', { credentials: 'include' })
+//     .then(r => r.json()).then(d => console.log(JSON.stringify(d, null, 2)))
+// ============================================================================
+export const debugAccounts = async (req, res) => {
+  const out = {
+    step: "start",
+    userId: null,
+    tokenDoc: null,
+    refreshResult: null,
+    listAccessibleCustomersResult: null,
+    perAccountNameLookups: [],
+    error: null,
+  };
+
+  try {
+    const userId = req.user.id || req.user._id;
+    out.userId = String(userId);
+
+    // 1. Read token doc
+    const tokenDoc = await GoogleAdsToken.findOne({ user: userId });
+    if (!tokenDoc) {
+      out.step = "no_token_doc";
+      return res.json(out);
+    }
+    out.tokenDoc = {
+      hasAccessToken: !!tokenDoc.accessToken,
+      hasRefreshToken: !!tokenDoc.refreshToken,
+      expiryDate: tokenDoc.expiryDate,
+      isExpired: tokenDoc.expiryDate ? Date.now() > new Date(tokenDoc.expiryDate).getTime() : null,
+      rootCustomerId: tokenDoc.rootCustomerId || null,
+      isManager: tokenDoc.isManager,
+      allCustomerIds: tokenDoc.allCustomerIds || [],
+      accountMetadataKeys: Object.keys(tokenDoc.accountMetadata || {}).length,
+      hasCachedConnections: !!(tokenDoc.connectionsCache?.connections?.length),
+      cachedConnectionsCount: tokenDoc.connectionsCache?.connections?.length || 0,
+    };
+
+    // 2. Refresh access token if needed
+    let accessToken = tokenDoc.accessToken;
+    const needsRefresh = !accessToken || Date.now() > new Date(tokenDoc.expiryDate).getTime() - 60000;
+    if (needsRefresh) {
+      out.step = "refreshing_token";
+      if (!tokenDoc.refreshToken) {
+        out.refreshResult = { ok: false, reason: "no_refresh_token_in_db" };
+        return res.json(out);
+      }
+      try {
+        const newTokens = await refreshGoogleToken(tokenDoc.refreshToken);
+        accessToken = newTokens.access_token;
+        out.refreshResult = { ok: true, expiresIn: newTokens.expires_in };
+      } catch (err) {
+        out.refreshResult = { ok: false, error: err.message };
+        return res.json(out);
+      }
+    } else {
+      out.refreshResult = { ok: true, skipped: "token_still_valid" };
+    }
+
+    // 3. Call listAccessibleCustomers — RAW
+    out.step = "calling_listAccessibleCustomers";
+    const url = "https://googleads.googleapis.com/v20/customers:listAccessibleCustomers";
+    const resp = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "developer-token": process.env.GOOGLE_ADS_DEVELOPER_TOKEN || "",
+      },
+    });
+    const bodyText = await resp.text();
+    let bodyJson = null;
+    try { bodyJson = JSON.parse(bodyText); } catch {}
+
+    out.listAccessibleCustomersResult = {
+      httpStatus: resp.status,
+      ok: resp.ok,
+      developerTokenPresent: !!process.env.GOOGLE_ADS_DEVELOPER_TOKEN,
+      developerTokenLength: (process.env.GOOGLE_ADS_DEVELOPER_TOKEN || "").length,
+      body: bodyJson || bodyText.slice(0, 1000),
+      resourceNames: bodyJson?.resourceNames || [],
+      customerIds: (bodyJson?.resourceNames || []).map((rn) => rn.split("/")[1]),
+    };
+
+    if (!resp.ok) {
+      out.step = "listAccessibleCustomers_failed";
+      return res.json(out);
+    }
+
+    // 4. For each customer ID, try a simple `SELECT customer.descriptive_name`
+    //    using login_customer_id = that ID. This tells us if the dev token is
+    //    approved for these accounts.
+    const ids = out.listAccessibleCustomersResult.customerIds.slice(0, 10);
+    out.step = "fetching_account_names";
+    for (const id of ids) {
+      try {
+        const c = getGoogleAdsClient(tokenDoc.refreshToken, id, id);
+        const result = await c.query(
+          "SELECT customer.descriptive_name, customer.manager FROM customer LIMIT 1"
+        );
+        const rows = Array.isArray(result) ? result : (result?.results || []);
+        const cust = rows[0]?.customer || rows[0];
+        out.perAccountNameLookups.push({
+          customerId: id,
+          ok: true,
+          name: cust?.descriptive_name || cust?.descriptiveName || null,
+          isManager: cust?.manager ?? cust?.manager_account ?? null,
+        });
+      } catch (err) {
+        out.perAccountNameLookups.push({
+          customerId: id,
+          ok: false,
+          error: err?.errors?.[0]?.message || err?.message || String(err),
+          errorCode: err?.errors?.[0]?.error_code || err?.code || null,
+        });
+      }
+    }
+
+    out.step = "done";
+    res.json(out);
+  } catch (err) {
+    out.error = err.message;
+    out.errorStack = err.stack;
+    res.status(500).json(out);
+  }
+};
+
 export const checkConnection = async (req, res) => {
   try {
     const userId = req.user._id || req.user.id;

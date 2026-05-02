@@ -15,6 +15,9 @@ router.post("/disconnect", protect, googleAdsController.disconnectGoogleAds);
 
 // ---------- Data ----------
 router.post("/connections", protect, googleAdsController.getConnections);
+
+// ---------- Debug ----------
+router.get("/debug-accounts", protect, googleAdsController.debugAccounts);
 router.post("/campaigns", protect, googleAdsController.getCampaigns);
 
 export default router;
