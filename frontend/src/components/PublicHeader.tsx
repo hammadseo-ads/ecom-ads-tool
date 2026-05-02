@@ -92,6 +92,16 @@ const PublicHeader = () => {
       name: "Simple Google Ads Sales Formula",
       description: "5-step formula to boost your Google Ads sales",
       link: "/simple-google-ads-sales-formula"
+    },
+    {
+      name: "Ecommerce CRO Audit",
+      description: "7-section manual checklist to audit your store",
+      link: "/guides/ecommerce-cro-audit"
+    },
+    {
+      name: "Negative Keywords & Titles",
+      description: "Pull 30 days of data + run through Claude skill",
+      link: "/guides/negative-keywords-and-titles"
     }
   ];
 
@@ -138,9 +148,12 @@ const PublicHeader = () => {
                       </Button>
                     </Link>
 
-                    {/* Dropdown Menu */}
+                    {/* Dropdown Menu — wrapper has top-full + pt-2 so the
+                        visual 8px gap is part of the hoverable region (fixes
+                        the "dropdown disappears when reaching for it" bug). */}
                     {isDropdownOpen && (
-                      <Card className="absolute top-full left-0 mt-2 w-80 bg-white border shadow-lg z-50 p-4">
+                      <div className="absolute top-full left-0 pt-2 z-50">
+                      <Card className="w-80 bg-white border shadow-lg p-4">
                         <div className="space-y-3">
                           <h3 className="text-sm font-semibold text-muted-foreground border-b pb-2">Featured Case Studies</h3>
                           {caseStudies.map((study, index) => (
@@ -163,6 +176,7 @@ const PublicHeader = () => {
                           </Link>
                         </div>
                       </Card>
+                      </div>
                     )}
                   </div>
                   <Link to="/ads-tool">
@@ -182,9 +196,10 @@ const PublicHeader = () => {
                       </Button>
                     </Link>
 
-                    {/* Guides Mega Menu */}
+                    {/* Guides Mega Menu — wrapper provides hoverable bridge */}
                     {isGuidesDropdownOpen && (
-                      <Card className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[900px] max-w-[90vw] bg-white border shadow-xl z-50 p-6">
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
+                      <Card className="w-[900px] max-w-[90vw] bg-white border shadow-xl p-6">
                         <div className="grid grid-cols-2 gap-6">
                           {/* Product Performance Guides Column */}
                           <div>
@@ -229,6 +244,7 @@ const PublicHeader = () => {
                           </Link>
                         </div>
                       </Card>
+                      </div>
                     )}
                   </div>
               </>

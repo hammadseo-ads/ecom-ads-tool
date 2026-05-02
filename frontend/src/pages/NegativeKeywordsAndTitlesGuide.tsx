@@ -77,8 +77,8 @@ const parts: Part[] = [
     ],
     images: [
       {
-        src: "/lovable-uploads/negkw-titles/search-terms-path.png",
-        caption: "Path: Campaigns → Insights and Reports → Search Terms",
+        src: "/lovable-uploads/negkw-titles/report-editor.png",
+        caption: "Report Editor → search \"Product Title Data Along with Campaigns\"",
       },
     ],
   },
@@ -102,8 +102,8 @@ const parts: Part[] = [
     ],
     images: [
       {
-        src: "/lovable-uploads/negkw-titles/report-editor.png",
-        caption: "Report Editor → search \"Product Title Data Along with Campaigns\"",
+        src: "/lovable-uploads/negkw-titles/search-terms-path.png",
+        caption: "Path: Campaigns → Insights and Reports → Search Terms",
       },
       {
         src: "/lovable-uploads/negkw-titles/select-campaigns.png",
