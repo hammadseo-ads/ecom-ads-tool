@@ -14,6 +14,7 @@ import Signup from "./pages/Signup";
 import DashboardHome from "./pages/DashboardHome";
 import ProductsReportPage from "./pages/ProductsReportPage";
 import KeywordsReportPage from "./pages/KeywordsReportPage";
+import ProductRoasPage from "./pages/ProductRoasPage";
 import Account from "./pages/Account";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -78,6 +79,7 @@ const App = () => {
                   <Route path="/dashboard" element={<DashboardHome />} />
                   <Route path="/dashboard/products" element={<ProductsReportPage />} />
                   <Route path="/dashboard/keywords" element={<KeywordsReportPage />} />
+                  <Route path="/dashboard/product-roas" element={<ProductRoasPage />} />
                   <Route path="/account" element={<Account />} />
 
                   {/* Public */}

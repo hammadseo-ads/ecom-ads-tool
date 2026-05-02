@@ -243,18 +243,20 @@ const Account = () => {
         },
         body: JSON.stringify({}),
       };
-      // Wipe both product reports AND keyword reports for this user.
-      const [prodRes, kwRes] = await Promise.all([
+      // Wipe every analysis-tool collection in parallel.
+      const [prodRes, kwRes, roasRes] = await Promise.all([
         fetch(`${API_URL}/on-demand-report/clear`, opts),
         fetch(`${API_URL}/keyword-report/clear`, opts),
+        fetch(`${API_URL}/product-roas/clear`, opts),
       ]);
-      if (!prodRes.ok && !kwRes.ok) throw new Error("Failed to delete data");
+      if (!prodRes.ok && !kwRes.ok && !roasRes.ok) throw new Error("Failed to delete data");
       const prod = prodRes.ok ? await prodRes.json() : { deleted: 0 };
       const kw = kwRes.ok ? await kwRes.json() : { deleted: 0 };
+      const roas = roasRes.ok ? await roasRes.json() : { deleted: 0 };
       try { clearCache(); } catch {}
       toast({
         title: "Deleted",
-        description: `Removed ${prod.deleted ?? 0} product + ${kw.deleted ?? 0} keyword reports.`,
+        description: `Removed ${prod.deleted ?? 0} product + ${kw.deleted ?? 0} keyword + ${roas.deleted ?? 0} product-ROAS reports.`,
       });
     } catch (err: any) {
       toast({

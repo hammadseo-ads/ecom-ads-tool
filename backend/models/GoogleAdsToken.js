@@ -35,6 +35,19 @@ const googleAdsTokenSchema = new mongoose.Schema({
   // Map<customerId, { name, isManager, lastSeenAt }>.
   // Stored as Mixed so adds/updates don't require defining nested schema.
   accountMetadata: { type: mongoose.Schema.Types.Mixed, default: {} },
+
+  // Per-account user-saved thresholds for analysis tools that need them
+  // (e.g. Product ROAS bucketing). We don't hardcode defaults at the analysis
+  // time — sensible defaults are filled in by the frontend on first load and
+  // saved here when the user adjusts. Keyed by tool name + customer_id.
+  //
+  // Shape: { [toolName: string]: { [customerId: string]: { ...settings } } }
+  // E.g.: {
+  //   productRoas: {
+  //     "1234567890": { targetRoas: 4, minSpend: 50, minClicks: 10 }
+  //   }
+  // }
+  toolSettings: { type: mongoose.Schema.Types.Mixed, default: {} },
 }, { timestamps: true });
 
 export default mongoose.model("GoogleAdsToken", googleAdsTokenSchema);

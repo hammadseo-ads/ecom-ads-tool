@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Search, ArrowRight, Layout, FileSpreadsheet } from "lucide-react";
+import { ShoppingBag, Search, ArrowRight, Layout, FileSpreadsheet, Trophy } from "lucide-react";
 import DashboardShell from "@/components/DashboardShell";
 
 const DashboardHome = () => {
@@ -95,6 +95,25 @@ const DashboardHome = () => {
                 <CardContent>
                   <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
                     Open Workflow <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* PMax Product ROAS Analysis (Mike Rhodes-style bucketing) */}
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-emerald-500" onClick={() => navigate("/dashboard/product-roas")}>
+                <CardHeader>
+                  <div className="bg-emerald-100 rounded-full w-14 h-14 flex items-center justify-center mb-4">
+                    <Trophy className="w-7 h-7 text-emerald-700" />
+                  </div>
+                  <CardTitle className="text-2xl">PMax Product ROAS Analysis</CardTitle>
+                  <CardDescription className="text-base mt-2">
+                    Bucket every PMax product into Heroes / Costly / Zombies / Sleepers /
+                    Low Volume using your own ROAS &amp; spend thresholds.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button className="w-full bg-emerald-700 hover:bg-emerald-800">
+                    Open Bucketing Tool <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </CardContent>
               </Card>
