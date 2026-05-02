@@ -418,7 +418,7 @@ export const getConnections = async (req, res) => {
       ORDER BY customer_client.level
     `;
 
-    let rows;
+    let rows = [];
     try {
       const resp = await client.query(gaql);
       if (Array.isArray(resp)) rows = resp;
@@ -427,13 +427,17 @@ export const getConnections = async (req, res) => {
       else rows = [];
       logger.info(`GAQL query returned ${rows.length} rows`);
     } catch (err) {
-      logger.error("GAQL customer_client query failed:", err);
-      return res.json({
-        connections: [],
-        clientAccounts: [],
-        hierarchy: {},
-        hasConnection: true,
-      });
+      // Detailed error so we can debug what Google rejected.
+      // (Don't return empty here — we still want to fall back to allCustomerIds
+      // below so the user sees their accounts even if the customer_client
+      // query failed for this MCC.)
+      const detail = err?.errors?.[0]?.message || err?.errors?.[0]?.error_code || err?.message || String(err);
+      logger.error(
+        `GAQL customer_client query failed for managerToQuery=${managerToQuery} | ` +
+        `code=${err?.code || err?.errors?.[0]?.error_code || "?"} | ` +
+        `msg=${detail?.toString().slice(0, 300)}`
+      );
+      // rows stays [] — we'll just skip GAQL data and use allCustomerIds below
     }
 
     // Build connections list, starting from any accounts GAQL returned
