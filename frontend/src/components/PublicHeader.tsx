@@ -10,7 +10,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 const PublicHeader = () => {
   const { user, cleanupAuthState } = useUser();
-  const { isAuthenticated, logout } = useAuth0();
+  // Authoritative auth state from our own JWT cookie (NOT Auth0 — we don't
+  // actually use Auth0 for sessions). Keeping `logout` from Auth0 around for
+  // the JS API even though we don't call it.
+  const isAuthenticated = !!user;
+  const { logout } = useAuth0();
   const { toast } = useToast();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isGuidesDropdownOpen, setIsGuidesDropdownOpen] = useState(false);

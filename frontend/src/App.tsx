@@ -4,9 +4,8 @@ import { Toaster } from "./components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppDataProvider } from "./contexts/AppDataContext";
-import { useUser } from "./hooks/useUser";
 
 // Pages
 import Index from "./pages/Index";
@@ -34,6 +33,7 @@ import GoogleAdsAuditGuide from "./pages/GoogleAdsAuditGuide";
 import CampaignStructureGuide from "./pages/CampaignStructureGuide";
 import ProductTitleOptimizationGuide from "./pages/ProductTitleOptimizationGuide";
 import StrategicNegativeKeywordsGuide from "./pages/StrategicNegativeKeywordsGuide";
+import EcommerceCROAuditGuide from "./pages/EcommerceCROAuditGuide";
 import Guides from "./pages/Guides";
 
 // Portfolio
@@ -49,14 +49,11 @@ import Footer from "./components/Footer";
 
 const queryClient = new QueryClient();
 
-// Global redirect after login
-const RootRedirect = () => {
-  const { user, loading } = useUser();
-
-  if (loading) return null;
-  if (user) return <Navigate to="/dashboard" replace />;
-  return <GoogleAdsService />;
-};
+// Always show the public homepage at "/", whether the user is logged in or not.
+// PublicHeader handles the auth-aware Sign In / Sign Up vs Dashboard button swap.
+// We don't gate the page on the auth check (so the homepage paints immediately
+// instead of waiting on the /api/auth/me round-trip).
+const RootRedirect = () => <GoogleAdsService />;
 
 const App = () => {
   return (
@@ -93,6 +90,7 @@ const App = () => {
                   <Route path="/campaign-structure-guide" element={<CampaignStructureGuide />} />
                   <Route path="/product-title-optimization-guide" element={<ProductTitleOptimizationGuide />} />
                   <Route path="/strategic-negative-keywords-guide" element={<StrategicNegativeKeywordsGuide />} />
+                  <Route path="/guides/ecommerce-cro-audit" element={<EcommerceCROAuditGuide />} />
 
                   {/* Portfolio */}
                   <Route path="/portfolio" element={<Portfolio />} />

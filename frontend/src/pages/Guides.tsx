@@ -2,7 +2,7 @@
 import  {Button}  from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { ArrowRight, BookOpen, Search, Target, TrendingUp, FileText, DollarSign, AlertTriangle, XCircle, Eye } from "lucide-react";
+import { ArrowRight, BookOpen, Search, Target, TrendingUp, FileText, DollarSign, AlertTriangle, XCircle, Eye, Layout } from "lucide-react";
 import PublicHeader from '@/components/PublicHeader';
 
 const guides = [
@@ -50,6 +50,15 @@ const guides = [
     color: "from-green-500/10 to-green-600/10",
     iconColor: "text-green-500",
     borderColor: "border-green-500/20 hover:border-green-500/50"
+  },
+  {
+    title: "Ecommerce Website CRO Audit",
+    description: "A 7-section manual audit of your store from a real visitor's perspective — banners, search, pop ups, mobile menu, reviews, product gallery, and Instagram.",
+    icon: Layout,
+    path: "/guides/ecommerce-cro-audit",
+    color: "from-emerald-500/10 to-emerald-600/10",
+    iconColor: "text-emerald-600",
+    borderColor: "border-emerald-500/20 hover:border-emerald-500/50"
   }
 ];
 
