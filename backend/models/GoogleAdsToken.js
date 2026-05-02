@@ -28,6 +28,13 @@ const googleAdsTokenSchema = new mongoose.Schema({
     hierarchy: { type: mongoose.Schema.Types.Mixed, default: null },
     cachedAt: { type: Date, default: null },
   },
+
+  // Per-account metadata cache. Survives rate-limits and bad fetches:
+  // once we've successfully looked up an account's name + manager flag,
+  // we keep it forever and never overwrite with a placeholder.
+  // Map<customerId, { name, isManager, lastSeenAt }>.
+  // Stored as Mixed so adds/updates don't require defining nested schema.
+  accountMetadata: { type: mongoose.Schema.Types.Mixed, default: {} },
 }, { timestamps: true });
 
 export default mongoose.model("GoogleAdsToken", googleAdsTokenSchema);

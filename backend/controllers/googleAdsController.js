@@ -498,15 +498,29 @@ export const getConnections = async (req, res) => {
       }
     }
 
-    // For every account we only have an ID for, fetch its real name + manager flag in parallel.
-    // Each account is queried with login_customer_id == its own id (no MCC needed for direct access).
+    // STEP A: hydrate from per-account metadata cache FIRST.
+    // If we've ever successfully looked this account up, we keep that name
+    // forever — no point asking Google again until user explicitly refreshes.
+    const accountMeta = tokenDoc.accountMetadata || {};
+    for (const acc of seen.values()) {
+      const meta = accountMeta[acc.id];
+      if (meta?.name) {
+        acc.account_name = meta.name;
+        if (typeof meta.isManager === "boolean") acc.is_manager_account = meta.isManager;
+      }
+    }
+
+    // STEP B: only fetch names for accounts we still don't know — placeholders.
     const refreshTokenForLookup = tokenDoc.refreshToken || tokenDoc.accessToken;
     const accountsNeedingName = Array.from(seen.values()).filter(
       (acc) => /^Account \d+$/.test(acc.account_name)
     );
 
+    // Track new metadata to merge into the persisted cache
+    const newMetaUpdates = {};
+
     if (refreshTokenForLookup && accountsNeedingName.length > 0) {
-      logger.info(`Fetching names for ${accountsNeedingName.length} accounts in parallel`);
+      logger.info(`Fetching names for ${accountsNeedingName.length} accounts (cache missed) in parallel`);
       await Promise.all(
         accountsNeedingName.map(async (acc) => {
           try {
@@ -520,18 +534,26 @@ export const getConnections = async (req, res) => {
               ? result.results
               : [];
             const cust = rowsArr[0]?.customer || rowsArr[0];
-            if (cust?.descriptive_name) {
-              acc.account_name = cust.descriptive_name;
-            } else if (cust?.descriptiveName) {
-              acc.account_name = cust.descriptiveName;
+            const name = cust?.descriptive_name || cust?.descriptiveName;
+            if (name) {
+              acc.account_name = name;
+              const isManager = cust?.manager ?? cust?.manager_account;
+              acc.is_manager_account = typeof isManager === "boolean" ? isManager : false;
+              // Save to per-account metadata cache (persists forever until disconnect)
+              newMetaUpdates[acc.id] = {
+                name,
+                isManager: acc.is_manager_account,
+                lastSeenAt: new Date(),
+              };
             }
-            const isManager = cust?.manager ?? cust?.manager_account;
-            if (typeof isManager === "boolean") acc.is_manager_account = isManager;
           } catch (err) {
-            logger.warn(`Name lookup failed for ${acc.id}: ${err.message?.slice(0, 120)}`);
+            const msg = err?.errors?.[0]?.message || err?.message || String(err);
+            logger.warn(`Name lookup failed for ${acc.id}: ${msg?.toString().slice(0, 120)}`);
           }
         })
       );
+    } else if (accountsNeedingName.length === 0) {
+      logger.info(`All ${seen.size} accounts found in metadata cache — skipped Google API name lookups`);
     }
 
     // Build hierarchy { mccId: [childCustomerIds] } so the frontend can show
@@ -600,36 +622,72 @@ export const getConnections = async (req, res) => {
 
     logger.info(`Returning ${connections.length} total accounts (${clientAccounts.length} clients, ${managerAccounts.length} managers)`);
 
-    // Persist to MongoDB cache only when the data is actually useful — i.e.
-    // we got accounts AND at least some of them have real names (not all
-    // "Account 12345" placeholders from a rate-limited fetch). This stops us
-    // from poisoning the cache with garbage data after a Google Ads API
-    // throttle, then serving that garbage for an hour.
+    // Merge any newly-discovered account metadata into the persistent map.
+    // Don't overwrite existing entries from the cache (which may have richer info).
+    if (Object.keys(newMetaUpdates).length > 0) {
+      tokenDoc.accountMetadata = { ...accountMeta, ...newMetaUpdates };
+      tokenDoc.markModified("accountMetadata"); // Mixed type needs explicit signal
+    }
+
+    // STALE-CACHE FALLBACK:
+    // If this fetch is WORSE than the existing cache (fewer real names),
+    // serve the existing cache instead so the user doesn't lose data
+    // because Google rate-limited us this round.
     const placeholderRegex = /^Account \d+$/;
     const accountsWithRealNames = connections.filter(
       (a) => !placeholderRegex.test(a.account_name)
     ).length;
-    const hasRealData = connections.length > 0 && accountsWithRealNames > 0;
+    const cachedAccountsWithRealNames = (cache?.connections || []).filter(
+      (a) => !placeholderRegex.test(a.account_name)
+    ).length;
 
-    if (hasRealData) {
-      try {
-        tokenDoc.connectionsCache = {
-          connections,
-          clientAccounts,
-          managerAccounts,
-          hierarchy,
-          cachedAt: new Date(),
-        };
-        await tokenDoc.save();
-        logger.info(`Cached ${connections.length} connections (${accountsWithRealNames} with real names)`);
-      } catch (cacheErr) {
-        logger.warn(`Failed to write connections cache: ${cacheErr.message}`);
+    const fetchIsWorseThanCache =
+      cache?.connections?.length > 0 &&
+      cachedAccountsWithRealNames > accountsWithRealNames;
+
+    if (fetchIsWorseThanCache) {
+      logger.warn(
+        `Stale-cache fallback: fresh fetch had ${accountsWithRealNames} real names ` +
+        `vs cached ${cachedAccountsWithRealNames}. Returning cached data.`
+      );
+      // Still persist new metadata if any was discovered
+      if (Object.keys(newMetaUpdates).length > 0) {
+        try { await tokenDoc.save(); } catch {}
       }
+      return res.json({
+        connections: cache.connections,
+        clientAccounts: cache.clientAccounts || [],
+        managerAccounts: cache.managerAccounts || [],
+        hierarchy: cache.hierarchy || {},
+        hasConnection: true,
+        cached: true,
+        stale: true,
+        cachedAt: cache.cachedAt,
+      });
+    }
+
+    // Cache the fresh result IF it has real data (don't poison cache with placeholders)
+    const hasRealData = connections.length > 0 && accountsWithRealNames > 0;
+    if (hasRealData) {
+      tokenDoc.connectionsCache = {
+        connections,
+        clientAccounts,
+        managerAccounts,
+        hierarchy,
+        cachedAt: new Date(),
+      };
+      logger.info(`Cached ${connections.length} connections (${accountsWithRealNames} with real names)`);
     } else {
       logger.warn(
-        `Skipped cache write: ${connections.length} accounts but only ${accountsWithRealNames} have real names ` +
-        `(probably hit Google Ads API rate limit — will retry on next request)`
+        `Skipped cache write: ${connections.length} accounts but only ${accountsWithRealNames} have real names`
       );
+    }
+
+    // Persist all changes (metadata + cache) in one save
+    try {
+      await tokenDoc.save();
+    } catch (saveErr) {
+      logger.warn(`Failed to save token doc: ${saveErr.message}`);
     }
 
     return res.json({
