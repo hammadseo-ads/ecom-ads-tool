@@ -117,9 +117,12 @@ mongoose
   .then(() => {
     logger.info("MongoDB connected successfully");
     logger.info(`Google Developer Token loaded: ${process.env.GOOGLE_ADS_DEVELOPER_TOKEN ? "YES ✓" : "❌ MISSING - Google Ads API will fail!"}`);
-    app.listen(PORT, "0.0.0.0", () => {
-      logger.info(`Server running on http://localhost:${PORT}`);
-      logger.info(`Frontend URL: http://localhost:8080`);
+    // Bind to "::" (all IPv6 interfaces). On Linux this dual-binds to IPv4 too,
+    // so we keep working on docker-compose AND on Railway (whose private
+    // service-to-service network is IPv6-only).
+    app.listen(PORT, "::", () => {
+      logger.info(`Server running on port ${PORT}`);
+      logger.info(`Frontend URL (configured): ${process.env.FRONTEND_URL || "(unset)"}`);
       logger.info(`Google OAuth ready`);
     });
   })
