@@ -24,7 +24,7 @@ FROM nginx:1.27-alpine
 # the proxy entirely.
 # Defaults for template dir (/etc/nginx/templates), suffix (.template), and
 # output dir (/etc/nginx/conf.d) are kept as-is.
-ENV NGINX_ENVSUBST_FILTER="BACKEND_HOST|BACKEND_PORT"
+ENV NGINX_ENVSUBST_FILTER="BACKEND_HOST|BACKEND_PORT|RESOLVER_IP"
 ENV BACKEND_HOST="backend"
 ENV BACKEND_PORT="5000"
 
@@ -33,6 +33,17 @@ RUN rm /etc/nginx/conf.d/default.conf
 
 # nginx.conf is a TEMPLATE — copied to the templates dir so it gets envsubsted
 COPY nginx.conf /etc/nginx/templates/default.conf.template
+
+# Auto-detect DNS resolver from /etc/resolv.conf at container start so the
+# RESOLVER_IP env var is set BEFORE the envsubst hook runs. nginx:alpine
+# executes scripts in /docker-entrypoint.d/ in alphanumeric order — this
+# script's "00-" prefix ensures it runs before "20-envsubst-on-templates.sh".
+#
+# IMPORTANT: file extension must be .envsh — nginx:alpine SOURCES *.envsh
+# files (so `export` survives) but EXECUTES *.sh files in a subshell (env
+# vars get lost).
+COPY docker-entrypoint-resolver.envsh /docker-entrypoint.d/00-export-resolver.envsh
+RUN chmod +x /docker-entrypoint.d/00-export-resolver.envsh
 
 # Copy built React assets
 COPY --from=build /app/dist /usr/share/nginx/html

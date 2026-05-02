@@ -1,0 +1,23 @@
+#!/bin/sh
+# Auto-detect the system's DNS resolver IP and export it as RESOLVER_IP.
+# nginx then uses this for runtime hostname re-resolution so we don't get
+# stuck on stale IPs after upstream container redeploys.
+#
+# Lives at /docker-entrypoint.d/00-export-resolver.sh — nginx:alpine runs
+# every executable in /docker-entrypoint.d/ in alphanumeric order at startup,
+# so this runs BEFORE the envsubst hook (20-envsubst-on-templates.sh).
+#
+# Falls back to Cloudflare/Google public DNS if /etc/resolv.conf has nothing
+# usable (shouldn't happen in any real container runtime).
+
+set -e
+
+RESOLVER_IP=$(awk '/^nameserver/ {print $2; exit}' /etc/resolv.conf 2>/dev/null || true)
+
+if [ -z "$RESOLVER_IP" ]; then
+    RESOLVER_IP="1.1.1.1 8.8.8.8"
+    echo "[entrypoint] no nameserver in /etc/resolv.conf, falling back to public DNS"
+fi
+
+echo "[entrypoint] using DNS resolver: $RESOLVER_IP"
+export RESOLVER_IP
