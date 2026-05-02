@@ -244,21 +244,23 @@ const Account = () => {
         body: JSON.stringify({}),
       };
       // Wipe every analysis-tool collection in parallel.
-      const [prodRes, kwRes, roasRes, heatRes] = await Promise.all([
+      const [prodRes, kwRes, roasRes, heatRes, geoRes] = await Promise.all([
         fetch(`${API_URL}/on-demand-report/clear`, opts),
         fetch(`${API_URL}/keyword-report/clear`, opts),
         fetch(`${API_URL}/product-roas/clear`, opts),
         fetch(`${API_URL}/heat-map/clear`, opts),
+        fetch(`${API_URL}/geo/clear`, opts),
       ]);
-      if (!prodRes.ok && !kwRes.ok && !roasRes.ok && !heatRes.ok) throw new Error("Failed to delete data");
+      if (!prodRes.ok && !kwRes.ok && !roasRes.ok && !heatRes.ok && !geoRes.ok) throw new Error("Failed to delete data");
       const prod = prodRes.ok ? await prodRes.json() : { deleted: 0 };
       const kw = kwRes.ok ? await kwRes.json() : { deleted: 0 };
       const roas = roasRes.ok ? await roasRes.json() : { deleted: 0 };
       const heat = heatRes.ok ? await heatRes.json() : { deleted: 0 };
+      const geo = geoRes.ok ? await geoRes.json() : { deleted: 0 };
       try { clearCache(); } catch {}
       toast({
         title: "Deleted",
-        description: `Removed ${prod.deleted ?? 0} products + ${kw.deleted ?? 0} keywords + ${roas.deleted ?? 0} ROAS + ${heat.deleted ?? 0} heat-map reports.`,
+        description: `Removed ${prod.deleted ?? 0} products + ${kw.deleted ?? 0} keywords + ${roas.deleted ?? 0} ROAS + ${heat.deleted ?? 0} heat-map + ${geo.deleted ?? 0} geo reports.`,
       });
     } catch (err: any) {
       toast({

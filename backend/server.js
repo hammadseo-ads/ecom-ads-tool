@@ -21,6 +21,7 @@ import onDemandReportRoutes from "./routes/onDemandReportRoutes.js";
 import keywordReportRoutes from "./routes/keywordReportRoutes.js";
 import productRoasRoutes from "./routes/productRoasRoutes.js";
 import heatMapRoutes from "./routes/heatMapRoutes.js";
+import geoRoutes from "./routes/geoRoutes.js";
 
 import logger from "./config/logger.js";
 import { morganMiddleware } from "./config/logger.js"; // assuming you export morganMiddleware as `morgan`
@@ -94,6 +95,7 @@ app.use("/api/on-demand-report", onDemandReportRoutes);
 app.use("/api/keyword-report", keywordReportRoutes);
 app.use("/api/product-roas", productRoasRoutes);
 app.use("/api/heat-map", heatMapRoutes);
+app.use("/api/geo", geoRoutes);
 
 // Health check
 app.get("/", (req, res) => {

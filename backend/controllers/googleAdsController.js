@@ -3,6 +3,7 @@ import OnDemandProductReport from "../models/OnDemandProductReport.js";
 import KeywordSearchTermReport from "../models/KeywordSearchTermReport.js";
 import ProductPerformanceReport from "../models/ProductPerformanceReport.js";
 import HeatMapReport from "../models/HeatMapReport.js";
+import GeoPerformanceReport from "../models/GeoPerformanceReport.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../utils/googleAdsClient.js";
 import logger from "../config/logger.js";
 
@@ -805,12 +806,13 @@ export const disconnectGoogleAds = async (req, res) => {
     const preservedMetadata = existing?.accountMetadata || {};
 
     // Wipe credentials + connection cache + reports across all analysis tools
-    const [tokenRes, productRes, keywordRes, productRoasRes, heatMapRes] = await Promise.all([
+    const [tokenRes, productRes, keywordRes, productRoasRes, heatMapRes, geoRes] = await Promise.all([
       GoogleAdsToken.deleteOne({ user: userId }),
       OnDemandProductReport.deleteMany({ user: userId }),
       KeywordSearchTermReport.deleteMany({ user: userId }),
       ProductPerformanceReport.deleteMany({ user: userId }),
       HeatMapReport.deleteMany({ user: userId }),
+      GeoPerformanceReport.deleteMany({ user: userId }),
     ]);
 
     // Re-create a stub doc holding only the preserved metadata (no tokens),
@@ -830,6 +832,7 @@ export const disconnectGoogleAds = async (req, res) => {
       `${productRes.deletedCount} product reports, ${keywordRes.deletedCount} keyword reports, ` +
       `${productRoasRes.deletedCount} product-ROAS reports, ` +
       `${heatMapRes.deletedCount} heat-map reports, ` +
+      `${geoRes.deletedCount} geo reports, ` +
       `preserved ${Object.keys(preservedMetadata).length} account metadata entries`
     );
     res.json({
@@ -838,6 +841,7 @@ export const disconnectGoogleAds = async (req, res) => {
       deletedKeywordReports: keywordRes.deletedCount,
       deletedProductRoasReports: productRoasRes.deletedCount,
       deletedHeatMapReports: heatMapRes.deletedCount,
+      deletedGeoReports: geoRes.deletedCount,
       preservedAccountMetadata: Object.keys(preservedMetadata).length,
     });
   } catch (error) {
