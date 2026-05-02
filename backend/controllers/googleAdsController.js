@@ -305,6 +305,10 @@ export const handleCallback = async (req, res) => {
   }
 };
 
+// 1 hour. Connections rarely change minute-to-minute; this is a cache for the
+// "list of accounts I can see" view, not for actual ad metrics.
+const CONNECTIONS_CACHE_TTL_MS = 60 * 60 * 1000;
+
 export const getConnections = async (req, res) => {
   try {
     const userId = req.user.id || req.user._id;
@@ -316,6 +320,29 @@ export const getConnections = async (req, res) => {
         clientAccounts: [],
         hierarchy: {},
         hasConnection: false,
+      });
+    }
+
+    // Cache hit? Return cached payload without hitting Google Ads API.
+    // Bypass with { refresh: true } in body, or ?refresh=1.
+    const forceRefresh = req.body?.refresh === true || req.query?.refresh === "1";
+    const cache = tokenDoc.connectionsCache;
+    if (
+      !forceRefresh &&
+      cache?.cachedAt &&
+      Date.now() - new Date(cache.cachedAt).getTime() < CONNECTIONS_CACHE_TTL_MS &&
+      cache?.connections &&
+      cache.connections.length > 0
+    ) {
+      logger.info(`Returning cached connections for user ${userId} (${cache.connections.length} accounts, age ${Math.round((Date.now() - new Date(cache.cachedAt).getTime()) / 1000)}s)`);
+      return res.json({
+        connections: cache.connections,
+        clientAccounts: cache.clientAccounts || [],
+        managerAccounts: cache.managerAccounts || [],
+        hierarchy: cache.hierarchy || {},
+        hasConnection: true,
+        cached: true,
+        cachedAt: cache.cachedAt,
       });
     }
 
@@ -573,12 +600,31 @@ export const getConnections = async (req, res) => {
 
     logger.info(`Returning ${connections.length} total accounts (${clientAccounts.length} clients, ${managerAccounts.length} managers)`);
 
+    // Persist to MongoDB cache so the next /connections call (within TTL) skips
+    // all the Google Ads API hits. Only cache when we actually got data —
+    // empty arrays from a rate-limited fetch would just keep showing nothing.
+    if (connections.length > 0) {
+      try {
+        tokenDoc.connectionsCache = {
+          connections,
+          clientAccounts,
+          managerAccounts,
+          hierarchy,
+          cachedAt: new Date(),
+        };
+        await tokenDoc.save();
+      } catch (cacheErr) {
+        logger.warn(`Failed to write connections cache: ${cacheErr.message}`);
+      }
+    }
+
     return res.json({
       connections,
       clientAccounts,
       managerAccounts,
       hierarchy,
       hasConnection: true,
+      cached: false,
     });
   } catch (error) {
     logger.error("getConnections Error:", error);

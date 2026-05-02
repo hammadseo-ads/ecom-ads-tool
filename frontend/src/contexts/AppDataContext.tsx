@@ -37,7 +37,7 @@ interface AppDataContextType {
   isLoadingAccounts: boolean;
 
   refreshConnectionStatus: () => Promise<void>;
-  refreshAccounts: () => Promise<void>;
+  refreshAccounts: (opts?: { force?: boolean }) => Promise<void>;
   clearCache: () => void;
 }
 
@@ -152,13 +152,16 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [authLoading, userId]);
 
-  const refreshAccounts = useCallback(async () => {
+  const refreshAccounts = useCallback(async (opts?: { force?: boolean }) => {
     if (authLoading || !userId) return;
-    console.debug('[AppDataContext] refreshAccounts start', { userId });
+    console.debug('[AppDataContext] refreshAccounts start', { userId, force: opts?.force });
     setIsLoadingAccounts(true);
     try {
-      const data = await api<any>("/connections");
-      console.debug('[AppDataContext] refreshAccounts response', { count: (data.connections || []).length });
+      // Pass refresh:true to bypass the backend's MongoDB cache and re-fetch
+      // from Google Ads API. Use sparingly — Google Ads API has tight quotas.
+      const body = opts?.force ? { refresh: true } : {};
+      const data = await api<any>("/connections", body);
+      console.debug('[AppDataContext] refreshAccounts response', { count: (data.connections || []).length, cached: data.cached });
       setAllAccounts(data.connections || []);
       setClientAccounts(data.clientAccounts || []);
       setHierarchy(data.hierarchy || {});

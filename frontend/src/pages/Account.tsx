@@ -22,6 +22,7 @@ const Account = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
   const [isDeletingData, setIsDeletingData] = useState(false);
+  const [isRefreshingAccounts, setIsRefreshingAccounts] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [hasConnection, setHasConnection] = useState(false);
   const [isLoadingConnection, setIsLoadingConnection] = useState(true);
@@ -204,6 +205,27 @@ const Account = () => {
     }
   };
 
+  // Force re-fetch the Google Ads account list from Google (bypass server cache).
+  // Use when user has added/removed accounts in Google Ads or accounts look stale.
+  const handleRefreshAccounts = async () => {
+    setIsRefreshingAccounts(true);
+    try {
+      await refreshAccounts({ force: true });
+      toast({
+        title: "Accounts refreshed",
+        description: "Latest Google Ads accounts loaded.",
+      });
+    } catch (err: any) {
+      toast({
+        title: "Refresh failed",
+        description: err?.message || "Try again in a moment",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRefreshingAccounts(false);
+    }
+  };
+
   // Delete all generated report data (keeps Google Ads connection intact)
   const handleDeleteAllData = async () => {
     if (!confirm("Delete all generated report data for every account? This cannot be undone. Your Google Ads connection will stay intact.")) {
@@ -375,6 +397,24 @@ const Account = () => {
               <>
                 {hasConnection ? (
                   <>
+                    <Button
+                      onClick={handleRefreshAccounts}
+                      disabled={isRefreshingAccounts}
+                      variant="outline"
+                      className="w-full border-blue-300 text-blue-700 hover:bg-blue-50"
+                    >
+                      {isRefreshingAccounts ? (
+                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                      )}
+                      Refresh Account List from Google
+                    </Button>
+                    <p className="text-xs text-gray-500 -mt-2">
+                      Re-fetches your Google Ads accounts. Use if you've added/removed accounts in Google Ads.
+                      Cached for 1 hour to save API quota.
+                    </p>
+
                     <Button
                       onClick={handleDisconnectGoogleAds}
                       disabled={isDisconnecting}
