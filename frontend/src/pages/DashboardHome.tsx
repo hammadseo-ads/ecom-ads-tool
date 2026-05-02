@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Search, ArrowRight, Layout, FileSpreadsheet, Trophy, Calendar, MapPin } from "lucide-react";
+import { ShoppingBag, Search, ArrowRight, Layout, FileSpreadsheet, Trophy, Calendar, MapPin, Type } from "lucide-react";
 import DashboardShell from "@/components/DashboardShell";
 
 const DashboardHome = () => {
@@ -133,6 +133,25 @@ const DashboardHome = () => {
                 <CardContent>
                   <Button className="w-full bg-emerald-700 hover:bg-emerald-800">
                     Open Heat Map <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* N-Gram Analysis */}
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-emerald-500" onClick={() => navigate("/dashboard/ngrams")}>
+                <CardHeader>
+                  <div className="bg-emerald-100 rounded-full w-14 h-14 flex items-center justify-center mb-4">
+                    <Type className="w-7 h-7 text-emerald-700" />
+                  </div>
+                  <CardTitle className="text-2xl">N-Gram Analysis</CardTitle>
+                  <CardDescription className="text-base mt-2">
+                    Break search terms into 1-, 2-, and 3-word n-grams to surface
+                    top performers and wasted-spend patterns hiding in your data.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button className="w-full bg-emerald-700 hover:bg-emerald-800">
+                    Open N-Gram Tool <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </CardContent>
               </Card>

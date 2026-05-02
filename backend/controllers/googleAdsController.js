@@ -4,6 +4,7 @@ import KeywordSearchTermReport from "../models/KeywordSearchTermReport.js";
 import ProductPerformanceReport from "../models/ProductPerformanceReport.js";
 import HeatMapReport from "../models/HeatMapReport.js";
 import GeoPerformanceReport from "../models/GeoPerformanceReport.js";
+import NGramReport from "../models/NGramReport.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../utils/googleAdsClient.js";
 import logger from "../config/logger.js";
 
@@ -806,13 +807,14 @@ export const disconnectGoogleAds = async (req, res) => {
     const preservedMetadata = existing?.accountMetadata || {};
 
     // Wipe credentials + connection cache + reports across all analysis tools
-    const [tokenRes, productRes, keywordRes, productRoasRes, heatMapRes, geoRes] = await Promise.all([
+    const [tokenRes, productRes, keywordRes, productRoasRes, heatMapRes, geoRes, nGramRes] = await Promise.all([
       GoogleAdsToken.deleteOne({ user: userId }),
       OnDemandProductReport.deleteMany({ user: userId }),
       KeywordSearchTermReport.deleteMany({ user: userId }),
       ProductPerformanceReport.deleteMany({ user: userId }),
       HeatMapReport.deleteMany({ user: userId }),
       GeoPerformanceReport.deleteMany({ user: userId }),
+      NGramReport.deleteMany({ user: userId }),
     ]);
 
     // Re-create a stub doc holding only the preserved metadata (no tokens),
@@ -833,6 +835,7 @@ export const disconnectGoogleAds = async (req, res) => {
       `${productRoasRes.deletedCount} product-ROAS reports, ` +
       `${heatMapRes.deletedCount} heat-map reports, ` +
       `${geoRes.deletedCount} geo reports, ` +
+      `${nGramRes.deletedCount} n-gram reports, ` +
       `preserved ${Object.keys(preservedMetadata).length} account metadata entries`
     );
     res.json({
@@ -842,6 +845,7 @@ export const disconnectGoogleAds = async (req, res) => {
       deletedProductRoasReports: productRoasRes.deletedCount,
       deletedHeatMapReports: heatMapRes.deletedCount,
       deletedGeoReports: geoRes.deletedCount,
+      deletedNGramReports: nGramRes.deletedCount,
       preservedAccountMetadata: Object.keys(preservedMetadata).length,
     });
   } catch (error) {
