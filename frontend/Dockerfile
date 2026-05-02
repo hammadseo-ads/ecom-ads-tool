@@ -13,12 +13,31 @@ RUN npm run build
 # --- Stage 2: serve with nginx ---
 FROM nginx:1.27-alpine
 
-# Replace default nginx config with ours (serves SPA + proxies /api to backend)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# nginx:alpine auto-runs `envsubst` over every file in /etc/nginx/templates/
+# at container startup and writes the result into /etc/nginx/conf.d/.
+# This lets BACKEND_HOST and BACKEND_PORT env vars be filled in at runtime
+# (different on Railway vs docker-compose vs anywhere else).
+#
+# IMPORTANT: NGINX_ENVSUBST_FILTER restricts envsubst to ONLY these names —
+# without it, envsubst would also replace nginx's own $host, $remote_addr,
+# $proxy_add_x_forwarded_for, $scheme, $uri etc. with empty strings, breaking
+# the proxy entirely.
+# Defaults for template dir (/etc/nginx/templates), suffix (.template), and
+# output dir (/etc/nginx/conf.d) are kept as-is.
+ENV NGINX_ENVSUBST_FILTER="BACKEND_HOST|BACKEND_PORT"
+ENV BACKEND_HOST="backend"
+ENV BACKEND_PORT="5000"
 
-# Copy built assets from the build stage
+# Remove default nginx config so ours wins
+RUN rm /etc/nginx/conf.d/default.conf
+
+# nginx.conf is a TEMPLATE — copied to the templates dir so it gets envsubsted
+COPY nginx.conf /etc/nginx/templates/default.conf.template
+
+# Copy built React assets
 COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 80
 
+# Standard nginx entrypoint runs envsubst then nginx
 CMD ["nginx", "-g", "daemon off;"]
