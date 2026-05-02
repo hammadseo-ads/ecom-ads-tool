@@ -498,10 +498,32 @@ export const getConnections = async (req, res) => {
       }
     }
 
+    const accountMeta = tokenDoc.accountMetadata || {};
+
+    // EMERGENCY FALLBACK: if Google Ads API rate-limited every single call
+    // (including listAccessibleCustomers), `seen` is empty AND allCustomerIds
+    // is empty — the user would see zero accounts. Fall back to whatever we
+    // have in the per-account metadata cache from previous successful fetches.
+    // Risk: the cache may include accounts the user has since lost access to;
+    // preferable to showing an empty list.
+    if (seen.size === 0 && Object.keys(accountMeta).length > 0) {
+      logger.warn(
+        `Google Ads API returned no accounts; falling back to ${Object.keys(accountMeta).length} entries from metadata cache`
+      );
+      for (const [id, meta] of Object.entries(accountMeta)) {
+        seen.set(id, {
+          id,
+          customer_id: id,
+          account_name: meta?.name || `Account ${id}`,
+          is_manager_account: !!meta?.isManager,
+          level: null,
+        });
+      }
+    }
+
     // STEP A: hydrate from per-account metadata cache FIRST.
     // If we've ever successfully looked this account up, we keep that name
     // forever — no point asking Google again until user explicitly refreshes.
-    const accountMeta = tokenDoc.accountMetadata || {};
     for (const acc of seen.values()) {
       const meta = accountMeta[acc.id];
       if (meta?.name) {
@@ -770,21 +792,45 @@ export const checkConnection = async (req, res) => {
 export const disconnectGoogleAds = async (req, res) => {
   try {
     const userId = req.user._id || req.user.id;
-    // Delete OAuth tokens AND every cached report for this user.
-    // Disconnecting from Google Ads should fully wipe the local copy of their data.
+
+    // PRESERVE the per-account metadata cache (names, manager flags) across
+    // disconnect/reconnect cycles — these are derived data, not credentials.
+    // Without preservation, a user who hits the Google Ads API rate limit
+    // and then tries disconnect → reconnect would lose all their cached
+    // account names and have to wait for the rate limit to clear before
+    // anything works.
+    const existing = await GoogleAdsToken.findOne({ user: userId }).lean();
+    const preservedMetadata = existing?.accountMetadata || {};
+
+    // Wipe credentials + connection cache + reports
     const [tokenRes, productRes, keywordRes] = await Promise.all([
       GoogleAdsToken.deleteOne({ user: userId }),
       OnDemandProductReport.deleteMany({ user: userId }),
       KeywordSearchTermReport.deleteMany({ user: userId }),
     ]);
+
+    // Re-create a stub doc holding only the preserved metadata (no tokens),
+    // so when the user reconnects, the new GoogleAdsToken doc can use this
+    // map to fill in account names without hitting Google Ads API.
+    if (Object.keys(preservedMetadata).length > 0) {
+      await GoogleAdsToken.create({
+        user: userId,
+        // No tokens = will be picked up as "not connected" by hasConnection
+        // checks. The metadata stays available for the next reconnect.
+        accountMetadata: preservedMetadata,
+      });
+    }
+
     logger.info(
       `Disconnected user ${userId}: removed ${tokenRes.deletedCount} token doc, ` +
-      `${productRes.deletedCount} product reports, ${keywordRes.deletedCount} keyword reports`
+      `${productRes.deletedCount} product reports, ${keywordRes.deletedCount} keyword reports, ` +
+      `preserved ${Object.keys(preservedMetadata).length} account metadata entries`
     );
     res.json({
       success: true,
       deletedProductReports: productRes.deletedCount,
       deletedKeywordReports: keywordRes.deletedCount,
+      preservedAccountMetadata: Object.keys(preservedMetadata).length,
     });
   } catch (error) {
     logger.error("disconnectGoogleAds Error:", error);
