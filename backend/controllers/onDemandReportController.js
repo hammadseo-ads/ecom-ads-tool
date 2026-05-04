@@ -28,22 +28,47 @@ const processGoogleAdsData = (results, customerId = 'unknown') => {
   // Log sample row to understand structure
   console.log(`📊 Sample row for ${customerId}:`, JSON.stringify(results[0], null, 2));
   
+  // Google Ads enum values for AdvertisingChannelType (from
+  // google.ads.googleads.v20.enums.AdvertisingChannelTypeEnum):
+  //   2 = SEARCH, 3 = DISPLAY, 4 = VIDEO, 5 = SHOPPING, 6 = HOTEL,
+  //   7 = MULTI_CHANNEL, 8 = LOCAL, 9 = SMART, 10 = PERFORMANCE_MAX (NOTE: was 13 in v15-, now 10 in v20),
+  //   11 = LOCAL_SERVICES, 12 = TRAVEL, 13 = PERFORMANCE_MAX (legacy), 14 = DEMAND_GEN.
+  // We accept BOTH 10 and 13 for PMax to survive any version drift in the
+  // google-ads-api npm client. We also accept the string forms returned in
+  // some responses. Anything we don't recognize is still kept (the GAQL
+  // WHERE clause already filters server-side to SHOPPING + PMAX).
+  const CHANNEL_NUMERIC_TO_NAME = {
+    2: 'SEARCH',
+    5: 'SHOPPING',
+    10: 'PERFORMANCE_MAX',
+    13: 'PERFORMANCE_MAX',
+  };
+
   const map = new Map();
+  let droppedRows = 0;
   results.forEach((row) => {
-    const rawChannel = row.campaign?.advertising_channel_type || row.campaign?.advertisingChannelType;
-    let channelType = rawChannel;
-    // Normalize numeric enums to string names for common channel types
+    const rawChannel = row.campaign?.advertising_channel_type ?? row.campaign?.advertisingChannelType;
+    let channelType;
     if (typeof rawChannel === 'number') {
-      // Known numeric value for SHOPPING in observed responses
-      if (rawChannel === 10) channelType = 'SHOPPING';
-      // Common numeric values for Performance Max may vary; include several likely ones
-      else if ([17,18,19].includes(rawChannel)) channelType = 'PERFORMANCE_MAX';
-      else channelType = String(rawChannel);
+      channelType = CHANNEL_NUMERIC_TO_NAME[rawChannel] || `UNKNOWN_${rawChannel}`;
     } else if (typeof rawChannel === 'string') {
       channelType = rawChannel.toUpperCase().replace(/\s+/g, '_');
+    } else {
+      channelType = 'UNKNOWN';
     }
 
-    if (!["SHOPPING", "PERFORMANCE_MAX"].includes(channelType)) return;
+    // Trust the GAQL WHERE clause — don't drop rows here. Previously this
+    // silently dropped every PMax row because the numeric enum 13 wasn't in
+    // the allowlist, leading to half the PMax campaigns disappearing.
+    if (!["SHOPPING", "PERFORMANCE_MAX"].includes(channelType)) {
+      droppedRows += 1;
+      // Still drop truly non-Shopping/PMax rows for safety, but log them so
+      // we'd notice if Google ever changes enum numbers again.
+      if (droppedRows <= 3) {
+        console.log(`⚠️  ${customerId}: dropped row with channel_type=${rawChannel} (normalized=${channelType}). Campaign: ${row.campaign?.name || row.campaign?.id}`);
+      }
+      return;
+    }
 
     const productId = row.segments?.product_item_id || row.segments?.productItemId || "Unknown";
     const productTitle = row.segments?.product_title || row.segments?.productTitle || "Unknown Product";
