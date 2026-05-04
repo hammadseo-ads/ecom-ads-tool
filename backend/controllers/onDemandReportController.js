@@ -485,6 +485,135 @@ export const getReportStatus = async (req, res) => {
   }
 };
 
+// ============================================================================
+// DEBUG ENDPOINT — returns raw GAQL output so we can see what channel-type
+// values Google is sending and which campaigns/products we'd be processing.
+// Hit it from browser console:
+//   fetch('/api/on-demand-report/debug-raw', {
+//     method: 'POST', credentials: 'include',
+//     headers: {'Content-Type':'application/json'},
+//     body: JSON.stringify({ customer_id: 'XXXXXXXXXX', days: 30 })
+//   }).then(r=>r.json()).then(d=>console.log(JSON.stringify(d,null,2)))
+// ============================================================================
+export const debugRawProducts = async (req, res) => {
+  try {
+    const userId = req.user._id || req.user.id;
+    const { customer_id, days = 30 } = req.body;
+    if (!customer_id) return res.status(400).json({ error: "customer_id required" });
+
+    const tokenDoc = await GoogleAdsToken.findOne({ user: userId });
+    if (!tokenDoc) return res.status(404).json({ error: "no token doc" });
+
+    const cid = formatCustomerId(customer_id);
+    const loginCid = tokenDoc.rootCustomerId ? formatCustomerId(tokenDoc.rootCustomerId) : cid;
+
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - days);
+    const start = startDate.toISOString().split("T")[0];
+    const end = endDate.toISOString().split("T")[0];
+
+    const client = getGoogleAdsClient(tokenDoc.refreshToken, cid, loginCid);
+
+    const query = `
+      SELECT
+        segments.product_title,
+        segments.product_item_id,
+        campaign.id,
+        campaign.name,
+        campaign.advertising_channel_type,
+        metrics.impressions,
+        metrics.clicks,
+        metrics.cost_micros,
+        metrics.conversions,
+        metrics.conversions_value
+      FROM shopping_performance_view
+      WHERE segments.date >= '${start}'
+        AND segments.date <= '${end}'
+        AND metrics.impressions > 0
+      ORDER BY metrics.cost_micros DESC
+      LIMIT 5000
+    `;
+    // NOTE: deliberately removed the WHERE channel_type IN (...) filter
+    // so we can see ALL rows and find anything Google is returning that
+    // we don't recognize.
+
+    let rows;
+    try {
+      const resp = await client.query(query);
+      rows = Array.isArray(resp) ? resp : [];
+    } catch (err) {
+      return res.json({
+        error: err?.errors?.[0]?.message || err.message,
+        customerId: cid,
+        loginCustomerId: loginCid,
+      });
+    }
+
+    // Per-campaign roll-up so we can see exactly what's being returned
+    // and what channel-type each campaign has (raw + JS typeof).
+    const perCampaign = new Map();
+    let totals = { impressions: 0, clicks: 0, cost: 0, conversions: 0, value: 0 };
+    const channelTypeCounts = {}; // raw value -> count
+
+    for (const row of rows) {
+      const cidVal = row.campaign?.id;
+      const cname = row.campaign?.name;
+      const rawCh = row.campaign?.advertising_channel_type ?? row.campaign?.advertisingChannelType;
+      const chKey = `${typeof rawCh}:${rawCh}`;
+      channelTypeCounts[chKey] = (channelTypeCounts[chKey] || 0) + 1;
+
+      const cost = Number(row.metrics?.cost_micros || 0) / 1e6;
+      const conv = Number(row.metrics?.conversions || 0);
+      const val = Number(row.metrics?.conversions_value || 0);
+      const imp = Number(row.metrics?.impressions || 0);
+      const clk = Number(row.metrics?.clicks || 0);
+
+      totals.impressions += imp;
+      totals.clicks += clk;
+      totals.cost += cost;
+      totals.conversions += conv;
+      totals.value += val;
+
+      const k = String(cidVal);
+      if (!perCampaign.has(k)) {
+        perCampaign.set(k, {
+          campaign_id: k,
+          campaign_name: cname,
+          raw_channel_type: rawCh,
+          raw_channel_type_typeof: typeof rawCh,
+          rows: 0,
+          impressions: 0,
+          clicks: 0,
+          cost: 0,
+          conversions: 0,
+          conversions_value: 0,
+        });
+      }
+      const e = perCampaign.get(k);
+      e.rows += 1;
+      e.impressions += imp;
+      e.clicks += clk;
+      e.cost += cost;
+      e.conversions += conv;
+      e.conversions_value += val;
+    }
+
+    res.json({
+      customerId: cid,
+      loginCustomerId: loginCid,
+      dateRange: { start, end },
+      totalRowsReturned: rows.length,
+      grandTotals: totals,
+      channelTypeCountsRaw: channelTypeCounts,
+      perCampaign: Array.from(perCampaign.values()).sort((a, b) => b.cost - a.cost),
+      sampleFirstRow: rows[0] || null,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message, stack: err.stack });
+  }
+};
+
 export const clearReports = async (req, res) => {
   try {
     const userId = req.user._id;
