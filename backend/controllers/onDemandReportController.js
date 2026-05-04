@@ -28,20 +28,18 @@ const processGoogleAdsData = (results, customerId = 'unknown') => {
   // Log sample row to understand structure
   console.log(`📊 Sample row for ${customerId}:`, JSON.stringify(results[0], null, 2));
   
-  // Google Ads enum values for AdvertisingChannelType (from
-  // google.ads.googleads.v20.enums.AdvertisingChannelTypeEnum):
-  //   2 = SEARCH, 3 = DISPLAY, 4 = VIDEO, 5 = SHOPPING, 6 = HOTEL,
-  //   7 = MULTI_CHANNEL, 8 = LOCAL, 9 = SMART, 10 = PERFORMANCE_MAX (NOTE: was 13 in v15-, now 10 in v20),
-  //   11 = LOCAL_SERVICES, 12 = TRAVEL, 13 = PERFORMANCE_MAX (legacy), 14 = DEMAND_GEN.
-  // We accept BOTH 10 and 13 for PMax to survive any version drift in the
-  // google-ads-api npm client. We also accept the string forms returned in
-  // some responses. Anything we don't recognize is still kept (the GAQL
-  // WHERE clause already filters server-side to SHOPPING + PMAX).
+  // Google Ads enum values for AdvertisingChannelType v20 (verified by
+  // running /api/on-demand-report/debug-raw against a real account):
+  //   2 = SEARCH, 3 = DISPLAY, 4 = SHOPPING, 5 = HOTEL, 6 = VIDEO,
+  //   7 = MULTI_CHANNEL, 8 = LOCAL, 9 = SMART, 10 = PERFORMANCE_MAX,
+  //   11 = LOCAL_SERVICES, 12 = TRAVEL, 13 = DEMAND_GEN.
+  // The GAQL WHERE clause already filters server-side to SHOPPING + PMAX,
+  // so anything that survives must map to one of those two even if the
+  // numeric enum drifts in a future API version.
   const CHANNEL_NUMERIC_TO_NAME = {
     2: 'SEARCH',
-    5: 'SHOPPING',
+    4: 'SHOPPING',
     10: 'PERFORMANCE_MAX',
-    13: 'PERFORMANCE_MAX',
   };
 
   const map = new Map();
