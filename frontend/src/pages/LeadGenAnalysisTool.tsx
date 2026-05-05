@@ -97,26 +97,26 @@ const LeadGenAnalysisTool = () => {
               style={{
                 background: `linear-gradient(135deg,
                   #0a0a0a 0%,
-                  #0d2436 15%,
-                  #0a3a4f 35%,
-                  #1a4a6e 50%,
-                  #2a5a8e 65%,
-                  #0d2436 80%,
+                  #0d2818 15%,
+                  #0d2818 35%,
+                  #164223 50%,
+                  #1a5c2e 65%,
+                  #0d2818 80%,
                   #0a0a0a 100%)`,
               }}
             />
           </div>
 
           <div className="relative max-w-5xl mx-auto text-center text-white">
-            <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 rounded-full px-4 py-1.5 text-xs font-semibold text-blue-100 mb-6">
+            <div className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 rounded-full px-4 py-1.5 text-xs font-semibold text-emerald-100 mb-6">
               <Target className="w-3.5 h-3.5" />
               Built for Lead Gen — not eCommerce
             </div>
             <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
               Stop paying Google for clicks that{" "}
-              <span className="text-blue-300">don't become leads.</span>
+              <span className="text-emerald-300">don't become leads.</span>
             </h1>
-            <p className="text-lg md:text-xl text-blue-50/90 max-w-3xl mx-auto mb-8">
+            <p className="text-lg md:text-xl text-emerald-50/90 max-w-3xl mx-auto mb-8">
               Most lead-gen accounts waste 30–60% of their Google Ads spend on
               keywords, hours, and geos that never produce a single form-fill
               or call. This free tool surfaces every one of them — ranked by
@@ -125,7 +125,7 @@ const LeadGenAnalysisTool = () => {
             <div className="flex flex-wrap justify-center gap-3">
               <Button
                 size="lg"
-                className="bg-blue-500 hover:bg-blue-600 text-white shadow-lg"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg"
                 onClick={() => navigate("/signup")}
               >
                 Start free analysis <ArrowRight className="w-4 h-4 ml-2" />
@@ -139,14 +139,14 @@ const LeadGenAnalysisTool = () => {
                 Talk to a specialist
               </Button>
             </div>
-            <p className="text-xs text-blue-100/70 mt-6">
+            <p className="text-xs text-emerald-100/70 mt-6">
               Free. Read-only Google Ads connection. No credit card.
             </p>
           </div>
         </section>
 
         {/* Why lead-gen needs different tools */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-background via-blue-50/40 to-blue-100/30">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-background via-emerald-50/40 to-emerald-100/30">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-10">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
@@ -183,9 +183,9 @@ const LeadGenAnalysisTool = () => {
                   </li>
                 </ul>
               </div>
-              <div className="bg-white border-2 border-blue-300 rounded-xl p-6">
+              <div className="bg-white border-2 border-emerald-300 rounded-xl p-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <CheckCircle className="w-5 h-5 text-blue-600" />
+                  <CheckCircle className="w-5 h-5 text-emerald-600" />
                   <h3 className="font-semibold text-gray-900">
                     The lead-gen way (this tool)
                   </h3>
@@ -212,7 +212,7 @@ const LeadGenAnalysisTool = () => {
         <section className="py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-10">
-              <span className="inline-block bg-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wide rounded-full px-3 py-1 mb-3">
+              <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold uppercase tracking-wide rounded-full px-3 py-1 mb-3">
                 What you get
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
@@ -233,8 +233,8 @@ const LeadGenAnalysisTool = () => {
                     key={t.title}
                     className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow"
                   >
-                    <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                      <Icon className="w-6 h-6 text-blue-700" />
+                    <div className="bg-emerald-100 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                      <Icon className="w-6 h-6 text-emerald-700" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">
                       {t.title}
@@ -250,7 +250,7 @@ const LeadGenAnalysisTool = () => {
         </section>
 
         {/* Who it's for */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50/40 via-white to-blue-50/40">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-emerald-50/40 via-white to-emerald-50/40">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-10">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
@@ -265,8 +265,8 @@ const LeadGenAnalysisTool = () => {
                     key={g.label}
                     className="bg-white border border-gray-200 rounded-xl p-6 text-center"
                   >
-                    <div className="bg-blue-100 rounded-full w-14 h-14 flex items-center justify-center mb-4 mx-auto">
-                      <Icon className="w-7 h-7 text-blue-700" />
+                    <div className="bg-emerald-100 rounded-full w-14 h-14 flex items-center justify-center mb-4 mx-auto">
+                      <Icon className="w-7 h-7 text-emerald-700" />
                     </div>
                     <h3 className="font-semibold text-gray-900 mb-1">
                       {g.label}
@@ -282,12 +282,12 @@ const LeadGenAnalysisTool = () => {
         {/* The 80/20 reality */}
         <section className="py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-2xl p-8 md:p-12 text-center shadow-xl">
-              <TrendingDown className="w-12 h-12 mx-auto mb-4 text-blue-200" />
+            <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 text-white rounded-2xl p-8 md:p-12 text-center shadow-xl">
+              <TrendingDown className="w-12 h-12 mx-auto mb-4 text-emerald-200" />
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 The 80/20 of lead-gen ad spend
               </h2>
-              <p className="text-lg text-blue-50/90 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-lg text-emerald-50/90 max-w-2xl mx-auto leading-relaxed">
                 On almost every lead-gen account we audit,{" "}
                 <strong className="text-white">
                   20% of the keywords drive 80% of the leads
@@ -295,14 +295,14 @@ const LeadGenAnalysisTool = () => {
                 — and the other 80% of keywords burn 30–60% of the budget on
                 clicks that never convert.
               </p>
-              <p className="text-sm text-blue-100/80 mt-4 max-w-xl mx-auto">
+              <p className="text-sm text-emerald-100/80 mt-4 max-w-xl mx-auto">
                 Identifying that bleed is the single highest-leverage fix in
                 your account. This tool finds it for you in 60 seconds.
               </p>
               <div className="mt-8">
                 <Button
                   size="lg"
-                  className="bg-white text-blue-700 hover:bg-blue-50"
+                  className="bg-white text-emerald-700 hover:bg-emerald-50"
                   onClick={() => navigate("/signup")}
                 >
                   Find my wasted spend <ArrowRight className="w-4 h-4 ml-2" />
@@ -351,10 +351,10 @@ const LeadGenAnalysisTool = () => {
                     className="bg-white border border-gray-200 rounded-xl p-6"
                   >
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="bg-blue-600 text-white rounded-full w-9 h-9 flex items-center justify-center font-bold">
+                      <span className="bg-emerald-600 text-white rounded-full w-9 h-9 flex items-center justify-center font-bold">
                         {s.n}
                       </span>
-                      <Icon className="w-5 h-5 text-blue-600" />
+                      <Icon className="w-5 h-5 text-emerald-600" />
                     </div>
                     <h3 className="font-semibold text-gray-900 mb-2">
                       {s.title}
@@ -370,19 +370,19 @@ const LeadGenAnalysisTool = () => {
         </section>
 
         {/* Final CTA */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-emerald-600 to-emerald-800 text-white">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Ready to find the leaks?
             </h2>
-            <p className="text-blue-50/95 text-lg mb-8">
+            <p className="text-emerald-50/95 text-lg mb-8">
               Sign up free, connect your Google Ads, and run your first
               analysis in under 5 minutes.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Button
                 size="lg"
-                className="bg-white text-blue-700 hover:bg-blue-50"
+                className="bg-white text-emerald-700 hover:bg-emerald-50"
                 onClick={() => navigate("/signup")}
               >
                 Start free analysis <ArrowRight className="w-4 h-4 ml-2" />

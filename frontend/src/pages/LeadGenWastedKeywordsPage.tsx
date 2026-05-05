@@ -326,19 +326,19 @@ const Inner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
       </div>
 
       {/* Header */}
-      <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-xl p-6 md:p-8 shadow-lg">
+      <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 text-white rounded-xl p-6 md:p-8 shadow-lg">
         <div className="flex items-start gap-4">
           <div className="bg-white/15 rounded-full w-14 h-14 flex items-center justify-center flex-shrink-0">
             <PiggyBank className="w-7 h-7" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-xs uppercase tracking-wide font-semibold text-blue-200 mb-1">
+            <div className="text-xs uppercase tracking-wide font-semibold text-emerald-200 mb-1">
               Lead Generation
             </div>
             <h1 className="text-2xl md:text-3xl font-bold leading-tight">
               Budget Wastage by Keywords
             </h1>
-            <p className="text-blue-100 mt-1 text-sm md:text-base">
+            <p className="text-emerald-100 mt-1 text-sm md:text-base">
               Search terms over the last <strong>{days}</strong> days that spent
               money but produced <strong>zero conversions</strong>.{" "}
               {selectedAccountName ? (
@@ -383,7 +383,7 @@ const Inner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
             <Button
               onClick={handleGenerate}
               disabled={isGenerating || !selectedAccountId}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-emerald-600 hover:bg-emerald-700"
             >
               {isGenerating ? (
                 <>
@@ -438,7 +438,7 @@ const Inner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
               <div className="text-xs text-gray-500 uppercase tracking-wide">
                 Wasted spend
               </div>
-              <div className="text-2xl font-bold text-blue-700 mt-1">
+              <div className="text-2xl font-bold text-emerald-700 mt-1">
                 {fmtMoney(totals.cost)}
               </div>
             </CardContent>
@@ -481,7 +481,7 @@ const Inner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <TrendingDown className="w-4 h-4 text-blue-600" />
+              <TrendingDown className="w-4 h-4 text-emerald-600" />
               Wasted spend by campaign
             </CardTitle>
             <CardDescription>
@@ -528,7 +528,7 @@ const Inner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
                       <td className="py-2 px-3 text-right">
                         {c.clicks.toLocaleString()}
                       </td>
-                      <td className="py-2 px-3 text-right font-semibold text-blue-700">
+                      <td className="py-2 px-3 text-right font-semibold text-emerald-700">
                         {fmtMoney(c.cost)}
                       </td>
                     </tr>
@@ -611,7 +611,7 @@ const Inner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
                       <td className="py-2 px-3 text-right">
                         {r.clicks.toLocaleString()}
                       </td>
-                      <td className="py-2 px-3 text-right font-semibold text-blue-700">
+                      <td className="py-2 px-3 text-right font-semibold text-emerald-700">
                         {fmtMoney(r.cost)}
                       </td>
                     </tr>

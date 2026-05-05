@@ -157,9 +157,9 @@ const LEADGEN_TOOLS: ToolCardSpec[] = [
     description:
       "Find search terms over the last 30 / 60 / 90 days that spent budget but produced zero conversions — the cleanest list of negative-keyword candidates for lead-gen accounts.",
     icon: PiggyBank,
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-700",
-    buttonClass: "bg-blue-600 hover:bg-blue-700",
+    iconBg: "bg-emerald-100",
+    iconColor: "text-emerald-700",
+    buttonClass: "bg-emerald-600 hover:bg-emerald-700",
     ctaLabel: "Open Wasted Keywords",
     to: "/dashboard/lead-gen/wasted-keywords",
     requiresAccount: true,
@@ -169,48 +169,45 @@ const LEADGEN_TOOLS: ToolCardSpec[] = [
     description:
       "When do your leads actually convert across 24h × 7 days? Suggested bid adjustments per hour are built on conversion rate (not ROAS) for lead-gen.",
     icon: Calendar,
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-700",
-    buttonClass: "bg-blue-600 hover:bg-blue-700",
-    ctaLabel: "Coming soon",
+    iconBg: "bg-emerald-100",
+    iconColor: "text-emerald-700",
+    buttonClass: "bg-emerald-600 hover:bg-emerald-700",
+    ctaLabel: "Open Heat Map",
     to: "/dashboard/lead-gen/heatmap",
     requiresAccount: true,
-    comingSoon: true,
   },
   {
     title: "Geographic Performance",
     description:
       "Find which cities / regions / zip codes drive the cheapest leads — and which ones to exclude entirely. Bid recommendations use CPA, not ROAS.",
     icon: MapPin,
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-700",
-    buttonClass: "bg-blue-600 hover:bg-blue-700",
-    ctaLabel: "Coming soon",
+    iconBg: "bg-emerald-100",
+    iconColor: "text-emerald-700",
+    buttonClass: "bg-emerald-600 hover:bg-emerald-700",
+    ctaLabel: "Open Geo Analysis",
     to: "/dashboard/lead-gen/geo",
     requiresAccount: true,
-    comingSoon: true,
   },
   {
     title: "N-Gram Analysis",
     description:
       "Break search terms into 1-, 2-, and 3-word n-grams ranked by conversions and cost-per-conversion. Surface lead-quality patterns hiding inside your queries.",
     icon: Type,
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-700",
-    buttonClass: "bg-blue-600 hover:bg-blue-700",
-    ctaLabel: "Coming soon",
+    iconBg: "bg-emerald-100",
+    iconColor: "text-emerald-700",
+    buttonClass: "bg-emerald-600 hover:bg-emerald-700",
+    ctaLabel: "Open N-Gram Tool",
     to: "/dashboard/lead-gen/ngrams",
     requiresAccount: true,
-    comingSoon: true,
   },
   {
     title: "Negative Keywords (Lead Gen)",
     description:
       "Download your last 30 days of search-term data per campaign, then run it through our lead-gen Claude skill (combined with your landing-page content) to get a negatives list tuned to your business.",
     icon: FileSpreadsheet,
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-700",
-    buttonClass: "bg-blue-600 hover:bg-blue-700",
+    iconBg: "bg-emerald-100",
+    iconColor: "text-emerald-700",
+    buttonClass: "bg-emerald-600 hover:bg-emerald-700",
     ctaLabel: "Coming soon",
     to: "/guides/lead-gen-negative-keywords",
     requiresAccount: false,
@@ -286,11 +283,11 @@ const DashboardHome = () => {
                 const ringClass =
                   t === "ecommerce"
                     ? "ring-emerald-500 border-emerald-400"
-                    : "ring-blue-500 border-blue-400";
+                    : "ring-emerald-500 border-emerald-400";
                 const iconBg =
-                  t === "ecommerce" ? "bg-emerald-100" : "bg-blue-100";
+                  t === "ecommerce" ? "bg-emerald-100" : "bg-emerald-100";
                 const iconColor =
-                  t === "ecommerce" ? "text-emerald-700" : "text-blue-700";
+                  t === "ecommerce" ? "text-emerald-700" : "text-emerald-700";
                 return (
                   <button
                     key={t}
@@ -359,7 +356,7 @@ const DashboardHome = () => {
                             <Icon className={`w-7 h-7 ${tool.iconColor}`} />
                           </div>
                           {disabled && (
-                            <span className="text-[11px] font-semibold uppercase tracking-wide text-blue-700 bg-blue-100 rounded-full px-2 py-0.5">
+                            <span className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700 bg-emerald-100 rounded-full px-2 py-0.5">
                               Coming soon
                             </span>
                           )}
@@ -445,7 +442,7 @@ const DashboardHome = () => {
 
             {/* What's the difference between tracks */}
             <section className="max-w-6xl mx-auto pt-4">
-              <div className="bg-gradient-to-br from-emerald-50 via-white to-blue-50 border border-gray-200 rounded-xl p-6 md:p-8">
+              <div className="bg-gradient-to-br from-emerald-50 via-white to-emerald-50 border border-gray-200 rounded-xl p-6 md:p-8">
                 <div className="flex items-center gap-2 mb-3">
                   <Sparkles className="w-5 h-5 text-emerald-600" />
                   <h2 className="text-xl font-bold text-gray-900">
@@ -471,7 +468,7 @@ const DashboardHome = () => {
                     </ul>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-blue-700 mb-2">
+                    <h3 className="font-semibold text-emerald-700 mb-2">
                       Lead Generation track
                     </h3>
                     <ul className="text-sm text-gray-700 space-y-1.5 list-disc pl-5">

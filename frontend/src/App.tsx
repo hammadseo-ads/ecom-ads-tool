@@ -28,6 +28,9 @@ import NotFound from "./pages/NotFound";
 import GoogleAdsService from "./pages/GoogleAdsService";
 import LeadGenAnalysisTool from "./pages/LeadGenAnalysisTool";
 import LeadGenWastedKeywordsPage from "./pages/LeadGenWastedKeywordsPage";
+import LeadGenHeatMapPage from "./pages/LeadGenHeatMapPage";
+import LeadGenGeoPage from "./pages/LeadGenGeoPage";
+import LeadGenNGramPage from "./pages/LeadGenNGramPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
@@ -91,6 +94,9 @@ const App = () => {
                   <Route path="/dashboard/geo" element={<GeoPage />} />
                   <Route path="/dashboard/ngrams" element={<NGramPage />} />
                   <Route path="/dashboard/lead-gen/wasted-keywords" element={<LeadGenWastedKeywordsPage />} />
+                  <Route path="/dashboard/lead-gen/heatmap" element={<LeadGenHeatMapPage />} />
+                  <Route path="/dashboard/lead-gen/geo" element={<LeadGenGeoPage />} />
+                  <Route path="/dashboard/lead-gen/ngrams" element={<LeadGenNGramPage />} />
                   <Route path="/account" element={<Account />} />
 
                   {/* Public */}

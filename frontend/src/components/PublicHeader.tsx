@@ -215,8 +215,8 @@ const PublicHeader = () => {
                             <Link to="/lead-gen-tool" className="block">
                               <div className="p-3 rounded-md hover:bg-muted/50 transition-colors cursor-pointer">
                                 <div className="flex items-center gap-2 mb-0.5">
-                                  <span className="text-blue-700 text-xs font-bold uppercase tracking-wide">
-                                    Lead Generation
+                                  <span className="text-emerald-800 text-xs font-bold uppercase tracking-wide bg-emerald-50 px-1.5 py-0.5 rounded">
+                                    Lead Gen
                                   </span>
                                 </div>
                                 <h4 className="font-semibold text-sm">
