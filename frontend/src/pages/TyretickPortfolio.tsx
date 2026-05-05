@@ -235,6 +235,111 @@ const TyretickPortfolio = () => {
         </div>
       </section>
 
+      {/* Revenue Impact */}
+      <section className="py-16 px-4 bg-muted/20">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-2">Revenue Impact</h2>
+          <p className="text-center text-muted-foreground mb-12 max-w-3xl mx-auto">
+            Month-by-month revenue contribution from Google Ads, calculated against category close rates and average order value for UK mobile tyre fitting services.
+          </p>
+
+          <div className="grid lg:grid-cols-3 gap-6">
+            {/* Month 1 */}
+            <Card className="p-6">
+              <CardHeader className="px-0 pt-0">
+                <CardTitle className="text-lg">Month 1</CardTitle>
+                <p className="text-xs text-muted-foreground">Initial Period</p>
+              </CardHeader>
+              <CardContent className="px-0 space-y-2 text-sm">
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">Qualified Leads</span>
+                  <span className="font-semibold">128</span>
+                </div>
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">Ad Spend</span>
+                  <span className="font-semibold">&pound;3,080</span>
+                </div>
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">Booked Customers</span>
+                  <span className="font-semibold">64</span>
+                </div>
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">Sales Revenue</span>
+                  <span className="font-semibold">&pound;7,680</span>
+                </div>
+                <div className="flex justify-between py-1.5">
+                  <span className="text-muted-foreground">Return on Ad Spend</span>
+                  <span className="font-semibold text-emerald-700">2.49x</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Month 2 */}
+            <Card className="p-6 border-emerald-200">
+              <CardHeader className="px-0 pt-0">
+                <CardTitle className="text-lg">Month 2</CardTitle>
+                <p className="text-xs text-muted-foreground">Latest Period</p>
+              </CardHeader>
+              <CardContent className="px-0 space-y-2 text-sm">
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">Qualified Leads</span>
+                  <span className="font-semibold">264 <span className="text-emerald-600 text-xs">(+106.8%)</span></span>
+                </div>
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">Ad Spend</span>
+                  <span className="font-semibold">&pound;3,830</span>
+                </div>
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">Booked Customers</span>
+                  <span className="font-semibold">132 <span className="text-emerald-600 text-xs">(+106.3%)</span></span>
+                </div>
+                <div className="flex justify-between border-b py-1.5">
+                  <span className="text-muted-foreground">Sales Revenue</span>
+                  <span className="font-semibold">&pound;15,840 <span className="text-emerald-600 text-xs">(+106.3%)</span></span>
+                </div>
+                <div className="flex justify-between py-1.5">
+                  <span className="text-muted-foreground">Return on Ad Spend</span>
+                  <span className="font-semibold text-emerald-700">4.14x <span className="text-emerald-600 text-xs">(+66.3%)</span></span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Combined Total */}
+            <Card className="p-6 bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-300">
+              <CardHeader className="px-0 pt-0">
+                <CardTitle className="text-lg">Combined 2-Month Total</CardTitle>
+                <p className="text-xs text-muted-foreground">Cumulative</p>
+              </CardHeader>
+              <CardContent className="px-0 space-y-3">
+                <div>
+                  <p className="text-xs text-muted-foreground">Total Leads</p>
+                  <p className="text-2xl font-bold text-emerald-700">392</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Total Customers</p>
+                  <p className="text-2xl font-bold text-emerald-700">196</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Total Revenue</p>
+                  <p className="text-2xl font-bold text-emerald-700">&pound;23,520</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Average ROAS</p>
+                  <p className="text-2xl font-bold text-emerald-700">3.40x</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="mt-8 bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg max-w-4xl mx-auto">
+            <p className="text-sm text-amber-900 mb-1 font-semibold">Revenue Calculation</p>
+            <p className="text-sm text-amber-900/90 leading-relaxed">
+              Qualified leads &times; 50% category close rate &times; &pound;120 average order value = sales revenue. Close rate and AOV ranges drawn from UK mobile tyre fitting category norms. A typical booking covers 1 to 2 tyres at &pound;41 to &pound;75 per tyre based on Tyretick's published price list, with high-intent emergency callouts converting at industry-standard rates.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Closing */}
       <section className="py-16 px-4 bg-gradient-to-br from-primary/5 to-emerald-500/5">
         <div className="max-w-4xl mx-auto text-center">
