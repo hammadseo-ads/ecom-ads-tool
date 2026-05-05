@@ -868,8 +868,8 @@ export default function GoogleAdsAuditGuide() {
     <div className="min-h-screen bg-background">
       <PublicHeader />
       <SEO
-        title="Google Ads Audit Guide — Complete Framework"
-        description="A full framework for auditing any Google Ads account — campaign structure, conversion tracking, bidding, audiences, assets, search terms."
+        title="Google Ads Audit Guide, Complete Framework"
+        description="A full framework for auditing any Google Ads account, campaign structure, conversion tracking, bidding, audiences, assets, search terms."
         ogType="article"
       />
       

@@ -1,8 +1,8 @@
-// Lead-Gen N-Gram Analysis — uses the SAME backend as the eCom n-gram
+// Lead-Gen N-Gram Analysis, uses the SAME backend as the eCom n-gram
 // tool (/api/ngrams). Run the eCom "Negative Keywords & Search Terms"
 // tool first to populate the source data.
 //
-// Reads from KeywordSearchTermReport (the keyword tool's stored data) — does
+// Reads from KeywordSearchTermReport (the keyword tool's stored data), does
 // NOT hit Google Ads API. So this page works as long as the user has
 // generated keyword reports first. If not, page tells them to do that.
 //
@@ -293,11 +293,11 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
           </div>
           <CardDescription>
             Find which words and phrases drive your spend &amp; conversions for{" "}
-            <span className="font-semibold">{selectedAccountName || "—"}</span>{" "}
+            <span className="font-semibold">{selectedAccountName || "-"}</span>{" "}
             {selectedAccountId && <span className="text-gray-400">({selectedAccountId})</span>}
             <br />
             <span className="text-xs text-gray-500">
-              Computed from your Keyword Analysis data — no Google API calls. Run{" "}
+              Computed from your Keyword Analysis data, no Google API calls. Run{" "}
               <button
                 className="text-emerald-700 underline"
                 onClick={() => navigate("/dashboard/keywords")}
@@ -378,7 +378,7 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
                   Google does not expose cost-per-search-term for Performance Max. Conversions and
                   conversion value are still aggregated, but ROAS / cost columns will be blank.
                   Use clicks and conversions to identify wasted patterns. Add as account-level
-                  negatives — PMax respects them.
+                  negatives, PMax respects them.
                 </p>
               </div>
             </div>
@@ -396,11 +396,11 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
                       <Type className="w-12 h-12 mx-auto mb-3 text-gray-300" />
                       <p>No n-grams for {t.label.toLowerCase()} ({sourceType}, {ngramSize}-gram).</p>
                       <p className="text-sm mt-1">
-                        Either no source data yet — run{" "}
+                        Either no source data yet, run{" "}
                         <button className="text-emerald-700 underline" onClick={() => navigate("/dashboard/keywords")}>
                           Keyword Reports
                         </button>{" "}
-                        first — or click <strong>Generate N-Grams</strong> above.
+                        first, or click <strong>Generate N-Grams</strong> above.
                       </p>
                     </CardContent>
                   </Card>
@@ -446,13 +446,13 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
                                   <td className="text-right px-3 py-2 tabular-nums">{r.total_clicks.toLocaleString()}</td>
                                   {sourceType === "SEARCH" && (
                                     <td className="text-right px-3 py-2 tabular-nums">
-                                      {r.has_cost_data ? fmtMoney(r.total_cost) : <span className="text-gray-300">—</span>}
+                                      {r.has_cost_data ? fmtMoney(r.total_cost) : <span className="text-gray-300">-</span>}
                                     </td>
                                   )}
                                   <td className="text-right px-3 py-2 tabular-nums">{r.total_conversions.toFixed(1)}</td>
                                   {sourceType === "SEARCH" && (
                                     <td className="text-right px-3 py-2 tabular-nums font-semibold text-emerald-700">
-                                      {r.has_cost_data && r.total_cost > 0 ? r.roas.toFixed(2) : <span className="text-gray-300">—</span>}
+                                      {r.has_cost_data && r.total_cost > 0 ? r.roas.toFixed(2) : <span className="text-gray-300">-</span>}
                                     </td>
                                   )}
                                 </tr>
@@ -472,7 +472,7 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
                         </CardTitle>
                         <CardDescription>
                           ≥ 5 clicks, zero conversions. Sorted by{" "}
-                          {sourceType === "SEARCH" ? "cost" : "clicks"} desc — top negative
+                          {sourceType === "SEARCH" ? "cost" : "clicks"} desc, top negative
                           keyword candidates.
                         </CardDescription>
                       </CardHeader>
@@ -504,7 +504,7 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
                                   <td className="text-right px-3 py-2 tabular-nums">{r.total_clicks.toLocaleString()}</td>
                                   {sourceType === "SEARCH" && (
                                     <td className="text-right px-3 py-2 tabular-nums font-semibold text-red-700">
-                                      {r.has_cost_data ? fmtMoney(r.total_cost) : <span className="text-gray-300">—</span>}
+                                      {r.has_cost_data ? fmtMoney(r.total_cost) : <span className="text-gray-300">-</span>}
                                     </td>
                                   )}
                                 </tr>

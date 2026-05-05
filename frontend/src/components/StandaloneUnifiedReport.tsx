@@ -33,7 +33,7 @@ const StandaloneUnifiedReport: React.FC<StandaloneUnifiedReportProps> = ({
     });
   };
 
-  // Same powerful insights generator — unchanged logic
+  // Same powerful insights generator, unchanged logic
   const generateInsights = (summaryData: SummaryData[], activeTab: string) => {
     if (!summaryData || summaryData.length === 0) return null;
 

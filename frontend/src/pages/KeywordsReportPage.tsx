@@ -110,7 +110,7 @@ const withAuthRetry = async <T,>(call: () => Promise<T>): Promise<T> => {
       const { data } = await axios.post("/api/auth/refresh-token", {}, { withCredentials: true });
       if (data?.accessToken) localStorage.setItem("accessToken", data.accessToken);
     } catch {
-      throw err; // refresh failed too — surface original
+      throw err; // refresh failed too, surface original
     }
     return await call();
   }
@@ -212,11 +212,11 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
         // RUNNING or NO_DATA → keep polling (NO_DATA can briefly appear if the
         // poll lands between job dispatch and the in-memory tracker update)
       } catch (e: any) {
-        // Network blip — keep polling unless it's a clear failure
+        // Network blip, keep polling unless it's a clear failure
         if (e?.message?.includes("Generation failed")) throw e;
       }
     }
-    throw new Error("Generation took longer than 10 minutes — check backend logs.");
+    throw new Error("Generation took longer than 10 minutes, check backend logs.");
   };
 
   const handleGenerate = async () => {
@@ -228,7 +228,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
     setGenerationProgress("Starting...");
     toast({
       title: "Generating in background",
-      description: "Search terms across all campaigns. This can take a few minutes for large accounts — you can leave this tab open.",
+      description: "Search terms across all campaigns. This can take a few minutes for large accounts, you can leave this tab open.",
       duration: 8000,
     });
     try {
@@ -241,7 +241,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
         )
       );
       if (kicked?.status === "ALREADY_RUNNING") {
-        toast({ title: "Already in progress", description: "A generation is already running for this account — waiting for it to finish." });
+        toast({ title: "Already in progress", description: "A generation is already running for this account, waiting for it to finish." });
       }
       // Poll until COMPLETED / FAILED
       const final = await pollUntilDone(selectedAccountId);
@@ -302,7 +302,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
         )
         .map((r) => {
           // Sum just the matching campaign entries (a term may rarely appear
-          // in the SAME campaign across multiple ad groups — sum those too).
+          // in the SAME campaign across multiple ad groups, sum those too).
           const matches = (r.campaigns || []).filter(
             (c) => String(c?.campaign_id ?? "") === target
           );
@@ -433,7 +433,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
           </div>
           <CardDescription>
             Search terms across Search, Shopping, and Performance Max campaigns for{" "}
-            <span className="font-semibold">{selectedAccountName || "—"}</span>{" "}
+            <span className="font-semibold">{selectedAccountName || "-"}</span>{" "}
             {selectedAccountId && <span className="text-gray-400">({selectedAccountId})</span>}
           </CardDescription>
         </CardHeader>
@@ -455,7 +455,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                   <RefreshCw className="w-4 h-4 animate-spin flex-shrink-0" />
                   <span>
                     <strong>Working in background:</strong> {generationProgress || "Starting..."}
-                    {" "}— safe to leave this tab open. Polling every few seconds.
+                    {" "}- safe to leave this tab open. Polling every few seconds.
                   </span>
                 </div>
               )}
@@ -470,7 +470,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
       <div className="flex gap-3 p-4 bg-amber-50 border border-amber-300 rounded-lg">
         <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
         <div className="text-sm text-amber-900">
-          <p className="font-semibold mb-1">Before adding any term as a negative keyword — review it first.</p>
+          <p className="font-semibold mb-1">Before adding any term as a negative keyword, review it first.</p>
           <p>
             Some search terms may be highly relevant to your business but haven't converted yet (small sample, long sales cycle, indirect intent).
             Treat the <span className="font-semibold">"High Engagement, No Conversion"</span> bucket as <em>candidates for review</em>, not automatic negatives.
@@ -517,7 +517,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                             {fmtMoney(insightSections.profitableCost)} of {fmtMoney(insightSections.totalCost)} total spend generated {fmtMoney(insightSections.profitableValue)} in profitable sales over the past {tabLabel}.
                           </p>
                           <p className="text-green-700 text-sm mt-2">
-                            These are the search terms driving your business — protect and scale them. Consider raising bids on the keywords that triggered them, or building tighter ad groups around their themes.
+                            These are the search terms driving your business, protect and scale them. Consider raising bids on the keywords that triggered them, or building tighter ad groups around their themes.
                           </p>
                         </div>
                       )}
@@ -540,7 +540,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                         </div>
                       )}
 
-                      {/* Wasted Clicks (PMax — no cost data) */}
+                      {/* Wasted Clicks (PMax, no cost data) */}
                       {insightSections.wastedClicksPct > 0 && (
                         <div className="bg-orange-50 border-l-4 border-orange-500 p-6 rounded-r-lg">
                           <div className="flex items-start justify-between mb-3">
@@ -571,7 +571,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                             <strong>{insightSections.reviewCount} terms</strong> ({fmtPct(insightSections.reviewPct)} of total) have decent CTR but no conversions yet. They got <strong>{insightSections.reviewClicks.toLocaleString()}</strong> clicks total.
                           </p>
                           <p className="text-amber-900 text-sm mt-2">
-                            These look engaged — read each one. Some may be relevant terms with a long sales cycle, slow attribution, or just a small sample. Don't bulk-negative them.
+                            These look engaged, read each one. Some may be relevant terms with a long sales cycle, slow attribution, or just a small sample. Don't bulk-negative them.
                           </p>
                         </div>
                       )}
@@ -607,7 +607,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                           </li>
                           <li className="flex items-start gap-2">
                             <span className="font-semibold text-amber-700 whitespace-nowrap">• Same week:</span>
-                            <span>Review every term in <strong>"High Engagement, No Conversion"</strong>. Don't bulk-negative — decide per term.</span>
+                            <span>Review every term in <strong>"High Engagement, No Conversion"</strong>. Don't bulk-negative, decide per term.</span>
                           </li>
                           <li className="flex items-start gap-2">
                             <span className="font-semibold text-blue-700 whitespace-nowrap">• Long-term:</span>
@@ -676,7 +676,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                   {selectedCampaign !== "all" && (
                     <div className="bg-blue-50 border border-blue-300 rounded p-3 text-sm text-blue-900">
                       🔍 <strong>Per-campaign view active.</strong> Metrics in the table below are the contribution
-                      from <span className="font-mono">{periodData.campaign_list.find(c => c.id === selectedCampaign)?.name || selectedCampaign}</span> only — not the cross-campaign total. If you don't see numbers change after picking a campaign, your browser is still running the old build (hard refresh with Cmd/Ctrl+Shift+Delete → clear cached files for localhost, then reload).
+                      from <span className="font-mono">{periodData.campaign_list.find(c => c.id === selectedCampaign)?.name || selectedCampaign}</span> only, not the cross-campaign total. If you don't see numbers change after picking a campaign, your browser is still running the old build (hard refresh with Cmd/Ctrl+Shift+Delete → clear cached files for localhost, then reload).
                     </div>
                   )}
 
@@ -705,7 +705,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                                 <span className="inline-flex items-center gap-2">
                                   {r.search_term}
                                   {r.category === "High Engagement, No Conversion" && (
-                                    <span title="May be a relevant term — review manually before negativing">
+                                    <span title="May be a relevant term, review manually before negativing">
                                       <Info className="w-3.5 h-3.5 text-amber-500" />
                                     </span>
                                   )}
@@ -721,12 +721,12 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                               <td className="text-right px-3 py-2 tabular-nums">{r.total_clicks.toLocaleString()}</td>
                               <td className="text-right px-3 py-2 tabular-nums">{r.ctr.toFixed(2)}</td>
                               <td className="text-right px-3 py-2 tabular-nums">
-                                {r.has_cost_data ? fmtMoney(r.total_cost) : <span className="text-gray-300">—</span>}
+                                {r.has_cost_data ? fmtMoney(r.total_cost) : <span className="text-gray-300">-</span>}
                               </td>
                               <td className="text-right px-3 py-2 tabular-nums">{r.total_conversions.toFixed(1)}</td>
                               <td className="text-right px-3 py-2 tabular-nums">{fmtMoney(r.total_conversion_value)}</td>
                               <td className="text-right px-3 py-2 tabular-nums">
-                                {r.has_cost_data && r.total_cost > 0 ? r.roas.toFixed(2) : <span className="text-gray-300">—</span>}
+                                {r.has_cost_data && r.total_cost > 0 ? r.roas.toFixed(2) : <span className="text-gray-300">-</span>}
                               </td>
                             </tr>
                           ))}
@@ -734,7 +734,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                       </table>
                     </div>
                     <div className="px-3 py-2 text-xs text-gray-500 border-t bg-gray-50">
-                      Cost &amp; ROAS are shown only for Search/Shopping/Display terms — Google does not expose cost-per-search-term for Performance Max.
+                      Cost &amp; ROAS are shown only for Search/Shopping/Display terms, Google does not expose cost-per-search-term for Performance Max.
                     </div>
                   </div>
                 </>

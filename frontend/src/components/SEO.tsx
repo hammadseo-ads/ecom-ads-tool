@@ -1,7 +1,7 @@
 // Per-page SEO tags. Drop <SEO ... /> at the top of any page component to
 // override the global <title>, meta description, canonical URL, and OG/
 // Twitter cards. Helmet hoists these into the document <head> at runtime
-// (and at build time once we add prerendering — same component, no rewrite).
+// (and at build time once we add prerendering, same component, no rewrite).
 
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";

@@ -411,7 +411,7 @@ Input Titles
       <PublicHeader />
       <SEO
         title="Product Title Optimization for Google Shopping and PMax"
-        description="Why product titles drive PMax targeting — and how to rewrite them so your ads show up on the searches that actually convert."
+        description="Why product titles drive PMax targeting, and how to rewrite them so your ads show up on the searches that actually convert."
         ogType="article"
       />
       

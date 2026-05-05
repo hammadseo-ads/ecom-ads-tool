@@ -47,7 +47,7 @@ const PJBoldPortfolio = () => {
     <div className="min-h-screen bg-background">
       <PublicHeader />
       <SEO
-        title="PJ BOLD Case Study — 9.32x Sales, 816% ROAS Lift"
+        title="PJ BOLD Case Study, 9.32x Sales, 816% ROAS Lift"
         description="PJ BOLD case study: resolving Google Ads policy violations, restructuring Performance Max, and unlocking 9.32x sales growth on food-grade silicone molds."
         ogType="article"
       />

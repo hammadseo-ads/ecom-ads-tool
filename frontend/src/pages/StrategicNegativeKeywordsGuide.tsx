@@ -182,8 +182,8 @@ const StrategicNegativeKeywordsGuide = () => {
     <>
       <PublicHeader />
       <SEO
-        title="Strategic Negative Keywords — Expert-Level Tactics"
-        description="Master expert-level negative-keyword strategy for Search, Shopping, and Performance Max — beyond the obvious junk-query lists."
+        title="Strategic Negative Keywords, Expert-Level Tactics"
+        description="Master expert-level negative-keyword strategy for Search, Shopping, and Performance Max, beyond the obvious junk-query lists."
         ogType="article"
       />
       <div className="min-h-screen bg-background">

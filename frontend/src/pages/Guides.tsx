@@ -54,7 +54,7 @@ const guides = [
   },
   {
     title: "Ecommerce Website CRO Audit",
-    description: "A 7-section manual audit of your store from a real visitor's perspective — banners, search, pop ups, mobile menu, reviews, product gallery, and Instagram.",
+    description: "A 7-section manual audit of your store from a real visitor's perspective, banners, search, pop ups, mobile menu, reviews, product gallery, and Instagram.",
     icon: Layout,
     path: "/guides/ecommerce-cro-audit",
     color: "from-emerald-500/10 to-emerald-600/10",
@@ -117,7 +117,7 @@ function Guides() {
       <PublicHeader />
       <SEO
         title="Google Ads & eCommerce CRO Guides"
-        description="Free guides for eCommerce Google Ads — product bucketing (heroes/costly/zombies), negative keywords, campaign structure, product titles, and a full website CRO audit checklist."
+        description="Free guides for eCommerce Google Ads, product bucketing (heroes/costly/zombies), negative keywords, campaign structure, product titles, and a full website CRO audit checklist."
         ogType="website"
       />
       <div className="min-h-screen bg-background">

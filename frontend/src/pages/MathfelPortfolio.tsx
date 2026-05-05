@@ -59,7 +59,7 @@ const MathfelPortfolio = () => {
     <div className="min-h-screen bg-background">
       <PublicHeader />
       <SEO
-        title="Mathfel Case Study — 114% Sales Increase"
+        title="Mathfel Case Study, 114% Sales Increase"
         description="Mathfel video door-intercom case study: untangling scattered campaigns and confused product categorization to drive 114% sales growth on Google Ads."
         ogType="article"
       />

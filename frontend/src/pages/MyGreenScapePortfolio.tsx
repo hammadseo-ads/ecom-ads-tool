@@ -43,7 +43,7 @@ const MyGreenScapePortfolio = () => {
     <div className="min-h-screen bg-background">
       <PublicHeader />
       <SEO
-        title="MyGreenScape Case Study — 368% Conv Value, 56% ROAS Lift"
+        title="MyGreenScape Case Study, 368% Conv Value, 56% ROAS Lift"
         description="How a small-budget indoor-plants brand went from underperforming Shopping campaigns to 368% conversion-value growth and a 56% ROAS lift via Performance Max + DSA."
         ogType="article"
       />

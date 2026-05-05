@@ -80,7 +80,7 @@ const ECOM_TOOLS: ToolCardSpec[] = [
   {
     title: "Budget Wastage by Keywords",
     description:
-      "Surface Performance Max search terms that may be wasting budget — and find candidates for negative keywords.",
+      "Surface Performance Max search terms that may be wasting budget, and find candidates for negative keywords.",
     icon: Search,
     iconBg: "bg-emerald-50",
     iconColor: "text-emerald-700",
@@ -128,7 +128,7 @@ const ECOM_TOOLS: ToolCardSpec[] = [
   {
     title: "Website CRO Audit",
     description:
-      "Manual checklist — open your store and audit it section by section. No Google Ads connection needed.",
+      "Manual checklist, open your store and audit it section by section. No Google Ads connection needed.",
     icon: Layout,
     iconBg: "bg-green-100",
     iconColor: "text-green-700",
@@ -155,7 +155,7 @@ const LEADGEN_TOOLS: ToolCardSpec[] = [
   {
     title: "Budget Wastage by Keywords",
     description:
-      "Find search terms over the last 30 / 60 / 90 days that spent budget but produced zero conversions — the cleanest list of negative-keyword candidates for lead-gen accounts.",
+      "Find search terms over the last 30 / 60 / 90 days that spent budget but produced zero conversions, the cleanest list of negative-keyword candidates for lead-gen accounts.",
     icon: PiggyBank,
     iconBg: "bg-emerald-100",
     iconColor: "text-emerald-700",
@@ -179,7 +179,7 @@ const LEADGEN_TOOLS: ToolCardSpec[] = [
   {
     title: "Geographic Performance",
     description:
-      "Find which cities / regions / zip codes drive the cheapest leads — and which ones to exclude entirely. Bid recommendations use CPA, not ROAS.",
+      "Find which cities / regions / zip codes drive the cheapest leads, and which ones to exclude entirely. Bid recommendations use CPA, not ROAS.",
     icon: MapPin,
     iconBg: "bg-emerald-100",
     iconColor: "text-emerald-700",
@@ -267,13 +267,13 @@ const DashboardHome = () => {
                 </p>
               ) : (
                 <p className="text-gray-500 mt-2 text-sm">
-                  Browse the tools below — pick a Google Ads account from the
+                  Browse the tools below, pick a Google Ads account from the
                   top-right dropdown when you're ready to run one.
                 </p>
               )}
             </div>
 
-            {/* Track selector — two big cards */}
+            {/* Track selector, two big cards */}
             <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
               {(["ecommerce", "leadgen"] as const).map((t) => {
                 const meta = TRACK_META[t];
@@ -327,7 +327,7 @@ const DashboardHome = () => {
             <div>
               <div className="flex items-center justify-between max-w-6xl mx-auto mb-4">
                 <h2 className="text-xl font-semibold text-gray-900">
-                  {TRACK_META[track].label} — Tools
+                  {TRACK_META[track].label}, Tools
                 </h2>
                 <span className="text-xs text-gray-500">
                   {tools.length} tools
@@ -404,7 +404,7 @@ const DashboardHome = () => {
                   <p className="text-sm text-gray-600">
                     Run <strong>Budget Wastage by Products</strong> or{" "}
                     <strong>by Keywords</strong> first. Identify the line items
-                    that have spent real money with no conversions — they're
+                    that have spent real money with no conversions, they're
                     almost always 20–40% of total spend.
                   </p>
                 </div>
@@ -445,7 +445,7 @@ const DashboardHome = () => {
                 <div className="flex items-center gap-2 mb-3">
                   <Sparkles className="w-5 h-5 text-emerald-600" />
                   <h2 className="text-xl font-bold text-gray-900">
-                    eCommerce vs Lead Gen — what changes?
+                    eCommerce vs Lead Gen, what changes?
                   </h2>
                 </div>
                 <div className="grid md:grid-cols-2 gap-6 mt-4">
@@ -489,7 +489,7 @@ const DashboardHome = () => {
               </div>
             </section>
 
-            {/* "Back to top" hint when scrolled — purely visual */}
+            {/* "Back to top" hint when scrolled, purely visual */}
             <div className="text-center text-xs text-gray-400 pt-2">
               <ChevronUp className="w-4 h-4 inline" /> Scroll up to switch
               tracks anytime
@@ -509,7 +509,7 @@ const DashboardHome = () => {
                   <DialogDescription className="pt-2">
                     This tool needs to know which Google Ads account to
                     analyze. Open the account dropdown at the top of the page
-                    and choose one — then click the tool again.
+                    and choose one, then click the tool again.
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>

@@ -15,7 +15,7 @@ const ProfitableProductsGuide = () => {
     <>
       <PublicHeader />
       <SEO
-        title="Profitable Products — Scale Your Star Performers"
+        title="Profitable Products, Scale Your Star Performers"
         description="How to spot your profitable hero products in Google Shopping and PMax and scale them with bid, budget, and structural changes."
         ogType="article"
       />

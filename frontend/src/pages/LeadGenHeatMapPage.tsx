@@ -1,4 +1,4 @@
-// Lead-Gen Heat Map (Hour × Day) — uses the SAME backend as the eCom heat
+// Lead-Gen Heat Map (Hour × Day), uses the SAME backend as the eCom heat
 // map (same GAQL: campaign metrics segmented by day_of_week + hour). Diff
 // is purely UI: defaults to Conversions / CVR / CPA, hides ROAS, and
 // re-labels the suggested-bid logic since lead-gen ranks by conv-rate.
@@ -82,7 +82,7 @@ const METRICS = [
   { key: "conversions", label: "Conversions", icon: TrendingUp, format: (n: number) => n.toFixed(1) },
   { key: "conv_rate", label: "Conv Rate %", icon: TrendingUp, format: (n: number) => `${n.toFixed(2)}%` },
   { key: "suggested_bid_multiplier", label: "Suggested Bid Adj %", icon: Sparkles,
-    format: (n: number | null) => n == null ? "—" : `${(n * 100).toFixed(1)}%` },
+    format: (n: number | null) => n == null ? "-" : `${(n * 100).toFixed(1)}%` },
 ] as const;
 
 const empty = (): PeriodData => ({
@@ -200,7 +200,7 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
         if (e?.message?.includes("Generation failed")) throw e;
       }
     }
-    throw new Error("Generation took longer than 10 minutes — check backend logs.");
+    throw new Error("Generation took longer than 10 minutes, check backend logs.");
   };
 
   const handleGenerate = async () => {
@@ -335,7 +335,7 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
           <CardDescription>
             See when your campaigns perform best. Suggested bid multipliers are computed from
             smoothed conversion rate vs the grid mean (capped ±35%) for{" "}
-            <span className="font-semibold">{selectedAccountName || "—"}</span>{" "}
+            <span className="font-semibold">{selectedAccountName || "-"}</span>{" "}
             {selectedAccountId && <span className="text-gray-400">({selectedAccountId})</span>}
           </CardDescription>
         </CardHeader>
@@ -421,7 +421,7 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                     )}
                   </div>
 
-                  {/* Warning banner — show when multipliers won't be honored */}
+                  {/* Warning banner, show when multipliers won't be honored */}
                   {!periodData.supports_bid_multiplier && (
                     <div className="flex gap-3 p-4 bg-amber-50 border border-amber-300 rounded-lg">
                       <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
@@ -435,11 +435,11 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                         </p>
                         <p>
                           {periodData.selected_campaign?.channel_type === "PERFORMANCE_MAX"
-                            ? "PMax doesn't support bid % adjustments by hour — only -100% pause works. "
+                            ? "PMax doesn't support bid % adjustments by hour, only -100% pause works. "
                             : periodData.selected_campaign
-                            ? "Smart Bidding (Target ROAS / Target CPA / Maximize Conversions etc.) overrides hour-of-day adjustments — Google handles timing. "
+                            ? "Smart Bidding (Target ROAS / Target CPA / Maximize Conversions etc.) overrides hour-of-day adjustments, Google handles timing. "
                             : "The aggregated view mixes campaigns with different bidding strategies. Filter to a Manual CPC / Maximize Clicks campaign to see actionable suggestions. "}
-                          Suggested-bid-adjustment values will show "—". Use the heat map to identify
+                          Suggested-bid-adjustment values will show "-". Use the heat map to identify
                           hours to <strong>fully pause</strong> (set ad schedule to -100%) instead.
                         </p>
                       </div>
@@ -452,7 +452,7 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-lg flex items-center gap-2">
                           <metric.icon className="w-5 h-5 text-emerald-600" />
-                          {metric.label} — Hour × Day
+                          {metric.label}, Hour × Day
                         </CardTitle>
                         <div className="text-xs text-gray-500">
                           Mean conv rate (smoothed): {periodData.mean_conv_rate.toFixed(2)}%
@@ -493,11 +493,11 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                                         `Conv rate: ${cell.conv_rate.toFixed(2)}%\n` +
                                         `ROAS: ${cell.roas.toFixed(2)}\n` +
                                         (cell.suggested_bid_multiplier == null
-                                          ? `Bid adj: —`
+                                          ? `Bid adj: -`
                                           : `Bid adj: ${(cell.suggested_bid_multiplier * 100).toFixed(1)}%`)
                                       : "no data"}
                                   >
-                                    {val == null ? "—" : metric.format(val)}
+                                    {val == null ? "-" : metric.format(val)}
                                   </td>
                                 );
                               })}

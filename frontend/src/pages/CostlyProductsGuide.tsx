@@ -27,8 +27,8 @@ const CostlyProductsGuide = () => {
     <>
       <PublicHeader />
       <SEO
-        title="Costly Products — Stop Budget-Drain in Google Ads"
-        description="Identify products eating your Google Ads budget without delivering ROAS — and the exact fixes to apply for each pattern."
+        title="Costly Products, Stop Budget-Drain in Google Ads"
+        description="Identify products eating your Google Ads budget without delivering ROAS, and the exact fixes to apply for each pattern."
         ogType="article"
       />
       <div className="min-h-screen bg-background">

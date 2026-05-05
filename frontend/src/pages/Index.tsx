@@ -53,8 +53,8 @@ const Index = () => {
     <>
       <PublicHeader />
       <SEO
-        title="Google Ads Analysis Tool — Free"
-        description="Free Google Ads analysis tool — connect your account and surface wasted spend, hidden winners, and PMax product performance."
+        title="Google Ads Analysis Tool, Free"
+        description="Free Google Ads analysis tool, connect your account and surface wasted spend, hidden winners, and PMax product performance."
         ogType="website"
       />
       <div className="min-h-screen bg-background">
@@ -166,7 +166,7 @@ const Index = () => {
                       </div>
                       <h3 className="text-lg text-blue-300 text-center">Hidden Opportunities</h3>
                       <p className="text-base text-white/80 text-center mt-2">
-                        Uncover 'Zombie' products — those with untapped potential where you're under-spending
+                        Uncover 'Zombie' products, those with untapped potential where you're under-spending
                       </p>
                     </div>
                   </div>

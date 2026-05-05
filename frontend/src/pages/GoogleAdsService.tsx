@@ -214,7 +214,7 @@ const GoogleAdsService = () => {
     {
       name: "Szilvia V.",
       title: "Head of Growth",
-      review: "Clear reports, clear actions. We know exactly what was trimmed, what was scaled, and why. No noise—just orders."
+      review: "Clear reports, clear actions. We know exactly what was trimmed, what was scaled, and why. No noise-just orders."
     },
     {
       name: "Alister M.",
@@ -234,11 +234,11 @@ const GoogleAdsService = () => {
     },
     {
       question: "Do you handle creative?",
-      answer: "Yes—assets and copy for PMax/Search tied to each product cluster. We'll also guide landing tweaks where needed."
+      answer: "Yes-assets and copy for PMax/Search tied to each product cluster. We'll also guide landing tweaks where needed."
     },
     {
       question: "What do you report?",
-      answer: "Revenue, ROAS, MER, CPA, CVR, wasted spend, and product-level winners/losers—plus the exact trims and tests running."
+      answer: "Revenue, ROAS, MER, CPA, CVR, wasted spend, and product-level winners/losers-plus the exact trims and tests running."
     },
     {
       question: "Budgets you work with?",
@@ -250,8 +250,8 @@ const GoogleAdsService = () => {
     <>
       <PublicHeader />
       <SEO
-        title="Ads Analysis by ManagingSEO — Maximize Your Google Ads ROAS"
-        description="Free Google Ads analytics tool for eCommerce. Find products wasting your budget, surface negative-keyword candidates, and bucket PMax products into Heroes / Costly / Zombies — without leaving your dashboard."
+        title="Ads Analysis by ManagingSEO, Maximize Your Google Ads ROAS"
+        description="Free Google Ads analytics tool for eCommerce. Find products wasting your budget, surface negative-keyword candidates, and bucket PMax products into Heroes / Costly / Zombies, without leaving your dashboard."
         ogType="website"
       />
       <div className="min-h-screen bg-background">
@@ -546,7 +546,7 @@ const GoogleAdsService = () => {
               <div className="text-center mb-12">
                 <h2 className="text-3xl sm:text-4xl font-bold mb-6">Dear Ecommerce Owner,</h2>
                 <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                  If your ads feel like a slot machine—some days good, most days noisy—you're not alone.
+                  If your ads feel like a slot machine-some days good, most days noisy-you're not alone.
                 </p>
               </div>
 
@@ -682,7 +682,7 @@ const GoogleAdsService = () => {
             <Card className="p-6 sm:p-8 lg:p-12 border-2 border-primary bg-gradient-to-br from-primary/5 to-emerald-500/5 hover:shadow-2xl transition-all duration-300">
               <div className="text-center max-w-4xl mx-auto">
                 <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-                  Cut Wasted Ad Spend in 30 Days — or Your First Month Is Free
+                  Cut Wasted Ad Spend in 30 Days, or Your First Month Is Free
                 </h2>
                 <div className="space-y-4 text-left max-w-3xl mx-auto mb-8">
                   <p>• We agree on a target against your last 30 days.</p>
@@ -966,7 +966,7 @@ const GoogleAdsService = () => {
                 <div className="space-y-4 text-lg leading-relaxed mb-8">
                   <p>If you spend $3k+/mo, you don't need tricks.</p>
                   <p>You need clean tracking, a product-first account, and steady trims and tests.</p>
-                  <p className="font-semibold">That's what we do. No noise—just orders.</p>
+                  <p className="font-semibold">That's what we do. No noise-just orders.</p>
                 </div>
                 <Button
                   size="lg"
@@ -1056,7 +1056,7 @@ const GoogleAdsService = () => {
             <Card className="p-6 sm:p-8 lg:p-12 border-2 border-primary bg-gradient-to-br from-primary/10 to-emerald-500/10 hover:shadow-2xl transition-all duration-300">
               <div className="text-center max-w-4xl mx-auto">
                 <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-                  If your Google Ads feel random, it's not you—it's the setup.
+                  If your Google Ads feel random, it's not you-it's the setup.
                 </h2>
                 <p className="text-lg sm:text-xl text-muted-foreground mb-8">
                   Let's build a product-first account that buys customers at the right price.

@@ -85,8 +85,8 @@ const Portfolio = () => {
     <div className="min-h-screen bg-background">
       <PublicHeader />
       <SEO
-        title="Case Studies — eCommerce Google Ads Results"
-        description="Real eCommerce case studies — MyGreenScape, PJ BOLD, Mathfel, TopTiny — with before/after Google Ads results, ROAS lifts, and the strategies used."
+        title="Case Studies, eCommerce Google Ads Results"
+        description="Real eCommerce case studies, MyGreenScape, PJ BOLD, Mathfel, TopTiny, with before/after Google Ads results, ROAS lifts, and the strategies used."
         ogType="website"
       />
       {/* Hero Section */}
@@ -102,7 +102,7 @@ const Portfolio = () => {
         </div>
       </section>
 
-      {/* Portfolio Grid — eCommerce */}
+      {/* Portfolio Grid, eCommerce */}
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-3 mb-6">
@@ -173,7 +173,7 @@ const Portfolio = () => {
         </div>
       </section>
 
-      {/* Portfolio Grid — Lead Generation (placeholder) */}
+      {/* Portfolio Grid, Lead Generation (placeholder) */}
       <section className="py-16 px-4 bg-emerald-50/30">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-3 mb-6">
@@ -190,7 +190,7 @@ const Portfolio = () => {
               <p className="text-sm max-w-xl mx-auto">
                 We're publishing detailed wins from service businesses, B2B
                 lead funnels, and form-fill campaigns soon. In the meantime,
-                explore the eCommerce stories above — the same strategic
+                explore the eCommerce stories above, the same strategic
                 principles apply.
               </p>
               <Button

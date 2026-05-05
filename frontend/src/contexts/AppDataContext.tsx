@@ -158,7 +158,7 @@ export const AppDataProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setIsLoadingAccounts(true);
     try {
       // Pass refresh:true to bypass the backend's MongoDB cache and re-fetch
-      // from Google Ads API. Use sparingly — Google Ads API has tight quotas.
+      // from Google Ads API. Use sparingly, Google Ads API has tight quotas.
       const body = opts?.force ? { refresh: true } : {};
       const data = await api<any>("/connections", body);
       console.debug('[AppDataContext] refreshAccounts response', { count: (data.connections || []).length, cached: data.cached });

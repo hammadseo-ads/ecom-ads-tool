@@ -1,8 +1,8 @@
 // Manual Ecommerce Website CRO Audit guide.
-// Static (no Google Ads connection needed) — user reads each section, looks at
+// Static (no Google Ads connection needed), user reads each section, looks at
 // reference screenshots, and audits their own site against the checklist.
 // Mirrors the design language of the other guide pages (CampaignStructureGuide etc.)
-// — green primary palette, occasional red/yellow accents, no purples.
+//, green primary palette, occasional red/yellow accents, no purples.
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -57,7 +57,7 @@ const sections: AuditSection[] = [
   {
     id: "section-1",
     number: "01",
-    title: "Top Banners — First Impression",
+    title: "Top Banners, First Impression",
     icon: Layout,
     intro:
       "The banner is the very first thing a visitor sees. It must instantly communicate a strong, attractive offer that pulls the audience in.",
@@ -72,7 +72,7 @@ const sections: AuditSection[] = [
       },
       {
         id: "1-3",
-        text: "Keep the message short, bold, and scannable — one clear headline + one CTA button.",
+        text: "Keep the message short, bold, and scannable, one clear headline + one CTA button.",
       },
       {
         id: "1-4",
@@ -82,9 +82,9 @@ const sections: AuditSection[] = [
     whyItMatters:
       "Visitors decide within seconds whether to stay or leave. A high-impact banner with a real offer keeps them engaged long enough to start browsing.",
     images: [
-      { src: "/lovable-uploads/cro-audit/banner-1.png", caption: "Leaderboard web banner — example 1" },
-      { src: "/lovable-uploads/cro-audit/banner-2.png", caption: "Leaderboard web banner — example 2" },
-      { src: "/lovable-uploads/cro-audit/banner-3.png", caption: "Leaderboard web banner — example 3" },
+      { src: "/lovable-uploads/cro-audit/banner-1.png", caption: "Leaderboard web banner, example 1" },
+      { src: "/lovable-uploads/cro-audit/banner-2.png", caption: "Leaderboard web banner, example 2" },
+      { src: "/lovable-uploads/cro-audit/banner-3.png", caption: "Leaderboard web banner, example 3" },
     ],
   },
   {
@@ -93,14 +93,14 @@ const sections: AuditSection[] = [
     title: "Smart Search",
     icon: Search,
     intro:
-      "Once the visitor lands, search is one of the next things they reach for — especially on stores with many products. The default Shopify / store search isn't enough; we need a smart, suggestion-driven search.",
+      "Once the visitor lands, search is one of the next things they reach for, especially on stores with many products. The default Shopify / store search isn't enough; we need a smart, suggestion-driven search.",
     items: [
       { id: "2-1", text: "Replace the default search with a smart search that shows live suggestions as the user types." },
       {
         id: "2-2",
         text: "Display top suggestions and best-selling products inside the search dropdown by default (even before the user types anything).",
       },
-      { id: "2-3", text: "Show product images, prices, and quick links inside the suggestions — not just text." },
+      { id: "2-3", text: "Show product images, prices, and quick links inside the suggestions, not just text." },
       { id: "2-4", text: "Include category and collection suggestions so users can jump straight to a section." },
       {
         id: "2-5",
@@ -108,7 +108,7 @@ const sections: AuditSection[] = [
       },
     ],
     whyItMatters:
-      "Visitors who use search convert at a much higher rate than those who only browse — making the search smarter directly lifts revenue.",
+      "Visitors who use search convert at a much higher rate than those who only browse, making the search smarter directly lifts revenue.",
     images: [
       { src: "/lovable-uploads/cro-audit/search-1.png", caption: "Smart search with product suggestions and best-sellers" },
     ],
@@ -119,19 +119,19 @@ const sections: AuditSection[] = [
     title: "Pop Up",
     icon: MessageSquare,
     intro:
-      "A well-designed pop up captures the visitor's email or pushes them toward a first purchase. A weak pop up — text only, no visual — gets dismissed instantly.",
+      "A well-designed pop up captures the visitor's email or pushes them toward a first purchase. A weak pop up, text only, no visual, gets dismissed instantly.",
     items: [
-      { id: "3-1", text: "Every pop up MUST contain an image — product shot, lifestyle visual, or offer graphic. No text-only pop ups." },
+      { id: "3-1", text: "Every pop up MUST contain an image, product shot, lifestyle visual, or offer graphic. No text-only pop ups." },
       { id: "3-2", text: "Every pop up MUST contain a clear offer (discount code, free shipping, gift, exclusive access)." },
       { id: "3-3", text: "Keep the headline short and benefit-led; one CTA button only." },
       { id: "3-4", text: "Trigger on intent (exit-intent or after ~10–15 seconds), not immediately on landing." },
-      { id: "3-5", text: "Make it easy to close — a frustrating pop up hurts conversions more than it helps." },
+      { id: "3-5", text: "Make it easy to close, a frustrating pop up hurts conversions more than it helps." },
     ],
     whyItMatters:
       "Pop ups with strong visuals + a real offer can dramatically increase email capture rate, building a list you can market to long after the visitor leaves.",
     images: [
-      { src: "/lovable-uploads/cro-audit/popup-1.png", caption: "Pop up example 1 — image + offer" },
-      { src: "/lovable-uploads/cro-audit/popup-2.png", caption: "Pop up example 2 — image + offer" },
+      { src: "/lovable-uploads/cro-audit/popup-1.png", caption: "Pop up example 1, image + offer" },
+      { src: "/lovable-uploads/cro-audit/popup-2.png", caption: "Pop up example 2, image + offer" },
     ],
   },
   {
@@ -140,9 +140,9 @@ const sections: AuditSection[] = [
     title: "Mobile Mega Menu",
     icon: Smartphone,
     intro:
-      "Most stores build a mega menu for desktop and ignore mobile — but a large share of traffic is on mobile. A proper mobile mega menu makes the catalog discoverable instead of buried inside a basic hamburger list.",
+      "Most stores build a mega menu for desktop and ignore mobile, but a large share of traffic is on mobile. A proper mobile mega menu makes the catalog discoverable instead of buried inside a basic hamburger list.",
     items: [
-      { id: "4-1", text: "Build a dedicated mobile mega menu — don't just shrink the desktop one." },
+      { id: "4-1", text: "Build a dedicated mobile mega menu, don't just shrink the desktop one." },
       { id: "4-2", text: "Use collapsible categories with icons / thumbnails so users can scan visually." },
       { id: "4-3", text: "Highlight featured collections, new arrivals, or sale items at the top of the menu." },
       { id: "4-4", text: "Keep tap targets large and the menu fast to open / close." },
@@ -151,9 +151,9 @@ const sections: AuditSection[] = [
     whyItMatters:
       "Mobile users who can't navigate easily bounce within seconds. A real mobile mega menu directly improves engagement, time on site, and conversion.",
     images: [
-      { src: "/lovable-uploads/cro-audit/mobilemenu-1.png", caption: "Mobile mega menu — example 1" },
-      { src: "/lovable-uploads/cro-audit/mobilemenu-2.png", caption: "Mobile mega menu — example 2" },
-      { src: "/lovable-uploads/cro-audit/mobilemenu-3.png", caption: "Mobile mega menu — example 3" },
+      { src: "/lovable-uploads/cro-audit/mobilemenu-1.png", caption: "Mobile mega menu, example 1" },
+      { src: "/lovable-uploads/cro-audit/mobilemenu-2.png", caption: "Mobile mega menu, example 2" },
+      { src: "/lovable-uploads/cro-audit/mobilemenu-3.png", caption: "Mobile mega menu, example 3" },
     ],
   },
   {
@@ -162,25 +162,25 @@ const sections: AuditSection[] = [
     title: "Product Reviews (with Pictures & Video)",
     icon: Star,
     intro:
-      "Reviews are the single strongest trust signal on an ecommerce site. They should not live only on product pages — they need to be visible everywhere the buyer makes a decision.",
+      "Reviews are the single strongest trust signal on an ecommerce site. They should not live only on product pages, they need to be visible everywhere the buyer makes a decision.",
     whatToDoLabel: "Where to place reviews + what kind to use",
     items: [
-      { id: "5-1", text: "Home page — feature a few of the strongest, most credible reviews." },
-      { id: "5-2", text: "Collection / category pages — show ratings on product cards and pull a featured review." },
-      { id: "5-3", text: "Product pages — full review section + product-specific reviews." },
-      { id: "5-4", text: "Cart page — reassurance reviews near the checkout button to reduce abandonment." },
-      { id: "5-5", text: "Video reviews are the most powerful — prioritise them wherever possible." },
+      { id: "5-1", text: "Home page, feature a few of the strongest, most credible reviews." },
+      { id: "5-2", text: "Collection / category pages, show ratings on product cards and pull a featured review." },
+      { id: "5-3", text: "Product pages, full review section + product-specific reviews." },
+      { id: "5-4", text: "Cart page, reassurance reviews near the checkout button to reduce abandonment." },
+      { id: "5-5", text: "Video reviews are the most powerful, prioritise them wherever possible." },
       { id: "5-6", text: "Reviews with photos / images come second." },
       { id: "5-7", text: "Written reviews work best when paired with a video or image, not on their own." },
       { id: "5-8", text: "On product pages, show product-specific reviews (not generic store reviews)." },
-      { id: "5-9", text: "On home / collection pages, surface your top \"hero\" reviews — the most detailed, credible, and visual ones." },
+      { id: "5-9", text: "On home / collection pages, surface your top \"hero\" reviews, the most detailed, credible, and visual ones." },
     ],
     whyItMatters:
       "Buyers trust other buyers far more than brand copy. Video + photo reviews placed throughout the buying journey remove doubt at every step.",
     images: [
-      { src: "/lovable-uploads/cro-audit/reviews-1.png", caption: "Reviews — example 1" },
-      { src: "/lovable-uploads/cro-audit/reviews-2.png", caption: "Reviews — example 2" },
-      { src: "/lovable-uploads/cro-audit/reviews-3.png", caption: "Reviews — example 3" },
+      { src: "/lovable-uploads/cro-audit/reviews-1.png", caption: "Reviews, example 1" },
+      { src: "/lovable-uploads/cro-audit/reviews-2.png", caption: "Reviews, example 2" },
+      { src: "/lovable-uploads/cro-audit/reviews-3.png", caption: "Reviews, example 3" },
     ],
   },
   {
@@ -194,8 +194,8 @@ const sections: AuditSection[] = [
     items: [
       { id: "6-1", text: "Infographics that explain features, dimensions, materials, or how the product works." },
       { id: "6-2", text: "Short product demo / how-to-use videos." },
-      { id: "6-3", text: "UGC (User-Generated Content) — real customers using the product." },
-      { id: "6-4", text: "Comparison images — \"with vs without\" or \"us vs competitor\" style visuals." },
+      { id: "6-3", text: "UGC (User-Generated Content), real customers using the product." },
+      { id: "6-4", text: "Comparison images, \"with vs without\" or \"us vs competitor\" style visuals." },
       { id: "6-5", text: "Lifestyle shots showing the product in real-world context, not just on a white background." },
     ],
     whyItMatters:
@@ -213,9 +213,9 @@ const sections: AuditSection[] = [
       "An Instagram feed embedded on the site shows the brand is alive and active, generates social proof through UGC, and gives visitors another reason to follow.",
     items: [
       { id: "7-1", text: "Embed an Instagram feed section on the home page (typically above the footer)." },
-      { id: "7-2", text: "Post strong videos consistently on Instagram so the embedded feed actually looks impressive — not empty or stale." },
+      { id: "7-2", text: "Post strong videos consistently on Instagram so the embedded feed actually looks impressive, not empty or stale." },
       { id: "7-3", text: "Prioritise UGC and authority-building content (customer videos, behind the scenes, founder content)." },
-      { id: "7-4", text: "Make every embedded post clickable — link to the IG profile or the relevant product." },
+      { id: "7-4", text: "Make every embedded post clickable, link to the IG profile or the relevant product." },
     ],
     whyItMatters:
       "An active embedded Instagram feed builds brand authority, grows social following from website traffic, and gives buyers fresh social proof every time they visit.",
@@ -225,8 +225,8 @@ const sections: AuditSection[] = [
       text: "More design inspiration for the Instagram section: Webflow Instagram Feed (cloneable)",
     },
     images: [
-      { src: "/lovable-uploads/cro-audit/instagram-1.png", caption: "Instagram embed — example 1" },
-      { src: "/lovable-uploads/cro-audit/instagram-2.png", caption: "Instagram embed — example 2" },
+      { src: "/lovable-uploads/cro-audit/instagram-1.png", caption: "Instagram embed, example 1" },
+      { src: "/lovable-uploads/cro-audit/instagram-2.png", caption: "Instagram embed, example 2" },
     ],
   },
 ];
@@ -258,8 +258,8 @@ export default function EcommerceCROAuditGuide() {
     <div className="min-h-screen bg-gradient-to-br from-emerald-50/30 via-white to-green-50/30">
       <PublicHeader />
       <SEO
-        title="Ecommerce Website CRO Audit — 7-Section Manual Checklist"
-        description="A 7-section walkthrough of your eCommerce store in the order a real visitor experiences it — banners, search, popups, mobile menu, reviews, gallery, Instagram."
+        title="Ecommerce Website CRO Audit, 7-Section Manual Checklist"
+        description="A 7-section walkthrough of your eCommerce store in the order a real visitor experiences it, banners, search, popups, mobile menu, reviews, gallery, Instagram."
         ogType="article"
       />
 
@@ -297,7 +297,7 @@ export default function EcommerceCROAuditGuide() {
             Ecommerce Website CRO Audit
           </h1>
           <p className="text-base md:text-xl text-emerald-50/95 max-w-3xl mb-6">
-            A 7-section walk-through of your store in the same order a real visitor experiences it —
+            A 7-section walk-through of your store in the same order a real visitor experiences it -
             from the moment they land, through navigation and search, all the way to social proof
             and Instagram engagement. Each section explains{" "}
             <span className="font-semibold">what to add</span>,{" "}
@@ -508,7 +508,7 @@ export default function EcommerceCROAuditGuide() {
             Done with the audit?
           </h2>
           <p className="text-emerald-50/95 mb-6 max-w-2xl mx-auto">
-            Now run the data-driven analyses on your Google Ads — find the products and search
+            Now run the data-driven analyses on your Google Ads, find the products and search
             terms that are eating budget, and the ones quietly making you money.
           </p>
           <div className="flex flex-wrap justify-center gap-3">

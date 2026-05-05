@@ -100,7 +100,7 @@ const NavigationHeader: React.FC<NavigationHeaderProps> = ({
     try {
       const res = await api.post(
         "/google-ads/connections",
-        {}, // body empty — server should use req.user from protect
+        {}, // body empty, server should use req.user from protect
         { headers: getAuthHeader() }
       );
 

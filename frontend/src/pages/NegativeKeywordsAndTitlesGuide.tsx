@@ -1,13 +1,13 @@
 // Negative Keywords & Product Titles Analysis guide.
 //
 // Manual workflow guide (no Google Ads connection from our app):
-//   Part 1 — download Last 30 Days Search Terms from Google Ads
-//   Part 2 — download Last 30 Days Product Title Data from Google Ads
-//   Part 3 — run those Excel files through the "negative-keyword-targeting"
+//   Part 1, download Last 30 Days Search Terms from Google Ads
+//   Part 2, download Last 30 Days Product Title Data from Google Ads
+//   Part 3, run those Excel files through the "negative-keyword-targeting"
 //            Claude skill to get back two outputs: a negatives list (Excel)
 //            and a product title audit (Word).
 //
-// Same green palette as the other guides — no purples.
+// Same green palette as the other guides, no purples.
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -38,7 +38,7 @@ import {
   PlayCircle,
 } from "lucide-react";
 
-// File served from /public — see frontend/public/lovable-uploads/skills/
+// File served from /public, see frontend/public/lovable-uploads/skills/
 const SKILL_FILE_HREF = "/lovable-uploads/skills/negative-keyword-targeting.skill";
 const SKILL_FILE_NAME = "negative-keyword-targeting.skill";
 
@@ -55,9 +55,9 @@ interface Part {
   icon: React.ComponentType<{ className?: string }>;
   steps: Step[];
   images?: { src: string; caption: string }[];
-  // For Part 3 — extra "prompt" callout to copy/paste
+  // For Part 3, extra "prompt" callout to copy/paste
   prompt?: string;
-  // For Part 3 — outcome description
+  // For Part 3, outcome description
   outcome?: string;
 }
 
@@ -125,12 +125,12 @@ const parts: Part[] = [
         text: "Download the \"negative-keyword-targeting\" skill (button below) and upload it to your Claude skills.",
       },
       { id: "3-2", text: "Upload BOTH Excel files (search terms + product title data) to Claude in the same chat." },
-      { id: "3-3", text: "Paste the prompt shown below — replace [website-link] with your store URL." },
+      { id: "3-3", text: "Paste the prompt shown below, replace [website-link] with your store URL." },
     ],
     prompt:
       'For the website [website-link], work on the files I attached, use the skill "negative-keyword-targeting" and perform the analysis.',
     outcome:
-      "Claude returns two files — the negative keywords list (Excel) to apply in Google Ads, and the product title audit (Word) telling you exactly which titles to rewrite and how.",
+      "Claude returns two files, the negative keywords list (Excel) to apply in Google Ads, and the product title audit (Word) telling you exactly which titles to rewrite and how.",
   },
 ];
 
@@ -164,7 +164,7 @@ export default function NegativeKeywordsAndTitlesGuide() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // ignore — non-https or denied
+      // ignore, non-https or denied
     }
   };
 
@@ -172,7 +172,7 @@ export default function NegativeKeywordsAndTitlesGuide() {
     <div className="min-h-screen bg-gradient-to-br from-emerald-50/30 via-white to-green-50/30">
       <PublicHeader />
       <SEO
-        title="Negative Keywords + Product Titles — Google Ads Workflow"
+        title="Negative Keywords + Product Titles, Google Ads Workflow"
         description="Step-by-step workflow: pull 30 days of search-term + product-title data from Google Ads, run it through the Claude skill, get a ready-to-apply negatives list and a product-title audit."
         ogType="article"
       />
@@ -248,7 +248,7 @@ export default function NegativeKeywordsAndTitlesGuide() {
               <div className="border border-emerald-200 bg-emerald-50/40 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <FileSpreadsheet className="w-5 h-5 text-emerald-700" />
-                  <h3 className="font-semibold text-emerald-900">Output 1 — Negative Keywords List</h3>
+                  <h3 className="font-semibold text-emerald-900">Output 1, Negative Keywords List</h3>
                 </div>
                 <ul className="text-sm text-emerald-900/90 space-y-1.5 list-disc pl-5">
                   <li>Identifies search terms wasting ad spend (irrelevant traffic, wrong intent, junk queries).</li>
@@ -259,11 +259,11 @@ export default function NegativeKeywordsAndTitlesGuide() {
               <div className="border border-emerald-200 bg-emerald-50/40 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <FileText className="w-5 h-5 text-emerald-700" />
-                  <h3 className="font-semibold text-emerald-900">Output 2 — Product Title Audit</h3>
+                  <h3 className="font-semibold text-emerald-900">Output 2, Product Title Audit</h3>
                 </div>
                 <ul className="text-sm text-emerald-900/90 space-y-1.5 list-disc pl-5">
                   <li>In PMax, Google uses your product titles to decide which keywords to show ads against.</li>
-                  <li>If titles contain wrong, vague, or misleading words, ads end up triggered on the wrong searches — the root cause of most negatives in the first place.</li>
+                  <li>If titles contain wrong, vague, or misleading words, ads end up triggered on the wrong searches, the root cause of most negatives in the first place.</li>
                   <li>Flags titles that need to be rewritten so ads start showing on the right searches.</li>
                   <li>Better titles = higher CTR = lower CPC.</li>
                 </ul>
@@ -276,7 +276,7 @@ export default function NegativeKeywordsAndTitlesGuide() {
                 <p className="text-sm text-amber-900">
                   <span className="font-semibold">Why it matters:</span> Most teams treat negative
                   keywords and product titles as two separate problems. They are not. Bad titles
-                  CAUSE bad search terms. Fixing titles fixes the source — adding negatives fixes
+                  CAUSE bad search terms. Fixing titles fixes the source, adding negatives fixes
                   the symptoms. You need to do both, and this analysis covers both in one run.
                 </p>
               </div>
@@ -347,7 +347,7 @@ export default function NegativeKeywordsAndTitlesGuide() {
                     ))}
                   </div>
 
-                  {/* Skill download — only Part 3 has it */}
+                  {/* Skill download, only Part 3 has it */}
                   {p.id === "part-3" && (
                     <div className="bg-emerald-50 border border-emerald-300 rounded-lg p-5 flex flex-col sm:flex-row sm:items-center gap-4">
                       <div className="flex-1">
@@ -367,7 +367,7 @@ export default function NegativeKeywordsAndTitlesGuide() {
                     </div>
                   )}
 
-                  {/* Prompt to copy — only Part 3 */}
+                  {/* Prompt to copy, only Part 3 */}
                   {p.prompt && (
                     <div>
                       <div className="text-sm font-semibold text-gray-700 mb-2">

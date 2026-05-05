@@ -585,7 +585,7 @@ const UnifiedOnDemandReport: React.FC<UnifiedOnDemandReportProps> = ({
           <div className="space-y-6">
             {/* Only show this drill-down when the selected account is an MCC
                 with children other than itself. If list-accounts only returns
-                the selected account, it's a leaf — no need to ask again. */}
+                the selected account, it's a leaf, no need to ask again. */}
             {childAccounts.filter((a) => a.id !== selectedAccountId).length > 0 && (
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -677,7 +677,7 @@ const UnifiedOnDemandReport: React.FC<UnifiedOnDemandReportProps> = ({
                     <div>
                       <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-semibold">
-                          Category Summary — {tab.label}
+                          Category Summary, {tab.label}
                           {selectedCampaign !== 'all' && (
                             <span className="text-sm font-normal text-gray-600 ml-2">
                               (Campaign: {currentData.campaign_list.find(c => c.id === selectedCampaign)?.name})
@@ -728,7 +728,7 @@ const UnifiedOnDemandReport: React.FC<UnifiedOnDemandReportProps> = ({
                   {currentData.product_details.length > 0 && (
                     <div>
                       <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold">Product Details — {tab.label}</h3>
+                        <h3 className="text-lg font-semibold">Product Details, {tab.label}</h3>
                         <div className="flex gap-4">
                           <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
                             <SelectTrigger className="w-48">

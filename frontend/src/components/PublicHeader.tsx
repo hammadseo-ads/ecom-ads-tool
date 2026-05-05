@@ -10,7 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 const PublicHeader = () => {
   const { user, cleanupAuthState } = useUser();
-  // Authoritative auth state from our own JWT cookie (NOT Auth0 — we don't
+  // Authoritative auth state from our own JWT cookie (NOT Auth0, we don't
   // actually use Auth0 for sessions). Keeping `logout` from Auth0 around for
   // the JS API even though we don't call it.
   const isAuthenticated = !!user;
@@ -141,7 +141,7 @@ const PublicHeader = () => {
           {!isMobile && (
             <div className="flex items-center space-x-4">
               {/* Always-visible public nav (Case Studies / Analysis Tool / Guides)
-                  — shown regardless of auth state. Auth-specific buttons (Dashboard
+                 , shown regardless of auth state. Auth-specific buttons (Dashboard
                   vs Sign In / Get Started) live in the conditional block below. */}
               <>
                   <div
@@ -157,7 +157,7 @@ const PublicHeader = () => {
                       </Button>
                     </Link>
 
-                    {/* Dropdown Menu — wrapper has top-full + pt-2 so the
+                    {/* Dropdown Menu, wrapper has top-full + pt-2 so the
                         visual 8px gap is part of the hoverable region (fixes
                         the "dropdown disappears when reaching for it" bug). */}
                     {isDropdownOpen && (
@@ -218,7 +218,7 @@ const PublicHeader = () => {
                       </div>
                     )}
                   </div>
-                  {/* Analysis Tool dropdown — eCommerce vs Lead Gen */}
+                  {/* Analysis Tool dropdown, eCommerce vs Lead Gen */}
                   <div
                     className="relative"
                     onMouseEnter={() => setIsToolDropdownOpen(true)}
@@ -282,7 +282,7 @@ const PublicHeader = () => {
                       </Button>
                     </Link>
 
-                    {/* Guides Mega Menu — wrapper provides hoverable bridge */}
+                    {/* Guides Mega Menu, wrapper provides hoverable bridge */}
                     {isGuidesDropdownOpen && (
                       <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
                       <Card className="w-[640px] max-w-[calc(100vw-2rem)] bg-white border shadow-xl p-4">
@@ -335,7 +335,7 @@ const PublicHeader = () => {
                   </div>
               </>
 
-              {/* Auth-state buttons — Dashboard for logged-in users; Sign In / Get Started otherwise */}
+              {/* Auth-state buttons, Dashboard for logged-in users; Sign In / Get Started otherwise */}
               {isAuthenticated ? (
                 <>
                   <Link to="/dashboard">

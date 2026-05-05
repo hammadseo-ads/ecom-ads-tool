@@ -1,7 +1,7 @@
-// /lead-gen-tool — public landing page for the Lead Generation track.
+// /lead-gen-tool, public landing page for the Lead Generation track.
 // Mirrors /ads-tool structurally but: (1) lead-gen positioning, (2) NO
-// product-image-heavy sections (per user request), (3) ranks by conversions
-// + cost-per-conversion instead of ROAS.
+// product-image-heavy sections, (3) every metric framed around leads,
+// form-fills, and cost-per-conversion (not ROAS or revenue).
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -57,13 +57,13 @@ const LeadGenAnalysisTool = () => {
       icon: Calendar,
       title: "Heat Map (Hour × Day)",
       description:
-        "See which hours and days actually convert. Suggested bid adjustments are built on conversion rate, not ROAS — so they work for lead-gen accounts that don't track revenue.",
+        "See which hours and days actually convert. Suggested bid adjustments are built on conversion rate, so they work for any lead-gen account regardless of how revenue is tracked.",
     },
     {
       icon: MapPin,
       title: "Geographic Performance",
       description:
-        "Find which cities, regions, and zip codes produce the cheapest leads — and which ones to exclude. Action labels respect each campaign type's bid-modifier rules.",
+        "Find which cities, regions, and zip codes produce the cheapest leads, and which ones to exclude. Action labels respect each campaign type's bid-modifier rules.",
     },
     {
       icon: Type,
@@ -83,8 +83,8 @@ const LeadGenAnalysisTool = () => {
     <>
       <PublicHeader />
       <SEO
-        title="Lead Generation Google Ads Analysis Tool — Free"
-        description="Free Google Ads analysis tool built for lead-generation businesses. Find wasted spend on non-converting keywords, the best hours and geos for leads, and the search-term patterns to add as negatives — all ranked by conversions and cost-per-lead, not ROAS."
+        title="Lead Generation Google Ads Analysis Tool, Free"
+        description="Free Google Ads analysis tool built for lead-generation businesses. Find wasted spend on non-converting keywords, the best hours and geos for leads, and the search-term patterns to add as negatives, all measured by conversions and cost-per-lead."
         ogType="website"
       />
       <div className="min-h-screen bg-background">
@@ -110,7 +110,7 @@ const LeadGenAnalysisTool = () => {
           <div className="relative max-w-5xl mx-auto text-center text-white">
             <div className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 rounded-full px-4 py-1.5 text-xs font-semibold text-emerald-100 mb-6">
               <Target className="w-3.5 h-3.5" />
-              Built for Lead Gen — not eCommerce
+              Built for Lead Gen, not eCommerce
             </div>
             <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
               Stop paying Google for clicks that{" "}
@@ -119,8 +119,8 @@ const LeadGenAnalysisTool = () => {
             <p className="text-lg md:text-xl text-emerald-50/90 max-w-3xl mx-auto mb-8">
               Most lead-gen accounts waste 30–60% of their Google Ads spend on
               keywords, hours, and geos that never produce a single form-fill
-              or call. This free tool surfaces every one of them — ranked by
-              conversions and cost-per-lead, not ROAS.
+              or call. This free tool surfaces every one of them, ranked by
+              conversions and cost-per-lead.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Button
@@ -145,63 +145,48 @@ const LeadGenAnalysisTool = () => {
           </div>
         </section>
 
-        {/* Why lead-gen needs different tools */}
+        {/* What the tool does for service businesses */}
         <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-background via-emerald-50/40 to-emerald-100/30">
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-10">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-                ROAS-first tools don't fit lead generation
+                Built for the way service businesses count success
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Lead-gen accounts almost never have a clean revenue figure
-                attached to each conversion. A "lead" is a contact — its real
-                value isn't known for weeks. Tools that rank everything by
-                ROAS give you garbage. We rank by what you actually have:
-                <strong> conversions</strong> and{" "}
-                <strong> cost-per-conversion (CPA)</strong>.
+                Every report measures what your business actually depends on:
+                form-fills, phone calls, and qualified leads. Run any tool,
+                read the result, and apply the fix inside Google Ads. No
+                rebuild, no agency contract, no spreadsheets.
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white border-2 border-red-200 rounded-xl p-6">
+              <div className="bg-white border-2 border-emerald-300 rounded-xl p-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <AlertTriangle className="w-5 h-5 text-red-600" />
+                  <CheckCircle className="w-5 h-5 text-emerald-600" />
                   <h3 className="font-semibold text-gray-900">
-                    The eCommerce way (broken for lead gen)
+                    What every analysis answers
                   </h3>
                 </div>
                 <ul className="text-sm text-gray-700 space-y-1.5 list-disc pl-5">
-                  <li>Ranks by ROAS / conversion value</li>
-                  <li>Assumes every conversion has revenue attached</li>
-                  <li>
-                    Recommends bid changes proportional to revenue —
-                    meaningless if revenue isn't tracked
-                  </li>
-                  <li>
-                    Pulls from <code>shopping_performance_view</code> — empty
-                    for lead-gen accounts
-                  </li>
+                  <li>Which keywords burned budget without producing a single lead</li>
+                  <li>Which hours of the week your phone actually rings</li>
+                  <li>Which cities, regions and zip codes deliver the cheapest leads</li>
+                  <li>Which word patterns in the search-term report are the strongest negative-keyword candidates</li>
                 </ul>
               </div>
               <div className="bg-white border-2 border-emerald-300 rounded-xl p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <CheckCircle className="w-5 h-5 text-emerald-600" />
                   <h3 className="font-semibold text-gray-900">
-                    The lead-gen way (this tool)
+                    What you do with the answers
                   </h3>
                 </div>
                 <ul className="text-sm text-gray-700 space-y-1.5 list-disc pl-5">
-                  <li>Ranks by conversions + cost-per-conversion</li>
-                  <li>Treats every form-fill / call as the success unit</li>
-                  <li>
-                    Bid recommendations use conversion rate vs the account
-                    average
-                  </li>
-                  <li>
-                    Pulls from <code>search_term_view</code>,{" "}
-                    <code>geographic_view</code>, and per-campaign hour-of-day
-                    data — works on any lead-gen account
-                  </li>
+                  <li>Add the wasted keywords to your shared negative list</li>
+                  <li>Set hour-of-day bid adjustments where leads convert best</li>
+                  <li>Exclude the geographies that consistently waste budget</li>
+                  <li>Apply the n-gram patterns once and stop dozens of bad searches at the same time</li>
                 </ul>
               </div>
             </div>
@@ -216,11 +201,11 @@ const LeadGenAnalysisTool = () => {
                 What you get
               </span>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-                Four free analyses, all conversion-based
+                Four free analyses, built around real leads
               </h2>
               <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
                 Connect your Google Ads (read-only) and run any of these
-                whenever you want. Nothing is ever changed in your account —
+                whenever you want. Nothing is ever changed in your account -
                 we surface the data, you apply the fix.
               </p>
             </div>
@@ -292,7 +277,7 @@ const LeadGenAnalysisTool = () => {
                 <strong className="text-white">
                   20% of the keywords drive 80% of the leads
                 </strong>{" "}
-                — and the other 80% of keywords burn 30–60% of the budget on
+               , and the other 80% of keywords burn 30–60% of the budget on
                 clicks that never convert.
               </p>
               <p className="text-sm text-emerald-100/80 mt-4 max-w-xl mx-auto">
@@ -340,7 +325,7 @@ const LeadGenAnalysisTool = () => {
                 {
                   n: "3",
                   title: "Apply the fixes",
-                  desc: "Every report tells you exactly what to do — add these negatives, exclude these locations, raise/lower these hour bids. You apply them inside Google Ads UI.",
+                  desc: "Every report tells you exactly what to do, add these negatives, exclude these locations, raise/lower these hour bids. You apply them inside Google Ads UI.",
                   icon: CheckCircle,
                 },
               ].map((s) => {

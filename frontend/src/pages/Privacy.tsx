@@ -14,7 +14,7 @@ const Privacy = () => {
     <div className="min-h-screen bg-gray-50">
       <SEO
         title="Privacy Policy"
-        description="Privacy policy for Ads Analysis by ManagingSEO — what data we collect, how we store it, and how to delete it."
+        description="Privacy policy for Ads Analysis by ManagingSEO, what data we collect, how we store it, and how to delete it."
         ogType="website"
       />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

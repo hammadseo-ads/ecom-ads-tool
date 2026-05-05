@@ -72,7 +72,7 @@ export default function SimpleGoogleAdsSalesFormula() {
     <>
       <PublicHeader />
       <SEO
-        title="Simple Google Ads Sales Formula — 5-Step Boost"
+        title="Simple Google Ads Sales Formula, 5-Step Boost"
         description="A 5-step formula to lift Google Ads sales without rebuilding your account from scratch. Practical, no-fluff playbook."
         ogType="article"
       />

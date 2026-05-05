@@ -1,4 +1,4 @@
-// src/App.tsx ← FINAL VERSION — YOU WILL BE REDIRECTED TO DASHBOARD AFTER LOGIN
+// src/App.tsx ← FINAL VERSION, YOU WILL BE REDIRECTED TO DASHBOARD AFTER LOGIN
 import React from "react";
 import { Toaster } from "./components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";

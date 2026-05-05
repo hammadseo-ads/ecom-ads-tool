@@ -1,4 +1,4 @@
-// Lead-Gen — Budget Wastage by Keywords
+// Lead-Gen, Budget Wastage by Keywords
 // /dashboard/lead-gen/wasted-keywords
 //
 // Surfaces every search term that spent budget but produced ZERO conversions
@@ -313,8 +313,8 @@ const Inner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
   return (
     <div className="space-y-6 pb-20">
       <SEO
-        title="Lead-Gen Wasted Keywords — Find Non-Converting Spend"
-        description="Find every search term that burned budget over the last 30 / 60 / 90 days without producing a single conversion. Lead-gen optimized — no ROAS required."
+        title="Lead-Gen Wasted Keywords, Find Non-Converting Spend"
+        description="Find every search term that burned budget over the last 30 / 60 / 90 days without producing a single conversion. Lead-gen optimized, no ROAS required."
         ogType="website"
         noindex
       />

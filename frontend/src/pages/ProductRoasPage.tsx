@@ -105,15 +105,15 @@ const BUCKET_ORDER = ["Heroes", "Costly", "Zombies", "Sleepers", "Low Volume"];
 
 const BUCKET_META: Record<string, { color: string; icon: any; description: string }> = {
   Heroes: { color: "text-green-700 bg-green-50 border-green-300", icon: Trophy,
-    description: "High ROAS, high spend — protect & scale" },
+    description: "High ROAS, high spend, protect & scale" },
   Costly: { color: "text-red-700 bg-red-50 border-red-300", icon: TrendingDown,
-    description: "High spend, weak ROAS — cut or restructure" },
+    description: "High spend, weak ROAS, cut or restructure" },
   Zombies: { color: "text-gray-700 bg-gray-100 border-gray-400", icon: Skull,
-    description: "Impressions but ZERO clicks — title/image issue" },
+    description: "Impressions but ZERO clicks, title/image issue" },
   Sleepers: { color: "text-amber-800 bg-amber-50 border-amber-300", icon: Clock,
-    description: "Clicks but ZERO conversions — funnel issue" },
+    description: "Clicks but ZERO conversions, funnel issue" },
   "Low Volume": { color: "text-blue-700 bg-blue-50 border-blue-300", icon: Layers,
-    description: "Below min-spend — insufficient data" },
+    description: "Below min-spend, insufficient data" },
 };
 
 const empty = (): PeriodData => ({ product_details: [], summary_table: [], total_products: 0 });
@@ -244,7 +244,7 @@ const ProductRoasInner = ({ selectedAccountId, selectedAccountName }: InnerProps
         if (e?.message?.includes("Generation failed")) throw e;
       }
     }
-    throw new Error("Generation took longer than 10 minutes — check backend logs.");
+    throw new Error("Generation took longer than 10 minutes, check backend logs.");
   };
 
   const handleSaveThresholds = async () => {
@@ -399,9 +399,9 @@ const ProductRoasInner = ({ selectedAccountId, selectedAccountName }: InnerProps
             <CardTitle className="text-2xl">PMax Product ROAS Analysis</CardTitle>
           </div>
           <CardDescription>
-            Mike Rhodes-style bucketing — sorts every PMax product into Heroes / Costly / Zombies /
+            Mike Rhodes-style bucketing, sorts every PMax product into Heroes / Costly / Zombies /
             Sleepers / Low Volume based on your thresholds, for{" "}
-            <span className="font-semibold">{selectedAccountName || "—"}</span>{" "}
+            <span className="font-semibold">{selectedAccountName || "-"}</span>{" "}
             {selectedAccountId && <span className="text-gray-400">({selectedAccountId})</span>}
           </CardDescription>
         </CardHeader>
@@ -423,7 +423,7 @@ const ProductRoasInner = ({ selectedAccountId, selectedAccountName }: InnerProps
                   <RefreshCw className="w-4 h-4 animate-spin flex-shrink-0" />
                   <span>
                     <strong>Working in background:</strong> {progress || "Starting..."}
-                    {" "}— safe to leave this tab open.
+                    {" "}- safe to leave this tab open.
                   </span>
                 </div>
               )}
@@ -434,7 +434,7 @@ const ProductRoasInner = ({ selectedAccountId, selectedAccountName }: InnerProps
         </CardContent>
       </Card>
 
-      {/* Threshold config — per-account, user-saved */}
+      {/* Threshold config, per-account, user-saved */}
       {selectedAccountId && (
         <Card className="border-emerald-100">
           <CardHeader>
@@ -569,7 +569,7 @@ const ProductRoasInner = ({ selectedAccountId, selectedAccountName }: InnerProps
                         <SelectItem value="all">All buckets</SelectItem>
                         {BUCKET_ORDER.map((b) => (
                           <SelectItem key={b} value={b}>
-                            {b} {selectedBucket === b ? "" : `— ${BUCKET_META[b].description}`}
+                            {b} {selectedBucket === b ? "" : `- ${BUCKET_META[b].description}`}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -621,10 +621,10 @@ const ProductRoasInner = ({ selectedAccountId, selectedAccountName }: InnerProps
                               <td className="text-right px-3 py-2 tabular-nums">{r.total_conversions.toFixed(1)}</td>
                               <td className="text-right px-3 py-2 tabular-nums">{fmtMoney(r.total_conversion_value)}</td>
                               <td className="text-right px-3 py-2 tabular-nums">
-                                {r.total_cost > 0 ? r.roas.toFixed(2) : <span className="text-gray-300">—</span>}
+                                {r.total_cost > 0 ? r.roas.toFixed(2) : <span className="text-gray-300">-</span>}
                               </td>
                               <td className="text-right px-3 py-2 tabular-nums">
-                                {r.total_conversions > 0 ? fmtMoney(r.cpa) : <span className="text-gray-300">—</span>}
+                                {r.total_conversions > 0 ? fmtMoney(r.cpa) : <span className="text-gray-300">-</span>}
                               </td>
                             </tr>
                           ))}

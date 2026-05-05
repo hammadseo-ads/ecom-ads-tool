@@ -24,7 +24,7 @@ const ZombieProductsGuide = () => {
     <>
       <PublicHeader />
       <SEO
-        title="Zombie Products — Reactivate Low-Visibility Items"
+        title="Zombie Products, Reactivate Low-Visibility Items"
         description="How to find and revive zombie products (low impressions, no sales) hiding in your Google Shopping and Performance Max feeds."
         ogType="article"
       />

@@ -18,7 +18,7 @@ import OptimizedNavigationHeader from "./OptimizedNavigationHeader";
 import { WelcomeMessage } from "./ui/WelcomeMessage";
 
 interface DashboardShellProps {
-  // (selectedAccountId, selectedAccountName) — render-prop so children get the
+  // (selectedAccountId, selectedAccountName), render-prop so children get the
   // current selection without each page maintaining its own state.
   children: (ctx: { selectedAccountId: string; selectedAccountName: string }) => ReactNode;
   // Hide the "select an account" prompt on pages that don't need an account

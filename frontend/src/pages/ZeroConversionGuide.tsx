@@ -24,8 +24,8 @@ const ZeroConversionGuide = () => {
     <>
       <PublicHeader />
       <SEO
-        title="Zero-Conversion Products — Find What is Wasting Your Budget"
-        description="Diagnose products with clicks but no conversions on Google Shopping and PMax — and decide whether to fix, exclude, or pause them."
+        title="Zero-Conversion Products, Find What is Wasting Your Budget"
+        description="Diagnose products with clicks but no conversions on Google Shopping and PMax, and decide whether to fix, exclude, or pause them."
         ogType="article"
       />
       <div className="min-h-screen bg-background">

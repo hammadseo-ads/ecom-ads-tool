@@ -44,7 +44,7 @@ export const useUser = () => {
           setUser(retry.data.user);
           return;
         } catch (refreshErr) {
-          // Refresh failed too — really not logged in.
+          // Refresh failed too, really not logged in.
           localStorage.removeItem("accessToken");
           setUser(null);
         }

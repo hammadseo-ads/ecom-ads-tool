@@ -1,13 +1,13 @@
-// Lead-Gen Geographic Performance — uses the SAME backend as the eCom geo
+// Lead-Gen Geographic Performance, uses the SAME backend as the eCom geo
 // tool (/api/geo). UI focus is conversions + cost-per-conversion (CPA)
 // rather than ROAS, with the same per-row action labels.
 //
 // Locations are bucketed Winner / Loser / Sparse based on user thresholds.
 // Per-row action labels respect campaign type:
 //   - Search/Shopping campaigns: "Adjust bid" or "Exclude"
-//   - PMax campaigns: "Exclude only" — Google doesn't allow location bid
+//   - PMax campaigns: "Exclude only", Google doesn't allow location bid
 //     adjustments in PMax
-// If a location is hit by BOTH PMax and other channels, we show "Mixed —
+// If a location is hit by BOTH PMax and other channels, we show "Mixed -
 // adjust bids on Search/Shopping; exclude in PMax".
 
 import { useEffect, useState, useRef, useMemo } from "react";
@@ -88,9 +88,9 @@ const GRANULARITIES = [
 ];
 
 const BUCKET_META: Record<string, { color: string; icon: any; description: string }> = {
-  Winner: { color: "text-green-700 bg-green-50 border-green-300", icon: Trophy, description: "ROAS ≥ target — bid up or focus more here" },
-  Loser:  { color: "text-red-700 bg-red-50 border-red-300", icon: TrendingDown, description: "Spending without return — exclude or bid down" },
-  Sparse: { color: "text-gray-600 bg-gray-50 border-gray-300", icon: Layers, description: "Below min-spend — not enough data yet" },
+  Winner: { color: "text-green-700 bg-green-50 border-green-300", icon: Trophy, description: "ROAS ≥ target, bid up or focus more here" },
+  Loser:  { color: "text-red-700 bg-red-50 border-red-300", icon: TrendingDown, description: "Spending without return, exclude or bid down" },
+  Sparse: { color: "text-gray-600 bg-gray-50 border-gray-300", icon: Layers, description: "Below min-spend, not enough data yet" },
 };
 const BUCKET_ORDER = ["Winner", "Loser", "Sparse"];
 
@@ -126,7 +126,7 @@ const actionLabel = (row: GeoRow): { text: string; color: string } => {
   const hasOther = [...channels].some((c) => c !== "PERFORMANCE_MAX" && c !== "UNKNOWN");
   if (row.bucket === "Winner") {
     if (hasPMax && !hasOther) return { text: "Keep / can't bid-up (PMax)", color: "text-emerald-700" };
-    if (hasPMax && hasOther) return { text: "Mixed — bid up on Search/Shopping", color: "text-emerald-700" };
+    if (hasPMax && hasOther) return { text: "Mixed, bid up on Search/Shopping", color: "text-emerald-700" };
     return { text: "Bid UP or focus more", color: "text-emerald-700" };
   }
   if (row.bucket === "Loser") {
@@ -236,7 +236,7 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
         if (e?.message?.includes("Generation failed")) throw e;
       }
     }
-    throw new Error("Generation took longer than 10 minutes — check backend logs.");
+    throw new Error("Generation took longer than 10 minutes, check backend logs.");
   };
 
   const handleSaveThresholds = async () => {
@@ -373,7 +373,7 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
           </div>
           <CardDescription>
             Find your winning &amp; losing zip codes, cities, regions, and metros for{" "}
-            <span className="font-semibold">{selectedAccountName || "—"}</span>{" "}
+            <span className="font-semibold">{selectedAccountName || "-"}</span>{" "}
             {selectedAccountId && <span className="text-gray-400">({selectedAccountId})</span>}
           </CardDescription>
         </CardHeader>
@@ -503,7 +503,7 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
                     <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                     <div className="text-sm text-amber-900">
                       <span className="font-semibold">Important:</span> PMax campaigns don't support
-                      location-based bid adjustments — only full <em>exclusion</em>. Action labels
+                      location-based bid adjustments, only full <em>exclusion</em>. Action labels
                       below are tailored per row based on which campaign types contributed.
                     </div>
                   </div>
@@ -562,10 +562,10 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
                                 <td className="text-right px-3 py-2 tabular-nums">{fmtMoney(r.total_cost)}</td>
                                 <td className="text-right px-3 py-2 tabular-nums">{r.total_conversions.toFixed(1)}</td>
                                 <td className="text-right px-3 py-2 tabular-nums">
-                                  {r.total_cost > 0 ? r.roas.toFixed(2) : <span className="text-gray-300">—</span>}
+                                  {r.total_cost > 0 ? r.roas.toFixed(2) : <span className="text-gray-300">-</span>}
                                 </td>
                                 <td className="text-right px-3 py-2 tabular-nums">
-                                  {r.total_conversions > 0 ? fmtMoney(r.cpa) : <span className="text-gray-300">—</span>}
+                                  {r.total_conversions > 0 ? fmtMoney(r.cpa) : <span className="text-gray-300">-</span>}
                                 </td>
                               </tr>
                             );

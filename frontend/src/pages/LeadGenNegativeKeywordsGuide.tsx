@@ -2,10 +2,10 @@
 //
 // Mirrors NegativeKeywordsAndTitlesGuide.tsx structurally but is built for
 // lead-gen accounts:
-//   Part 1 — pull last 30 days of search-term data per campaign
-//   Part 2 — run that data through the lead-gen Claude skill (combined
+//   Part 1, pull last 30 days of search-term data per campaign
+//   Part 2, run that data through the lead-gen Claude skill (combined
 //            with your landing-page content) to get a tuned negatives list
-//   Part 3 — apply the negatives in Google Ads
+//   Part 3, apply the negatives in Google Ads
 //
 // Three deliberate placeholders waiting for content from the user:
 //   * The Claude .skill file (download button is a placeholder)
@@ -45,9 +45,20 @@ import {
 const SKILL_FILE_HREF: string | null =
   "/lovable-uploads/skills/lead-gen-negative-keywords.skill";
 const SKILL_FILE_NAME = "lead-gen-negative-keywords.skill";
-// Prompt text — will be wired in once the user provides it. Until then,
-// the prompt block stays hidden on the page.
-const SKILL_PROMPT_TEXT: string | null = null;
+// Prompt the user pastes into Claude after attaching their search-term file.
+// Replace the numbered list of ad groups + landing pages with your own.
+const SKILL_PROMPT_TEXT: string | null = `These are all my search terms in English from Google Ads. They are the queries my ads received over the last reporting period. I want to use the "lead-gen-negative-keywords" skill to find the negative keywords I should add.
+
+Below are my landing pages, listed one per ad group. List every ad group in your account here, with its landing-page URL next to the ad-group name, so the skill can match each search term to the right page.
+
+1. [Ad Group Name 1] - https://yoursite.com/page-1
+2. [Ad Group Name 2] - https://yoursite.com/page-2
+3. [Ad Group Name 3] - https://yoursite.com/page-3
+4. [Ad Group Name 4] - https://yoursite.com/page-4
+
+Add every ad group from your account in the same numbered format above, with the matching landing-page URL.
+
+Use the skill to read my landing pages, understand what I actually offer, and return: (a) a clean negative-keyword list I can paste into Google Ads, and (b) a short summary of the themes you excluded and why.`;
 
 interface Step {
   id: string;
@@ -69,7 +80,7 @@ const parts: Part[] = [
     number: "01",
     title: "Pull your last 30 days of search-term data",
     intro:
-      "You can either download the file straight from Google Ads UI, or use our built-in extractor inside the dashboard (recommended — it gives you the data in the exact shape the skill expects).",
+      "You can either download the file straight from Google Ads UI, or use our built-in extractor inside the dashboard (recommended, it gives you the data in the exact shape the skill expects).",
     icon: Search,
     steps: [
       {
@@ -112,7 +123,7 @@ const parts: Part[] = [
       },
       {
         id: "2-4",
-        text: "Claude reads your landing pages, understands what you actually sell, then classifies every search term as Relevant / Probably-Negative / Definitely-Negative based on your business — not generic templates.",
+        text: "Claude reads your landing pages, understands what you actually sell, then classifies every search term as Relevant / Probably-Negative / Definitely-Negative based on your business, not generic templates.",
       },
     ],
     outcome:
@@ -176,7 +187,7 @@ export default function LeadGenNegativeKeywordsGuide() {
     <div className="min-h-screen bg-gradient-to-br from-emerald-50/30 via-white to-green-50/30">
       <PublicHeader />
       <SEO
-        title="Lead-Gen Negative Keywords — Google Ads + Claude Workflow"
+        title="Lead-Gen Negative Keywords, Google Ads + Claude Workflow"
         description="Step-by-step workflow for lead-generation accounts: pull 30 days of search-term data, run it through our Claude skill (combined with your landing pages), and get back a negative-keywords list tuned to your actual business."
         ogType="article"
       />
@@ -222,7 +233,7 @@ export default function LeadGenNegativeKeywordsGuide() {
             Pull 30 days of search-term data, drop it into Claude with our
             lead-gen skill (which reads your landing pages to understand what
             you actually sell), and get back a negatives list tuned to your
-            business — not a generic template.
+            business, not a generic template.
           </p>
           <div className="flex flex-wrap gap-3">
             <Button
@@ -259,7 +270,7 @@ export default function LeadGenNegativeKeywordsGuide() {
                 <div className="flex items-center gap-2 mb-2">
                   <FileSpreadsheet className="w-5 h-5 text-emerald-700" />
                   <h3 className="font-semibold text-emerald-900">
-                    Output 1 — Negative Keywords List
+                    Output 1, Negative Keywords List
                   </h3>
                 </div>
                 <ul className="text-sm text-emerald-900/90 space-y-1.5 list-disc pl-5">
@@ -279,14 +290,14 @@ export default function LeadGenNegativeKeywordsGuide() {
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="w-5 h-5 text-emerald-700" />
                   <h3 className="font-semibold text-emerald-900">
-                    Output 2 — Theme Summary
+                    Output 2, Theme Summary
                   </h3>
                 </div>
                 <ul className="text-sm text-emerald-900/90 space-y-1.5 list-disc pl-5">
                   <li>
-                    A short note explaining the patterns the skill found —
+                    A short note explaining the patterns the skill found -
                     e.g. "lots of 'jobs' / 'careers' queries" or "many DIY-
-                    intent searches" — so you understand what the negatives
+                    intent searches", so you understand what the negatives
                     are actually fixing.
                   </li>
                   <li>
@@ -303,7 +314,7 @@ export default function LeadGenNegativeKeywordsGuide() {
                 <p className="text-sm text-amber-900">
                   <span className="font-semibold">Why landing pages matter:</span>{" "}
                   the skill reads your actual landing pages to understand what
-                  service you sell — so it can tell that "free legal advice"
+                  service you sell, so it can tell that "free legal advice"
                   is junk for a paid law firm but real intent for a legal-aid
                   nonprofit. Generic negative-keyword templates can't make
                   that distinction.
@@ -381,7 +392,7 @@ export default function LeadGenNegativeKeywordsGuide() {
                     ))}
                   </div>
 
-                  {/* Skill download — only Part 2; placeholder if file not ready */}
+                  {/* Skill download, only Part 2; placeholder if file not ready */}
                   {p.id === "part-2" && (
                     <div className="bg-emerald-50 border border-emerald-300 rounded-lg p-5 flex flex-col sm:flex-row sm:items-center gap-4">
                       <div className="flex-1">
@@ -400,7 +411,7 @@ export default function LeadGenNegativeKeywordsGuide() {
                         ) : (
                           <p className="text-sm text-emerald-900/85 flex items-start gap-2">
                             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                            Skill file is being finalized — download will
+                            Skill file is being finalized, download will
                             appear here shortly. In the meantime, you can run
                             Part 1 (data extraction) and we'll publish the
                             skill before you need Part 2.
@@ -418,7 +429,7 @@ export default function LeadGenNegativeKeywordsGuide() {
                     </div>
                   )}
 
-                  {/* Prompt placeholder — shown only when ready */}
+                  {/* Prompt placeholder, shown only when ready */}
                   {p.id === "part-2" && SKILL_PROMPT_TEXT && (
                     <div>
                       <div className="text-sm font-semibold text-gray-700 mb-2">
@@ -462,13 +473,23 @@ export default function LeadGenNegativeKeywordsGuide() {
                     </div>
                   )}
 
-                  {/* Reference screenshots — placeholder section */}
+                  {/* Reference screenshot for the manual fallback in Part 1 */}
                   {p.id === "part-1" && (
-                    <div className="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-4 text-sm text-gray-500 flex items-start gap-3">
-                      <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                      Reference screenshots coming soon. The dashboard
-                      extractor in step 1.2 already produces the file in the
-                      exact shape Claude expects, so visuals are optional.
+                    <div>
+                      <div className="text-sm font-semibold text-gray-700 mb-3">
+                        Reference screenshot
+                      </div>
+                      <figure className="border border-gray-200 rounded-lg overflow-hidden bg-white max-w-2xl">
+                        <img
+                          src="/lovable-uploads/negkw-titles/search-terms-path.png"
+                          alt="Path: Campaigns then Insights and Reports then Search Terms"
+                          loading="lazy"
+                          className="w-full h-auto block"
+                        />
+                        <figcaption className="px-3 py-2 text-xs text-gray-600 border-t border-gray-100 bg-gray-50">
+                          Manual path inside Google Ads: Campaigns &rarr; Insights and Reports &rarr; Search Terms.
+                        </figcaption>
+                      </figure>
                     </div>
                   )}
                 </CardContent>

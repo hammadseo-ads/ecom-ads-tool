@@ -64,7 +64,7 @@ const TopTinyPortfolio = () => {
     <div className="min-h-screen bg-background">
       <PublicHeader />
       <SEO
-        title="TopTiny Case Study — Scaled to $67k/mo at 9x ROAS"
+        title="TopTiny Case Study, Scaled to $67k/mo at 9x ROAS"
         description="TopTiny went from 4 months of zero sales to $67k/month at 9x ROAS through data-driven Google Ads restructuring. Full case study."
         ogType="article"
       />
