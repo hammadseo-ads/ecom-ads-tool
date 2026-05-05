@@ -296,8 +296,8 @@ const NavigationHeader: React.FC<NavigationHeaderProps> = ({
           <div className="flex justify-between items-center py-3 border-b border-gray-100">
             <div className="flex items-center">
               <img
-                src="/lovable-uploads/051b9e52-0e07-481f-80e2-9769a32180b0.png"
-                alt="Ecom Ads by ManagingSEO"
+                src="/lovable-uploads/ads-analysis-by-managingseo.png"
+                alt="Ads Analysis by ManagingSEO"
                 className="h-12 w-auto"
               />
             </div>
@@ -434,8 +434,8 @@ const NavigationHeader: React.FC<NavigationHeaderProps> = ({
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-8">
             <img
-              src="/lovable-uploads/051b9e52-0e07-481f-80e2-9769a32180b0.png"
-              alt="Ecom Ads by ManagingSEO"
+              src="/lovable-uploads/ads-analysis-by-managingseo.png"
+              alt="Ads Analysis by ManagingSEO"
               className="h-20 w-auto"
             />
           </div>

@@ -161,7 +161,7 @@ const OptimizedNavigationHeader: React.FC<NavigationHeaderProps> = ({
       <header className="bg-white shadow-sm border-b relative z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-3 border-b border-gray-100">
-            <img src="/lovable-uploads/051b9e52-0e07-481f-80e2-9769a32180b0.png" alt="Logo" className="h-12 w-auto" />
+            <img src="/lovable-uploads/ads-analysis-by-managingseo.png" alt="Logo" className="h-12 w-auto" />
             <Button variant="ghost" size="sm" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
@@ -237,7 +237,7 @@ const OptimizedNavigationHeader: React.FC<NavigationHeaderProps> = ({
     <header className="bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          <img src="/lovable-uploads/051b9e52-0e07-481f-80e2-9769a32180b0.png" alt="Logo" className="h-12 w-auto" />
+          <img src="/lovable-uploads/ads-analysis-by-managingseo.png" alt="Logo" className="h-12 w-auto" />
 
           {hasConnection && (
             <div className="flex-1 max-w-2xl mx-8">

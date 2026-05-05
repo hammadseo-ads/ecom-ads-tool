@@ -7,7 +7,7 @@ import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 
 const SITE_URL = "https://ads.managingseo.com";
-const DEFAULT_OG_IMAGE = `${SITE_URL}/lovable-uploads/051b9e52-0e07-481f-80e2-9769a32180b0.png`;
+const DEFAULT_OG_IMAGE = `${SITE_URL}/lovable-uploads/ads-analysis-by-managingseo.png`;
 
 interface SEOProps {
   title: string;
@@ -35,7 +35,7 @@ export default function SEO({
 }: SEOProps) {
   const location = useLocation();
   const url = canonical || `${SITE_URL}${location.pathname}`;
-  const fullTitle = title.includes("ManagingSEO") ? title : `${title} | Ecom Ads by ManagingSEO`;
+  const fullTitle = title.includes("ManagingSEO") ? title : `${title} | Ads Analysis by ManagingSEO`;
 
   return (
     <Helmet>
@@ -54,7 +54,7 @@ export default function SEO({
       <meta property="og:url" content={url} />
       <meta property="og:type" content={ogType} />
       <meta property="og:image" content={ogImage} />
-      <meta property="og:site_name" content="Ecom Ads by ManagingSEO" />
+      <meta property="og:site_name" content="Ads Analysis by ManagingSEO" />
 
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />

@@ -13,7 +13,7 @@ const Terms = () => {
     <div className="min-h-screen bg-gray-50">
       <SEO
         title="Terms of Service"
-        description="Terms of service for Ecom Ads by ManagingSEO."
+        description="Terms of service for Ads Analysis by ManagingSEO."
         ogType="website"
       />
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -46,8 +46,8 @@ const ForgotPassword = () => {
           <div className="w-25 h-50 mx-auto bg-gradient-to-br from-green-300 to-green-600 rounded-2xl flex items-center justify-center">
             <Link to="/" className="block">
                                       <img
-                                        src="/lovable-uploads/051b9e52-0e07-481f-80e2-9769a32180b0.png"
-                                        alt="Ecom Ads by ManagingSEO"
+                                        src="/lovable-uploads/ads-analysis-by-managingseo.png"
+                                        alt="Ads Analysis by ManagingSEO"
                                         className="h-12 sm:h-16 w-auto"
                                       />
                                     </Link>

@@ -250,7 +250,7 @@ const GoogleAdsService = () => {
     <>
       <PublicHeader />
       <SEO
-        title="Ecom Ads by ManagingSEO — Maximize Your Google Ads ROAS"
+        title="Ads Analysis by ManagingSEO — Maximize Your Google Ads ROAS"
         description="Free Google Ads analytics tool for eCommerce. Find products wasting your budget, surface negative-keyword candidates, and bucket PMax products into Heroes / Costly / Zombies — without leaving your dashboard."
         ogType="website"
       />

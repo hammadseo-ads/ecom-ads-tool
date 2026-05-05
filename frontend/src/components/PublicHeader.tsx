@@ -121,8 +121,8 @@ const PublicHeader = () => {
           <div className="flex items-center">
             <Link to="/" className="block">
               <img
-                src="/lovable-uploads/051b9e52-0e07-481f-80e2-9769a32180b0.png"
-                alt="Ecom Ads by ManagingSEO"
+                src="/lovable-uploads/ads-analysis-by-managingseo.png"
+                alt="Ads Analysis by ManagingSEO"
                 className="h-12 sm:h-16 w-auto"
               />
             </Link>

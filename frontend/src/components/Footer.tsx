@@ -17,8 +17,8 @@ const Footer: React.FC = () => {
             <div className="flex items-center space-x-3 mb-4">
               <a href="https://ads.managingseo.com" className="block" target="_blank" rel="noopener noreferrer">
                 <img 
-                  src="/lovable-uploads/051b9e52-0e07-481f-80e2-9769a32180b0.png" 
-                  alt="Ecom Ads by ManagingSEO" 
+                  src="/lovable-uploads/ads-analysis-by-managingseo.png" 
+                  alt="Ads Analysis by ManagingSEO" 
                   className="h-14 w-auto"
                 />
               </a>
