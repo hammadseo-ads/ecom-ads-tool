@@ -81,6 +81,60 @@ const Portfolio = () => {
     }
   ];
 
+  const leadGenPortfolios = [
+    {
+      id: 'tyretick',
+      company: 'Tyretick',
+      industry: '24/7 Mobile Tyre Fitting (UK)',
+      slug: '/portfolio/tyretick',
+      description: '392 qualified leads in 2 months for a 24/7 mobile tyre fitting service in London and the wider UK, with cost per lead cut by 39.9%.',
+      challenge: 'Single ad-group bottleneck, irrelevant search traffic eating budget, flat 24-hour bid distribution, geo targeting bleeding outside service zones.',
+      results: [
+        { metric: '392', label: 'Qualified Leads in 2 Months', icon: TrendingUp },
+        { metric: '3.40x', label: 'Return on Ad Spend', icon: Target },
+        { metric: '39.9%', label: 'Reduction in Cost Per Lead', icon: Zap },
+      ],
+      gradientFrom: 'from-emerald-500/10',
+      gradientTo: 'to-green-500/5',
+      borderColor: 'border-emerald-500/20',
+      buttonColor: 'from-emerald-600 to-green-600',
+    },
+    {
+      id: 'cpa-moms',
+      company: 'CPA MOMS',
+      industry: 'US Virtual CPA Network',
+      slug: '/portfolio/cpa-moms',
+      description: '145 free-consultation leads in 9 months for a US national CPA franchise, with cost per lead cut from $174 to $57.49 across three reporting quarters.',
+      challenge: 'Generic search drain, free consultation buried as a secondary CTA, flat audience targeting, spend distributed without time logic.',
+      results: [
+        { metric: '+62.9%', label: 'Increase in Qualified Leads', icon: TrendingUp },
+        { metric: '67%', label: 'Reduction in Cost Per Lead', icon: Target },
+        { metric: '3.51x', label: 'Conversion Rate Lift', icon: Zap },
+      ],
+      gradientFrom: 'from-emerald-500/10',
+      gradientTo: 'to-green-500/5',
+      borderColor: 'border-emerald-500/20',
+      buttonColor: 'from-emerald-600 to-green-600',
+    },
+    {
+      id: 'decor2sell',
+      company: 'Decor2sell',
+      industry: 'AU Home Staging & Decor',
+      slug: '/portfolio/decor2sell',
+      description: 'Cost per conversion cut 90% (from $256 to $25.11) for an Australian home-staging service through Performance Max optimisation and a full website redesign.',
+      challenge: 'High initial CPL, PMax learning curve, suboptimal website design, persistent hacker attacks taking the site offline.',
+      results: [
+        { metric: '90%', label: 'Cost-Per-Conversion Reduction', icon: TrendingUp },
+        { metric: '767%', label: 'Conversion Increase', icon: Target },
+        { metric: '15%', label: 'Total Cost Reduction', icon: Zap },
+      ],
+      gradientFrom: 'from-emerald-500/10',
+      gradientTo: 'to-green-500/5',
+      borderColor: 'border-emerald-500/20',
+      buttonColor: 'from-emerald-600 to-green-600',
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <PublicHeader />
@@ -173,7 +227,7 @@ const Portfolio = () => {
         </div>
       </section>
 
-      {/* Portfolio Grid, Lead Generation (placeholder) */}
+      {/* Portfolio Grid, Lead Generation */}
       <section className="py-16 px-4 bg-emerald-50/30">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-3 mb-6">
@@ -182,26 +236,55 @@ const Portfolio = () => {
             </span>
             <h2 className="text-2xl font-semibold text-gray-900">Lead Generation Case Studies</h2>
           </div>
-          <Card className="p-8 border-2 border-dashed border-emerald-200 bg-white">
-            <div className="text-center text-muted-foreground">
-              <p className="text-lg font-medium mb-2 text-gray-700">
-                Lead-gen case studies are on the way.
-              </p>
-              <p className="text-sm max-w-xl mx-auto">
-                We're publishing detailed wins from service businesses, B2B
-                lead funnels, and form-fill campaigns soon. In the meantime,
-                explore the eCommerce stories above, the same strategic
-                principles apply.
-              </p>
-              <Button
-                variant="outline"
-                className="mt-5"
-                onClick={() => navigate('/lead-gen-tool')}
+          <div className="grid gap-8">
+            {leadGenPortfolios.map((portfolio) => (
+              <Card
+                key={portfolio.id}
+                className={`p-8 hover:shadow-2xl transition-all duration-300 border-2 ${portfolio.borderColor} bg-gradient-to-br ${portfolio.gradientFrom} ${portfolio.gradientTo} hover:scale-[1.02] group`}
               >
-                See the Lead Gen Analysis Tool
-              </Button>
-            </div>
-          </Card>
+                <div className="grid lg:grid-cols-3 gap-8 items-center">
+                  <div className="lg:col-span-2">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Building2 className="w-6 h-6 text-primary" />
+                      <div>
+                        <h2 className="text-2xl font-bold">{portfolio.company}</h2>
+                        <p className="text-muted-foreground">{portfolio.industry}</p>
+                      </div>
+                    </div>
+                    <p className="text-lg mb-4 leading-relaxed">{portfolio.description}</p>
+                    <div className="mb-6">
+                      <h4 className="font-semibold mb-2 text-muted-foreground">Challenge:</h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{portfolio.challenge}</p>
+                    </div>
+                    <Button
+                      onClick={() => navigate(portfolio.slug)}
+                      className={`bg-gradient-to-r ${portfolio.buttonColor} hover:opacity-90 group-hover:scale-105 transition-all duration-300`}
+                    >
+                      View Full Case Study
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold mb-4">Results Achieved:</h3>
+                    {portfolio.results.map((result, resultIndex) => (
+                      <div
+                        key={resultIndex}
+                        className="flex items-center space-x-3 p-3 rounded-lg bg-background/50 backdrop-blur-sm"
+                      >
+                        <div className="p-2 rounded-full bg-primary/10">
+                          <result.icon className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <div className="text-xl font-bold text-primary">{result.metric}</div>
+                          <div className="text-sm text-muted-foreground">{result.label}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 

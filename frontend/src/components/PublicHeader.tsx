@@ -46,7 +46,26 @@ const PublicHeader = () => {
       link: "/portfolio/mathfel"
     }
   ];
-  const leadGenCaseStudies: { name: string; industry: string; result: string; link: string }[] = [];
+  const leadGenCaseStudies: { name: string; industry: string; result: string; link: string }[] = [
+    {
+      name: "Tyretick",
+      industry: "UK Mobile Tyre Fitting",
+      result: "39.9% Lower CPL",
+      link: "/portfolio/tyretick",
+    },
+    {
+      name: "CPA MOMS",
+      industry: "US Virtual CPA Network",
+      result: "67% Lower CPL",
+      link: "/portfolio/cpa-moms",
+    },
+    {
+      name: "Decor2sell",
+      industry: "AU Home Staging",
+      result: "$256 to $25.11 CPL",
+      link: "/portfolio/decor2sell",
+    },
+  ];
 
   const productPerformanceGuides = [
     {

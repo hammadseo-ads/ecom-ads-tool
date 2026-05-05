@@ -54,6 +54,9 @@ import MyGreenScapePortfolio from "./pages/MyGreenScapePortfolio";
 import PJBoldPortfolio from "./pages/PJBoldPortfolio";
 import MathfelPortfolio from "./pages/MathfelPortfolio";
 import TopTinyPortfolio from "./pages/TopTinyPortfolio";
+import TyretickPortfolio from "./pages/TyretickPortfolio";
+import CPAMomsPortfolio from "./pages/CPAMomsPortfolio";
+import Decor2sellPortfolio from "./pages/Decor2sellPortfolio";
 import SimpleGoogleAdsSalesFormula from "./pages/SimpleGoogleAdsSalesFormula";
 
 // Components
@@ -123,6 +126,9 @@ const App = () => {
                   <Route path="/portfolio/pj-bold" element={<PJBoldPortfolio />} />
                   <Route path="/portfolio/mathfel" element={<MathfelPortfolio />} />
                   <Route path="/portfolio/toptiny" element={<TopTinyPortfolio />} />
+                  <Route path="/portfolio/tyretick" element={<TyretickPortfolio />} />
+                  <Route path="/portfolio/cpa-moms" element={<CPAMomsPortfolio />} />
+                  <Route path="/portfolio/decor2sell" element={<Decor2sellPortfolio />} />
                   <Route path="/simple-google-ads-sales-formula" element={<SimpleGoogleAdsSalesFormula />} />
                   <Route path="/google-ads-service" element={<GoogleAdsService />} />
 
