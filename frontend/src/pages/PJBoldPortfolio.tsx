@@ -12,8 +12,8 @@ const PJBoldPortfolio = () => {
   const navigate = useNavigate();
   // ./assets/lovable-uploads/5457ce9a-bdc8-4994-9e9f-80ba6bda34c6.png";
 
-  const beforeImage = "../lovable-uploads/5457ce9a-bdc8-4994-9e9f-80ba6bda34c6.png";
-  const afterImage = "../lovable-uploads/6a11b21e-8290-4f79-8859-e72052619447.png";
+  const beforeImage = "/lovable-uploads/portfolio/pjbold-before.png";
+  const afterImage = "/lovable-uploads/portfolio/pjbold-after.png";
 
   const challenges = [
     {

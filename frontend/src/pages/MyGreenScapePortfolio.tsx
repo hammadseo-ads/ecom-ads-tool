@@ -10,8 +10,8 @@ import PublicHeader from '@/components/PublicHeader';
 const MyGreenScapePortfolio = () => {
   const navigate = useNavigate();
 
-  const beforeImage = "/lovable-uploads/fa263e24-7677-43ef-9c35-78ce9b2e3828.png";
-  const afterImage = "/lovable-uploads/bb5d5eb8-7e46-4dba-923b-1e752d194567.png";
+  const beforeImage = "/lovable-uploads/portfolio/mygreenscape-before.png";
+  const afterImage = "/lovable-uploads/portfolio/mygreenscape-after.png";
 
   const challenges = [
     "Small Ad Spend with Diverse Products",
