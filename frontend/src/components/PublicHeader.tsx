@@ -24,7 +24,9 @@ const PublicHeader = () => {
   const [isToolDropdownOpen, setIsToolDropdownOpen] = useState(false);
   const isMobile = useIsMobile();
 
-  const caseStudies = [
+  // Case studies grouped by track. Lead-Gen list is intentionally empty
+  // until user provides the lead-gen case-study content (Phase 6 follow-up).
+  const ecomCaseStudies = [
     {
       name: "MyGreenScape",
       industry: "Indoor Plants",
@@ -44,6 +46,7 @@ const PublicHeader = () => {
       link: "/portfolio/mathfel"
     }
   ];
+  const leadGenCaseStudies: { name: string; industry: string; result: string; link: string }[] = [];
 
   const productPerformanceGuides = [
     {
@@ -161,9 +164,12 @@ const PublicHeader = () => {
                       <div className="absolute top-full left-0 pt-2 z-50">
                       <Card className="w-80 bg-white border shadow-lg p-4">
                         <div className="space-y-3">
-                          <h3 className="text-sm font-semibold text-muted-foreground border-b pb-2">Featured Case Studies</h3>
-                          {caseStudies.map((study, index) => (
-                            <Link key={index} to={study.link} className="block">
+                          {/* eCommerce sub-list */}
+                          <h3 className="text-xs font-bold text-emerald-800 uppercase tracking-wide bg-emerald-50 px-2 py-1 rounded inline-block">
+                            eCommerce
+                          </h3>
+                          {ecomCaseStudies.map((study, index) => (
+                            <Link key={`ecom-${index}`} to={study.link} className="block">
                               <div className="p-3 rounded-lg hover:bg-muted/50 transition-colors duration-200 cursor-pointer">
                                 <div className="flex justify-between items-start">
                                   <div>
@@ -175,6 +181,33 @@ const PublicHeader = () => {
                               </div>
                             </Link>
                           ))}
+
+                          {/* Lead Gen sub-list */}
+                          <div className="pt-2 border-t">
+                            <h3 className="text-xs font-bold text-emerald-800 uppercase tracking-wide bg-emerald-50 px-2 py-1 rounded inline-block">
+                              Lead Generation
+                            </h3>
+                            {leadGenCaseStudies.length > 0 ? (
+                              leadGenCaseStudies.map((study, index) => (
+                                <Link key={`lg-${index}`} to={study.link} className="block">
+                                  <div className="p-3 rounded-lg hover:bg-muted/50 transition-colors duration-200 cursor-pointer">
+                                    <div className="flex justify-between items-start">
+                                      <div>
+                                        <h4 className="font-semibold text-sm">{study.name}</h4>
+                                        <p className="text-xs text-muted-foreground">{study.industry}</p>
+                                      </div>
+                                      <span className="text-xs font-medium text-green-600">{study.result}</span>
+                                    </div>
+                                  </div>
+                                </Link>
+                              ))
+                            ) : (
+                              <p className="text-xs text-muted-foreground italic px-3 py-2">
+                                Lead-gen case studies coming soon.
+                              </p>
+                            )}
+                          </div>
+
                           <Link to="/case-studies" className="block pt-2 border-t">
                             <Button variant="outline" size="sm" className="w-full text-xs">
                               View All Case Studies →

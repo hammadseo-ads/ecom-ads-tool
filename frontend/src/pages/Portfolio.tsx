@@ -102,9 +102,15 @@ const Portfolio = () => {
         </div>
       </section>
 
-      {/* Portfolio Grid */}
+      {/* Portfolio Grid — eCommerce */}
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-xs font-bold text-emerald-800 uppercase tracking-wide bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1">
+              eCommerce
+            </span>
+            <h2 className="text-2xl font-semibold text-gray-900">eCommerce Case Studies</h2>
+          </div>
           <div className="grid gap-8">
             {portfolios.map((portfolio) => (
               <Card 
@@ -164,6 +170,38 @@ const Portfolio = () => {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Portfolio Grid — Lead Generation (placeholder) */}
+      <section className="py-16 px-4 bg-emerald-50/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-xs font-bold text-emerald-800 uppercase tracking-wide bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1">
+              Lead Generation
+            </span>
+            <h2 className="text-2xl font-semibold text-gray-900">Lead Generation Case Studies</h2>
+          </div>
+          <Card className="p-8 border-2 border-dashed border-emerald-200 bg-white">
+            <div className="text-center text-muted-foreground">
+              <p className="text-lg font-medium mb-2 text-gray-700">
+                Lead-gen case studies are on the way.
+              </p>
+              <p className="text-sm max-w-xl mx-auto">
+                We're publishing detailed wins from service businesses, B2B
+                lead funnels, and form-fill campaigns soon. In the meantime,
+                explore the eCommerce stories above — the same strategic
+                principles apply.
+              </p>
+              <Button
+                variant="outline"
+                className="mt-5"
+                onClick={() => navigate('/lead-gen-tool')}
+              >
+                See the Lead Gen Analysis Tool
+              </Button>
+            </div>
+          </Card>
         </div>
       </section>
 
