@@ -31,6 +31,7 @@ import LeadGenWastedKeywordsPage from "./pages/LeadGenWastedKeywordsPage";
 import LeadGenHeatMapPage from "./pages/LeadGenHeatMapPage";
 import LeadGenGeoPage from "./pages/LeadGenGeoPage";
 import LeadGenNGramPage from "./pages/LeadGenNGramPage";
+import LeadGenNegativeKeywordsGuide from "./pages/LeadGenNegativeKeywordsGuide";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
@@ -113,6 +114,7 @@ const App = () => {
                   <Route path="/strategic-negative-keywords-guide" element={<StrategicNegativeKeywordsGuide />} />
                   <Route path="/guides/ecommerce-cro-audit" element={<EcommerceCROAuditGuide />} />
                   <Route path="/guides/negative-keywords-and-titles" element={<NegativeKeywordsAndTitlesGuide />} />
+                  <Route path="/guides/lead-gen-negative-keywords" element={<LeadGenNegativeKeywordsGuide />} />
 
                   {/* Portfolio */}
                   <Route path="/portfolio" element={<Portfolio />} />

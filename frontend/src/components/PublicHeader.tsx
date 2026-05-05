@@ -103,6 +103,11 @@ const PublicHeader = () => {
       name: "Negative Keywords & Titles",
       description: "Pull 30 days of data + run through Claude skill",
       link: "/guides/negative-keywords-and-titles"
+    },
+    {
+      name: "Lead-Gen Negative Keywords",
+      description: "30-day search-term pull + lead-gen Claude skill workflow",
+      link: "/guides/lead-gen-negative-keywords"
     }
   ];
 

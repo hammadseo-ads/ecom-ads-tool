@@ -208,10 +208,9 @@ const LEADGEN_TOOLS: ToolCardSpec[] = [
     iconBg: "bg-emerald-100",
     iconColor: "text-emerald-700",
     buttonClass: "bg-emerald-600 hover:bg-emerald-700",
-    ctaLabel: "Coming soon",
+    ctaLabel: "Open Workflow",
     to: "/guides/lead-gen-negative-keywords",
     requiresAccount: false,
-    comingSoon: true,
   },
 ];
 
