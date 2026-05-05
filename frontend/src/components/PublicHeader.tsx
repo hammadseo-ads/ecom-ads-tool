@@ -30,13 +30,13 @@ const PublicHeader = () => {
     {
       name: "MyGreenScape",
       industry: "Indoor Plants",
-      result: "+368% Conv Value",
+      result: "+386% Conv Value",
       link: "/portfolio/mygreen-scape"
     },
     {
       name: "PJ BOLD",
       industry: "Food-Grade Molds",
-      result: "9.32x Sales Increase",
+      result: "+187% Conv Value",
       link: "/portfolio/pj-bold"
     },
     {

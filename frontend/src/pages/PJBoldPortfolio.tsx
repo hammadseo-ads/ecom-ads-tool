@@ -69,7 +69,7 @@ const PJBoldPortfolio = () => {
               PJ BOLD Portfolio
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Achieving 9.32x Sales Increase with Strategic Google Ads Management - A Case Study in Overcoming Challenges and Maximizing ROAS
+              Achieving 187% Conversion Value Growth and 95% ROAS Lift with Strategic Google Ads Management, A Case Study in Overcoming Challenges
             </p>
           </div>
 
@@ -77,18 +77,18 @@ const PJBoldPortfolio = () => {
           <div className="grid sm:grid-cols-3 gap-6 mb-16">
             <Card className="text-center p-6 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
               <TrendingUp className="w-12 h-12 text-primary mx-auto mb-4" />
-              <h3 className="text-3xl font-bold text-primary mb-2">9.32x</h3>
-              <p className="text-muted-foreground">Increase in Sales</p>
+              <h3 className="text-3xl font-bold text-primary mb-2">187%</h3>
+              <p className="text-muted-foreground">Increase in Conversion Value</p>
             </Card>
             <Card className="text-center p-6 bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 border-emerald-500/20">
               <Target className="w-12 h-12 text-emerald-600 mx-auto mb-4" />
-              <h3 className="text-3xl font-bold text-emerald-600 mb-2">816%</h3>
+              <h3 className="text-3xl font-bold text-emerald-600 mb-2">95%</h3>
               <p className="text-muted-foreground">Increase in ROAS (Return on Ad Spend)</p>
             </Card>
-            <Card className="text-center p-6 bg-gradient-to-br from-blue-500/5 to-blue-500/10 border-blue-500/20">
-              <Zap className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-              <h3 className="text-3xl font-bold text-blue-600 mb-2">62%</h3>
-              <p className="text-muted-foreground">Improvement in Impressions Efficiency</p>
+            <Card className="text-center p-6 bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 border-emerald-500/20">
+              <Zap className="w-12 h-12 text-emerald-600 mx-auto mb-4" />
+              <h3 className="text-3xl font-bold text-emerald-600 mb-2">16%</h3>
+              <p className="text-muted-foreground">Click Volume Growth</p>
             </Card>
           </div>
         </div>
