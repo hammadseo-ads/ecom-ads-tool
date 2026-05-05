@@ -40,15 +40,14 @@ import {
 } from "lucide-react";
 
 // =====================================================================
-// PLACEHOLDERS — replace once the user provides the real assets
+// SKILL ASSETS
 // =====================================================================
-const SKILL_FILE_HREF: string | null = null; // e.g. "/lovable-uploads/skills/lead-gen-negative-keywords.skill"
+const SKILL_FILE_HREF: string | null =
+  "/lovable-uploads/skills/lead-gen-negative-keywords.skill";
 const SKILL_FILE_NAME = "lead-gen-negative-keywords.skill";
+// Prompt text — will be wired in once the user provides it. Until then,
+// the prompt block stays hidden on the page.
 const SKILL_PROMPT_TEXT: string | null = null;
-//   Will look something like:
-//   'Run the "lead-gen-negative-keywords" skill on the search-term file I attached.
-//    Use my landing pages at: [landing-page-urls]. Return a negatives list and a
-//    short summary of which themes to exclude.'
 
 interface Step {
   id: string;
