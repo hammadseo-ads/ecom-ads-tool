@@ -21,6 +21,7 @@ const PublicHeader = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProductGuidesOpen, setIsProductGuidesOpen] = useState(false);
   const [isCampaignGuidesOpen, setIsCampaignGuidesOpen] = useState(false);
+  const [isToolDropdownOpen, setIsToolDropdownOpen] = useState(false);
   const isMobile = useIsMobile();
 
   const caseStudies = [
@@ -179,11 +180,58 @@ const PublicHeader = () => {
                       </div>
                     )}
                   </div>
-                  <Link to="/ads-tool">
-                    <Button variant="ghost" className="text-foreground hover:bg-muted transition-all duration-200 relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left">
-                      Analysis Tool
-                    </Button>
-                  </Link>
+                  {/* Analysis Tool dropdown — eCommerce vs Lead Gen */}
+                  <div
+                    className="relative"
+                    onMouseEnter={() => setIsToolDropdownOpen(true)}
+                    onMouseLeave={() => setIsToolDropdownOpen(false)}
+                  >
+                    <Link to="/ads-tool">
+                      <Button variant="ghost" className="text-foreground hover:bg-muted transition-all duration-200 relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left flex items-center">
+                        Analysis Tool
+                        <ChevronDown className="w-4 h-4 ml-1" />
+                      </Button>
+                    </Link>
+
+                    {isToolDropdownOpen && (
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
+                        <Card className="w-[420px] max-w-[calc(100vw-2rem)] bg-white border shadow-xl p-3">
+                          <div className="space-y-1">
+                            <Link to="/ads-tool" className="block">
+                              <div className="p-3 rounded-md hover:bg-muted/50 transition-colors cursor-pointer">
+                                <div className="flex items-center gap-2 mb-0.5">
+                                  <span className="text-emerald-700 text-xs font-bold uppercase tracking-wide">
+                                    eCommerce
+                                  </span>
+                                </div>
+                                <h4 className="font-semibold text-sm">
+                                  Ecommerce Ads Analysis Tool
+                                </h4>
+                                <p className="text-xs text-muted-foreground mt-0.5 leading-snug">
+                                  Per-product ROAS, wasted spend, hour &amp; geo analysis for online stores.
+                                </p>
+                              </div>
+                            </Link>
+                            <Link to="/lead-gen-tool" className="block">
+                              <div className="p-3 rounded-md hover:bg-muted/50 transition-colors cursor-pointer">
+                                <div className="flex items-center gap-2 mb-0.5">
+                                  <span className="text-blue-700 text-xs font-bold uppercase tracking-wide">
+                                    Lead Generation
+                                  </span>
+                                </div>
+                                <h4 className="font-semibold text-sm">
+                                  Lead Gen Ads Analysis Tool
+                                </h4>
+                                <p className="text-xs text-muted-foreground mt-0.5 leading-snug">
+                                  Conversion-based wasted-keyword, hour &amp; geo analysis for service businesses &amp; lead funnels.
+                                </p>
+                              </div>
+                            </Link>
+                          </div>
+                        </Card>
+                      </div>
+                    )}
+                  </div>
                   <div
                     className="relative"
                     onMouseEnter={() => setIsGuidesDropdownOpen(true)}
@@ -314,7 +362,12 @@ const PublicHeader = () => {
                 </Link>
                 <Link to="/ads-tool" className="block">
                   <Button variant="ghost" className="w-full justify-start text-left">
-                    Analysis Tool
+                    eCommerce Analysis Tool
+                  </Button>
+                </Link>
+                <Link to="/lead-gen-tool" className="block">
+                  <Button variant="ghost" className="w-full justify-start text-left">
+                    Lead Gen Analysis Tool
                   </Button>
                 </Link>
                 <Link to="/guides" className="block" onClick={() => setIsMobileMenuOpen(false)}>

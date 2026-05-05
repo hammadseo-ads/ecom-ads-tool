@@ -26,6 +26,7 @@ import Contact from "./pages/Contact";
 import ContactSuccess from "./pages/ContactSuccess";
 import NotFound from "./pages/NotFound";
 import GoogleAdsService from "./pages/GoogleAdsService";
+import LeadGenAnalysisTool from "./pages/LeadGenAnalysisTool";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
@@ -92,6 +93,7 @@ const App = () => {
 
                   {/* Public */}
                   <Route path="/ads-tool" element={<Index />} />
+                  <Route path="/lead-gen-tool" element={<LeadGenAnalysisTool />} />
                   <Route path="/guides" element={<Guides />} />
                   <Route path="/guides/zombie-products" element={<ZombieProductsGuide />} />
                   <Route path="/guides/zero-conversion" element={<ZeroConversionGuide />} />
