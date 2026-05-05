@@ -7,6 +7,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PublicHeader from "@/components/PublicHeader";
+import SEO from '@/components/SEO';
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -256,6 +257,11 @@ export default function EcommerceCROAuditGuide() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50/30 via-white to-green-50/30">
       <PublicHeader />
+      <SEO
+        title="Ecommerce Website CRO Audit — 7-Section Manual Checklist"
+        description="A 7-section walkthrough of your eCommerce store in the order a real visitor experiences it — banners, search, popups, mobile menu, reviews, gallery, Instagram."
+        ogType="article"
+      />
 
       {/* Sticky progress sub-header */}
       <div

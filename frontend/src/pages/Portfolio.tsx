@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
 
+import SEO from '@/components/SEO';
 const Portfolio = () => {
   const navigate = useNavigate();
 
@@ -83,6 +84,11 @@ const Portfolio = () => {
   return (
     <div className="min-h-screen bg-background">
       <PublicHeader />
+      <SEO
+        title="Case Studies — eCommerce Google Ads Results"
+        description="Real eCommerce case studies — MyGreenScape, PJ BOLD, Mathfel, TopTiny — with before/after Google Ads results, ROAS lifts, and the strategies used."
+        ogType="website"
+      />
       {/* Hero Section */}
       <section className="relative py-20 px-4 bg-gradient-to-br from-background via-muted/30 to-primary/10">
         <div className="max-w-6xl mx-auto text-center">

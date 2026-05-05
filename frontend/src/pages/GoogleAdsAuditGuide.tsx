@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
+import SEO from '@/components/SEO';
 import  {Button}  from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -866,6 +867,11 @@ export default function GoogleAdsAuditGuide() {
   return (
     <div className="min-h-screen bg-background">
       <PublicHeader />
+      <SEO
+        title="Google Ads Audit Guide — Complete Framework"
+        description="A full framework for auditing any Google Ads account — campaign structure, conversion tracking, bidding, audiences, assets, search terms."
+        ogType="article"
+      />
       
       {/* Scroll Progress Bar */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-muted z-50">

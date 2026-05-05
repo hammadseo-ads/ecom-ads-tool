@@ -4,6 +4,7 @@ import  {Button}  from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, AlertTriangle, Search, FileText, Globe, BarChart3 } from "lucide-react";
 import PublicHeader from '@/components/PublicHeader';
+import SEO from '@/components/SEO';
 // import Footer from '@/components/Footer';
 
 const CostlyProductsGuide = () => {
@@ -25,6 +26,11 @@ const CostlyProductsGuide = () => {
   return (
     <>
       <PublicHeader />
+      <SEO
+        title="Costly Products — Stop Budget-Drain in Google Ads"
+        description="Identify products eating your Google Ads budget without delivering ROAS — and the exact fixes to apply for each pattern."
+        ogType="article"
+      />
       <div className="min-h-screen bg-background">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}

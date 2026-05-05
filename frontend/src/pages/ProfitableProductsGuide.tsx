@@ -5,6 +5,7 @@ import  {Button}  from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, TrendingUp, DollarSign, Target, Users } from "lucide-react";
 import PublicHeader from '@/components/PublicHeader';
+import SEO from '@/components/SEO';
 // import Footer from '@/components/Footer';
 
 const ProfitableProductsGuide = () => {
@@ -13,6 +14,11 @@ const ProfitableProductsGuide = () => {
   return (
     <>
       <PublicHeader />
+      <SEO
+        title="Profitable Products — Scale Your Star Performers"
+        description="How to spot your profitable hero products in Google Shopping and PMax and scale them with bid, budget, and structural changes."
+        ogType="article"
+      />
       <div className="min-h-screen bg-background">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}

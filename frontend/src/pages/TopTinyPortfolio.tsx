@@ -7,6 +7,7 @@ import { ImageModal } from '@/components/ui/image-modal';
 import { useNavigate } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
 
+import SEO from '@/components/SEO';
 const TopTinyPortfolio = () => {
   const navigate = useNavigate();
 
@@ -62,6 +63,11 @@ const TopTinyPortfolio = () => {
   return (
     <div className="min-h-screen bg-background">
       <PublicHeader />
+      <SEO
+        title="TopTiny Case Study — Scaled to $67k/mo at 9x ROAS"
+        description="TopTiny went from 4 months of zero sales to $67k/month at 9x ROAS through data-driven Google Ads restructuring. Full case study."
+        ogType="article"
+      />
       {/* Hero Section */}
       <section className="relative py-20 px-4 bg-gradient-to-br from-background via-muted/30 to-primary/10">
         <div className="max-w-6xl mx-auto">

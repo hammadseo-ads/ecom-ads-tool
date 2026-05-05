@@ -1,6 +1,7 @@
 
 // import React from 'react';
 import { useNavigate } from "react-router-dom";
+import SEO from '@/components/SEO';
 import {Button}  from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Scale, Shield, Database, AlertTriangle, Mail } from "lucide-react";
@@ -10,6 +11,11 @@ const Terms = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEO
+        title="Terms of Service"
+        description="Terms of service for Ecom Ads by ManagingSEO."
+        ogType="website"
+      />
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">

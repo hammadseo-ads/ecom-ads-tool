@@ -1,5 +1,6 @@
 
 import  {Button}  from "@/components/ui/button";
+import SEO from '@/components/SEO';
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -9,6 +10,11 @@ import { ExternalLink, Mail, MessageSquare, Calendar } from "lucide-react";
 const Contact = () => {
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEO
+        title="Contact ManagingSEO"
+        description="Get in touch with the ManagingSEO team for Google Ads management, audits, or questions about the Ecom Ads tool."
+        ogType="website"
+      />
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

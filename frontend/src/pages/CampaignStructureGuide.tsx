@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
+import SEO from '@/components/SEO';
 import  {Button}  from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -431,6 +432,11 @@ export default function CampaignStructureGuide() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background-secondary">
       <PublicHeader />
+      <SEO
+        title="Google Ads Campaign Structure for Maximum ROI"
+        description="How to structure Google Ads campaigns (Search, Shopping, PMax) so the algorithms have what they need to find your buyers and scale."
+        ogType="article"
+      />
       
       {/* Hero Section with Enhanced Gradients and Moving Animation */}
       <section className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8">

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, BookOpen, Search, Target, TrendingUp, FileText, DollarSign, AlertTriangle, XCircle, Eye, Layout } from "lucide-react";
 import PublicHeader from '@/components/PublicHeader';
 
+import SEO from '@/components/SEO';
 const guides = [
   {
     title: "Google Ads Audit Guide",
@@ -114,6 +115,11 @@ function Guides() {
   return (
     <>
       <PublicHeader />
+      <SEO
+        title="Google Ads & eCommerce CRO Guides"
+        description="Free guides for eCommerce Google Ads — product bucketing (heroes/costly/zombies), negative keywords, campaign structure, product titles, and a full website CRO audit checklist."
+        ogType="website"
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <section className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8">

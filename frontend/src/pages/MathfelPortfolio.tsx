@@ -7,6 +7,7 @@ import { ImageModal } from '@/components/ui/image-modal';
 import { useNavigate } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
 
+import SEO from '@/components/SEO';
 const MathfelPortfolio = () => {
   const navigate = useNavigate();
 
@@ -57,6 +58,11 @@ const MathfelPortfolio = () => {
   return (
     <div className="min-h-screen bg-background">
       <PublicHeader />
+      <SEO
+        title="Mathfel Case Study — 114% Sales Increase"
+        description="Mathfel video door-intercom case study: untangling scattered campaigns and confused product categorization to drive 114% sales growth on Google Ads."
+        ogType="article"
+      />
       {/* Hero Section */}
       <section className="relative py-20 px-4 bg-gradient-to-br from-background via-muted/30 to-primary/10">
         <div className="max-w-6xl mx-auto">

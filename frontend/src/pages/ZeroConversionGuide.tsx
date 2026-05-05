@@ -5,6 +5,7 @@ import  {Button}  from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, XCircle, Search, FileText, Target, Zap } from "lucide-react";
 import PublicHeader from '@/components/PublicHeader';
+import SEO from '@/components/SEO';
 // import Footer from '@/components/Footer';
 
 const ZeroConversionGuide = () => {
@@ -22,6 +23,11 @@ const ZeroConversionGuide = () => {
   return (
     <>
       <PublicHeader />
+      <SEO
+        title="Zero-Conversion Products — Find What is Wasting Your Budget"
+        description="Diagnose products with clicks but no conversions on Google Shopping and PMax — and decide whether to fix, exclude, or pause them."
+        ogType="article"
+      />
       <div className="min-h-screen bg-background">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}

@@ -4,6 +4,7 @@ import { Card, CardContent,  CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import PublicHeader from '@/components/PublicHeader';
+import SEO from '@/components/SEO';
 // import Footer from '@/components/Footer';
 import {
   Target,
@@ -248,6 +249,11 @@ const GoogleAdsService = () => {
   return (
     <>
       <PublicHeader />
+      <SEO
+        title="Ecom Ads by ManagingSEO — Maximize Your Google Ads ROAS"
+        description="Free Google Ads analytics tool for eCommerce. Find products wasting your budget, surface negative-keyword candidates, and bucket PMax products into Heroes / Costly / Zombies — without leaving your dashboard."
+        ogType="website"
+      />
       <div className="min-h-screen bg-background">
 
         {/* Sticky Bottom Bar */}

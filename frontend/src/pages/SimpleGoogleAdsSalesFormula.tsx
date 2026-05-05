@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { ArrowRight, Search, Target, Star, ShoppingCart, TrendingUp, BarChart3, CheckCircle, Eye, Zap, ChevronLeft, ChevronRight } from "lucide-react";
 import PublicHeader from '@/components/PublicHeader';
+import SEO from '@/components/SEO';
 // import Footer from '@/components/Footer';
 import { ImageModal } from "@/components/ui/image-modal";
 
@@ -70,6 +71,11 @@ export default function SimpleGoogleAdsSalesFormula() {
   return (
     <>
       <PublicHeader />
+      <SEO
+        title="Simple Google Ads Sales Formula — 5-Step Boost"
+        description="A 5-step formula to lift Google Ads sales without rebuilding your account from scratch. Practical, no-fluff playbook."
+        ogType="article"
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <section className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8">

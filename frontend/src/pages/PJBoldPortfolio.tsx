@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
 
 
+import SEO from '@/components/SEO';
 const PJBoldPortfolio = () => {
   const navigate = useNavigate();
   // ./assets/lovable-uploads/5457ce9a-bdc8-4994-9e9f-80ba6bda34c6.png";
@@ -45,6 +46,11 @@ const PJBoldPortfolio = () => {
   return (
     <div className="min-h-screen bg-background">
       <PublicHeader />
+      <SEO
+        title="PJ BOLD Case Study — 9.32x Sales, 816% ROAS Lift"
+        description="PJ BOLD case study: resolving Google Ads policy violations, restructuring Performance Max, and unlocking 9.32x sales growth on food-grade silicone molds."
+        ogType="article"
+      />
       {/* Hero Section */}
       <section className="relative py-20 px-4 bg-gradient-to-br from-background via-muted/30 to-primary/10">
         <div className="max-w-6xl mx-auto">

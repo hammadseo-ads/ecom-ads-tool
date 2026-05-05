@@ -7,6 +7,7 @@ import { ImageModal } from "@/components/ui/image-modal";
 import { useNavigate } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
 
+import SEO from '@/components/SEO';
 const MyGreenScapePortfolio = () => {
   const navigate = useNavigate();
 
@@ -41,6 +42,11 @@ const MyGreenScapePortfolio = () => {
   return (
     <div className="min-h-screen bg-background">
       <PublicHeader />
+      <SEO
+        title="MyGreenScape Case Study — 368% Conv Value, 56% ROAS Lift"
+        description="How a small-budget indoor-plants brand went from underperforming Shopping campaigns to 368% conversion-value growth and a 56% ROAS lift via Performance Max + DSA."
+        ogType="article"
+      />
       {/* Hero Section */}
       <section className="relative py-20 px-4 bg-gradient-to-br from-background via-muted/30 to-primary/10">
         <div className="max-w-6xl mx-auto">

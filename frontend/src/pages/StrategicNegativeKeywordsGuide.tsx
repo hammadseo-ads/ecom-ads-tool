@@ -5,6 +5,7 @@ import { Card, CardContent,  CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Shield, AlertTriangle, Search, Target,  BarChart3, CheckCircle, TrendingDown, Filter, Users, MapPin, Play } from "lucide-react";
 import PublicHeader from '@/components/PublicHeader';
 
+import SEO from '@/components/SEO';
 const StrategicNegativeKeywordsGuide = () => {
   const navigate = useNavigate();
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
@@ -180,6 +181,11 @@ const StrategicNegativeKeywordsGuide = () => {
   return (
     <>
       <PublicHeader />
+      <SEO
+        title="Strategic Negative Keywords — Expert-Level Tactics"
+        description="Master expert-level negative-keyword strategy for Search, Shopping, and Performance Max — beyond the obvious junk-query lists."
+        ogType="article"
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section with Interactive Gradient */}
         <div className="relative overflow-hidden bg-gradient-to-br from-primary via-emerald-600 to-primary">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PublicHeader from '@/components/PublicHeader';
+import SEO from '@/components/SEO';
 import  {Button}  from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -408,6 +409,11 @@ Input Titles
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       <PublicHeader />
+      <SEO
+        title="Product Title Optimization for Google Shopping and PMax"
+        description="Why product titles drive PMax targeting — and how to rewrite them so your ads show up on the searches that actually convert."
+        ogType="article"
+      />
       
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-green-700 text-white py-24">

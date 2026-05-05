@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 
 import PublicHeader from "@/components/PublicHeader";
+import SEO from '@/components/SEO';
 import Footer from "@/components/Footer";
 import InsightsShowcase from "@/components/InsightsShowcase";
 
@@ -51,6 +52,11 @@ const Index = () => {
   return (
     <>
       <PublicHeader />
+      <SEO
+        title="Google Ads Analysis Tool — Free"
+        description="Free Google Ads analysis tool — connect your account and surface wasted spend, hidden winners, and PMax product performance."
+        ogType="website"
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <section className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8">
