@@ -27,6 +27,7 @@ import ContactSuccess from "./pages/ContactSuccess";
 import NotFound from "./pages/NotFound";
 import GoogleAdsService from "./pages/GoogleAdsService";
 import LeadGenAnalysisTool from "./pages/LeadGenAnalysisTool";
+import LeadGenWastedKeywordsPage from "./pages/LeadGenWastedKeywordsPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
@@ -89,6 +90,7 @@ const App = () => {
                   <Route path="/dashboard/heatmap" element={<HeatMapPage />} />
                   <Route path="/dashboard/geo" element={<GeoPage />} />
                   <Route path="/dashboard/ngrams" element={<NGramPage />} />
+                  <Route path="/dashboard/lead-gen/wasted-keywords" element={<LeadGenWastedKeywordsPage />} />
                   <Route path="/account" element={<Account />} />
 
                   {/* Public */}

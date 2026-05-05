@@ -160,10 +160,9 @@ const LEADGEN_TOOLS: ToolCardSpec[] = [
     iconBg: "bg-blue-100",
     iconColor: "text-blue-700",
     buttonClass: "bg-blue-600 hover:bg-blue-700",
-    ctaLabel: "Coming soon",
+    ctaLabel: "Open Wasted Keywords",
     to: "/dashboard/lead-gen/wasted-keywords",
     requiresAccount: true,
-    comingSoon: true,
   },
   {
     title: "Heat Map (Hour × Day)",

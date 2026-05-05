@@ -23,6 +23,7 @@ import productRoasRoutes from "./routes/productRoasRoutes.js";
 import heatMapRoutes from "./routes/heatMapRoutes.js";
 import geoRoutes from "./routes/geoRoutes.js";
 import nGramRoutes from "./routes/nGramRoutes.js";
+import leadGenRoutes from "./routes/leadGenRoutes.js";
 
 import logger from "./config/logger.js";
 import { morganMiddleware } from "./config/logger.js"; // assuming you export morganMiddleware as `morgan`
@@ -98,6 +99,7 @@ app.use("/api/product-roas", productRoasRoutes);
 app.use("/api/heat-map", heatMapRoutes);
 app.use("/api/geo", geoRoutes);
 app.use("/api/ngrams", nGramRoutes);
+app.use("/api/lead-gen", leadGenRoutes);
 
 // Health check
 app.get("/", (req, res) => {
