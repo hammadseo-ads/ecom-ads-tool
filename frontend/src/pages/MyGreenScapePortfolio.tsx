@@ -11,8 +11,8 @@ import SEO from '@/components/SEO';
 const MyGreenScapePortfolio = () => {
   const navigate = useNavigate();
 
-  const beforeImage = "/lovable-uploads/portfolio/mygreenscape-before.png";
-  const afterImage = "/lovable-uploads/portfolio/mygreenscape-after.png";
+  const beforeImage = "/lovable-uploads/mygreenscape-before.png";
+  const afterImage = "/lovable-uploads/mygreenscape-after.png";
 
   const challenges = [
     "Small Ad Spend with Diverse Products",
