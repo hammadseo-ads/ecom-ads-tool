@@ -59,7 +59,7 @@ const MyGreenScapePortfolio = () => {
               MyGreenScape Portfolio
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Achieving Up to 453% Increase in ROAS with Focused Google Ads - A Case Study in Overcoming Challenges and Maximizing ROAS
+              Achieving 368% Increase in Conversion Value with Focused Google Ads - A Case Study in Overcoming Challenges and Maximizing ROAS
             </p>
           </div>
 
@@ -67,18 +67,18 @@ const MyGreenScapePortfolio = () => {
           <div className="grid sm:grid-cols-3 gap-6 mb-16">
             <Card className="text-center p-6 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
               <TrendingUp className="w-12 h-12 text-primary mx-auto mb-4" />
-              <h3 className="text-3xl font-bold text-primary mb-2">195%</h3>
+              <h3 className="text-3xl font-bold text-primary mb-2">368%</h3>
               <p className="text-muted-foreground">Increase in Total Conversion Value</p>
             </Card>
             <Card className="text-center p-6 bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 border-emerald-500/20">
               <Target className="w-12 h-12 text-emerald-600 mx-auto mb-4" />
-              <h3 className="text-3xl font-bold text-emerald-600 mb-2">453%</h3>
+              <h3 className="text-3xl font-bold text-emerald-600 mb-2">56%</h3>
               <p className="text-muted-foreground">Increase in ROAS (Return on Ad Spend)</p>
             </Card>
             <Card className="text-center p-6 bg-gradient-to-br from-blue-500/5 to-blue-500/10 border-blue-500/20">
               <Zap className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-              <h3 className="text-3xl font-bold text-blue-600 mb-2">46.3%</h3>
-              <p className="text-muted-foreground">Improvement in CTR Efficiency</p>
+              <h3 className="text-3xl font-bold text-blue-600 mb-2">213%</h3>
+              <p className="text-muted-foreground">Increase in Impressions</p>
             </Card>
           </div>
         </div>

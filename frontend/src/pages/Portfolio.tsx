@@ -15,12 +15,12 @@ const Portfolio = () => {
       company: 'MyGreenScape',
       industry: 'Indoor Plants',
       slug: '/portfolio/mygreen-scape',
-      description: 'Achieving up to 453% increase in ROAS with focused Google Ads optimization for a specialized indoor plants brand.',
+      description: 'Achieving 368% increase in conversion value with focused Google Ads optimization for a specialized indoor plants brand.',
       challenge: 'Small budgets, similar products confusing AI matching, underperforming Shopping campaigns.',
       results: [
-        { metric: '195%', label: 'Increase in Conversion Value', icon: TrendingUp },
-        { metric: '453%', label: 'Increase in ROAS', icon: Target },
-        { metric: '46.3%', label: 'CTR Efficiency Improvement', icon: Zap }
+        { metric: '368%', label: 'Increase in Conversion Value', icon: TrendingUp },
+        { metric: '56%', label: 'Increase in ROAS', icon: Target },
+        { metric: '213%', label: 'Increase in Impressions', icon: Zap }
       ],
       gradientFrom: 'from-green-500/10',
       gradientTo: 'to-emerald-500/5',
@@ -32,11 +32,11 @@ const Portfolio = () => {
       company: 'PJ BOLD',
       industry: 'Food-Grade Silicone Molds',
       slug: '/portfolio/pj-bold',
-      description: 'Achieving 7x sales increase through strategic campaign restructuring and policy violation resolution.',
+      description: 'Achieving 9.32x sales increase through strategic campaign restructuring and policy violation resolution.',
       challenge: 'Policy violations flagging products as drug-related, scattered product structure, high-value items underperforming.',
       results: [
-        { metric: '7x', label: 'Increase in Sales', icon: TrendingUp },
-        { metric: '694%', label: 'Increase in ROAS', icon: Target },
+        { metric: '9.32x', label: 'Increase in Sales', icon: TrendingUp },
+        { metric: '816%', label: 'Increase in ROAS', icon: Target },
         { metric: '62%', label: 'Impressions Efficiency', icon: Zap }
       ],
       gradientFrom: 'from-green-500/10',
