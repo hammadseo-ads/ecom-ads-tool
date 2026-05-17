@@ -32,6 +32,7 @@ import LeadGenHeatMapPage from "./pages/LeadGenHeatMapPage";
 import LeadGenGeoPage from "./pages/LeadGenGeoPage";
 import LeadGenNGramPage from "./pages/LeadGenNGramPage";
 import LeadGenNegativeKeywordsGuide from "./pages/LeadGenNegativeKeywordsGuide";
+import WhiteLabelGoogleAds from "./pages/WhiteLabelGoogleAds";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
@@ -131,6 +132,9 @@ const App = () => {
                   <Route path="/portfolio/decor2sell" element={<Decor2sellPortfolio />} />
                   <Route path="/simple-google-ads-sales-formula" element={<SimpleGoogleAdsSalesFormula />} />
                   <Route path="/google-ads-service" element={<GoogleAdsService />} />
+
+                  {/* Private share-only pitch page (noindex, not in nav/sitemap) */}
+                  <Route path="/white-label-google-ads" element={<WhiteLabelGoogleAds />} />
 
                   {/* Static */}
                   <Route path="/privacy" element={<Privacy />} />
