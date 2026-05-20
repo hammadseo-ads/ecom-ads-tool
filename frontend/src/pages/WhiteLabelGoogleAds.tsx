@@ -450,16 +450,61 @@ const WhiteLabelGoogleAds = () => {
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { name: "MyGreenScape", result: "+386% Conv Value", slug: "/portfolio/mygreen-scape" },
-                { name: "PJ BOLD", result: "+187% Conv Value", slug: "/portfolio/pj-bold" },
-                { name: "Mathfel", result: "+114% Sales", slug: "/portfolio/mathfel" },
-                { name: "TopTiny", result: "$67k/mo at 9x ROAS", slug: "/portfolio/toptiny" },
+                {
+                  name: "MyGreenScape",
+                  result: "+386% Conv Value",
+                  slug: "/portfolio/mygreen-scape",
+                  before: "/lovable-uploads/mygreenscape-before.png",
+                  after: "/lovable-uploads/mygreenscape-after.png",
+                },
+                {
+                  name: "PJ BOLD",
+                  result: "+187% Conv Value",
+                  slug: "/portfolio/pj-bold",
+                  before: "/lovable-uploads/pjbold-before.png",
+                  after: "/lovable-uploads/pjbold-after.png",
+                },
+                {
+                  name: "Mathfel",
+                  result: "+114% Sales",
+                  slug: "/portfolio/mathfel",
+                  before: "/lovable-uploads/f98890e1-3214-4382-9212-ecf6f2a2f131.png",
+                  after: "/lovable-uploads/8c4028f7-578f-4074-a480-7bc2da933083.png",
+                },
+                {
+                  name: "TopTiny",
+                  result: "$67k/mo at 9x ROAS",
+                  slug: "/portfolio/toptiny",
+                  before: "/lovable-uploads/cc006e3d-826d-4336-b314-c72725d9246a.png",
+                  after: "/lovable-uploads/46e6f842-7aa8-4445-8cdb-31157bc0cb2c.png",
+                },
               ].map((c) => (
                 <Card
                   key={c.slug}
-                  className="cursor-pointer hover:shadow-lg hover:border-emerald-400 border-2 transition-all"
+                  className="group cursor-pointer hover:shadow-lg hover:border-emerald-400 border-2 transition-all overflow-hidden"
                   onClick={() => navigate(c.slug)}
                 >
+                  {/* Before / After swap on hover */}
+                  <div className="relative w-full aspect-[16/10] bg-gray-50 overflow-hidden">
+                    <img
+                      src={c.before}
+                      alt={`${c.name} before`}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+                    />
+                    <img
+                      src={c.after}
+                      alt={`${c.name} after`}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    />
+                    <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-white/90 text-gray-700 px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
+                      Before
+                    </span>
+                    <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
+                      After
+                    </span>
+                  </div>
                   <CardContent className="p-6 text-center">
                     <Badge className="mb-3">{c.name}</Badge>
                     <div className="text-xl font-bold text-emerald-700 mb-1">
