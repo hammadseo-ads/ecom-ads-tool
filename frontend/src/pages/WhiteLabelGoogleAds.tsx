@@ -10,6 +10,7 @@
 // structure. Footer is rendered globally by App.tsx, so this page does NOT
 // render its own (avoids the double-footer the user reported).
 
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -114,6 +115,61 @@ const ADS_ANALYSES = [
     body: "Particularly for Search campaigns: see the hours and days that convert best and weight bids toward them.",
   },
 ];
+
+// Clean YouTube embed: shows just the video thumbnail with our own red play
+// button (no profile, no "Watch on YouTube" bar, no related chrome).
+// Loads the actual iframe only when the user clicks — also a perf win.
+const LiteYouTube = ({ id, title }: { id: string; title: string }) => {
+  const [playing, setPlaying] = useState(false);
+
+  if (playing) {
+    return (
+      <iframe
+        className="absolute inset-0 w-full h-full"
+        src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`}
+        title={title}
+        frameBorder={0}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerPolicy="strict-origin-when-cross-origin"
+        allowFullScreen
+      />
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setPlaying(true)}
+      aria-label={`Play ${title}`}
+      className="group absolute inset-0 w-full h-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-400"
+    >
+      <img
+        src={`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`}
+        alt={title}
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover"
+        onError={(e) => {
+          const img = e.currentTarget;
+          if (!img.src.endsWith("/hqdefault.jpg")) {
+            img.src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+          }
+        }}
+      />
+      <div className="absolute inset-0 bg-black/5 group-hover:bg-black/15 transition-colors" />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-[68px] h-[48px] rounded-[14px] bg-[#cc0000] group-hover:bg-[#ff0000] flex items-center justify-center shadow-lg transition-all group-hover:scale-110">
+          <svg
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="w-7 h-7 text-white ml-1"
+          >
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </div>
+      </div>
+    </button>
+  );
+};
 
 const WhiteLabelGoogleAds = () => {
   const navigate = useNavigate();
@@ -428,16 +484,8 @@ const WhiteLabelGoogleAds = () => {
                   key={v.id}
                   className="rounded-xl overflow-hidden shadow-lg border border-emerald-100 bg-black"
                 >
-                  <div className="aspect-video">
-                    <iframe
-                      className="w-full h-full"
-                      src={`https://www.youtube.com/embed/${v.id}?rel=0`}
-                      title={v.label}
-                      frameBorder={0}
-                      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      referrerPolicy="strict-origin-when-cross-origin"
-                      allowFullScreen
-                    />
+                  <div className="relative aspect-video">
+                    <LiteYouTube id={v.id} title={v.label} />
                   </div>
                 </div>
               ))}
