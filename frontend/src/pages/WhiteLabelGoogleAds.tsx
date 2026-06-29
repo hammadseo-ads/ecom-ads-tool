@@ -688,7 +688,7 @@ const WhiteLabelGoogleAds = () => {
                 </h3>
                 <p className="text-gray-600 mt-3 max-w-3xl mx-auto">
                   Real before/after from a SleekPro Fitness redesign. Hover any tile
-                  to see the after, click to enlarge. Together these typically{" "}
+                  to see the before state, click to enlarge. Together these typically{" "}
                   <strong>double mobile conversion</strong>, raise{" "}
                   <strong>AOV 20–30%</strong>, and lift{" "}
                   <strong>Google Ads ROAS 30–50%</strong>,without spending one
@@ -797,8 +797,14 @@ const WhiteLabelGoogleAds = () => {
                         className="group bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-emerald-300 transition-all text-left w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       >
                         <div className="relative w-full aspect-[16/10] bg-gray-100 overflow-hidden">
+                          <img
+                            src={s.afterImg}
+                            alt={`${s.title} after`}
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+                          />
                           {s.noBefore ? (
-                            <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center px-6 text-center transition-opacity duration-300 group-hover:opacity-0">
+                            <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center px-6 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                               <XCircle className="w-10 h-10 text-gray-400 mb-2" />
                               <div className="text-sm font-bold text-gray-700">
                                 {s.noBeforeHeading}
@@ -812,20 +818,14 @@ const WhiteLabelGoogleAds = () => {
                               src={s.beforeImg}
                               alt={`${s.title} before`}
                               loading="lazy"
-                              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+                              className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                             />
                           )}
-                          <img
-                            src={s.afterImg}
-                            alt={`${s.title} after`}
-                            loading="lazy"
-                            className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                          />
-                          <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-white/95 text-gray-700 px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
-                            Before
-                          </span>
-                          <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
+                          <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
                             After
+                          </span>
+                          <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-white/95 text-gray-700 px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
+                            Before
                           </span>
                           <span className="absolute top-2 right-2 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                             {s.n} / 10
@@ -906,7 +906,7 @@ const WhiteLabelGoogleAds = () => {
                 ))}
               </div>
               <p className="text-center text-xs text-gray-500 mt-8">
-                Hover any tile to see the after, click to enlarge the full comparison.
+                Hover any tile to flip back to the before, click to enlarge the full comparison.
               </p>
             </div>
           </div>
@@ -1018,25 +1018,25 @@ const WhiteLabelGoogleAds = () => {
                   className="group cursor-pointer hover:shadow-lg hover:border-emerald-400 border-2 transition-all overflow-hidden"
                   onClick={() => navigate(c.slug)}
                 >
-                  {/* Before / After swap on hover */}
+                  {/* After by default, swap to Before on hover */}
                   <div className="relative w-full aspect-[16/10] bg-gray-50 overflow-hidden">
-                    <img
-                      src={c.before}
-                      alt={`${c.name} before`}
-                      loading="lazy"
-                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
-                    />
                     <img
                       src={c.after}
                       alt={`${c.name} after`}
                       loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+                    />
+                    <img
+                      src={c.before}
+                      alt={`${c.name} before`}
+                      loading="lazy"
                       className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     />
-                    <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-white/90 text-gray-700 px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
-                      Before
-                    </span>
-                    <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
+                    <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
                       After
+                    </span>
+                    <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-white/90 text-gray-700 px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
+                      Before
                     </span>
                     {/* Hover CTA, appears over the image on hover */}
                     <div className="absolute inset-x-0 bottom-0 p-3 flex items-end justify-center pointer-events-none">
