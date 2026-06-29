@@ -245,17 +245,19 @@ const WhiteLabelGoogleAds = () => {
                   <span className="relative inline-block">
                     <span
                       aria-hidden
-                      className="absolute -inset-x-2 inset-y-1 md:inset-y-2 bg-emerald-500 -rotate-[1.5deg] -z-10 rounded-sm"
+                      className="absolute -inset-x-4 -inset-y-1 md:-inset-y-2 bg-emerald-400 -rotate-[1.5deg] -z-10 rounded-md"
                     />
-                    <span className="relative">Google Ads</span>
+                    <span className="relative text-emerald-950">
+                      Google Ads
+                    </span>
                   </span>{" "}
                   to your eCommerce clients,{" "}
                   <span className="relative inline-block mt-2">
                     <span
                       aria-hidden
-                      className="absolute -inset-x-3 inset-y-1 md:inset-y-2 bg-emerald-600 rotate-[-0.8deg] -z-10 rounded-sm"
+                      className="absolute -inset-x-4 -inset-y-1 md:-inset-y-2 bg-emerald-300 rotate-[-0.8deg] -z-10 rounded-md"
                     />
-                    <span className="relative text-white">
+                    <span className="relative text-emerald-950">
                       without doing the work.
                     </span>
                   </span>
@@ -406,9 +408,9 @@ const WhiteLabelGoogleAds = () => {
                   <span className="relative inline-block">
                     <span
                       aria-hidden
-                      className="absolute -inset-x-2 inset-y-1 md:inset-y-2 bg-emerald-400 -rotate-[1.5deg] -z-10 rounded-sm"
+                      className="absolute -inset-x-3 -inset-y-1 md:-inset-y-2 bg-emerald-400 -rotate-[1.5deg] -z-10 rounded-md"
                     />
-                    <span className="relative">Hammad</span>
+                    <span className="relative text-emerald-950">Hammad</span>
                   </span>
                   .
                 </h2>
