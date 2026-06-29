@@ -20,6 +20,12 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ImageModal } from "@/components/ui/image-modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import PublicHeader from "@/components/PublicHeader";
 import SEO from "@/components/SEO";
 import {
@@ -36,6 +42,8 @@ import {
   TrendingUp,
   Handshake,
   DollarSign,
+  XCircle,
+  ZoomIn,
 } from "lucide-react";
 
 const CALENDLY_URL =
@@ -543,10 +551,11 @@ const WhiteLabelGoogleAds = () => {
                 {
                   n: "01",
                   title: "Entry discount pop-up",
-                  before: "Live site loads with no welcome offer. First-time visitors leave with nothing pulling them back.",
+                  before: "No pop-up on the live site. First-time visitors leave with no incentive to come back.",
                   after: "Premium popup auto-shows in 2 seconds: 15% off + email capture + trust strip. Builds the remarketing list.",
-                  beforeImg: "/lovable-uploads/sleekpro-cro/01-popup-before.webp",
+                  beforeImg: "",
                   afterImg: "/lovable-uploads/sleekpro-cro/01-popup-after.webp",
+                  noBefore: true,
                 },
                 {
                   n: "02",
@@ -621,51 +630,123 @@ const WhiteLabelGoogleAds = () => {
                   afterImg: "/lovable-uploads/sleekpro-cro/10-related-after.webp",
                 },
               ].map((s) => (
-                <div
-                  key={s.n}
-                  className="group bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-emerald-300 transition-all"
-                >
-                  <div className="relative w-full aspect-[16/10] bg-gray-100 overflow-hidden">
-                    <img
-                      src={s.beforeImg}
-                      alt={`${s.title} before`}
-                      loading="lazy"
-                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
-                    />
-                    <img
-                      src={s.afterImg}
-                      alt={`${s.title} after`}
-                      loading="lazy"
-                      className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                    />
-                    <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-white/95 text-gray-700 px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
-                      Before
-                    </span>
-                    <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
-                      After
-                    </span>
-                    <span className="absolute top-2 right-2 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                      {s.n} / 10
-                    </span>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-semibold text-gray-900 mb-2">{s.title}</h3>
-                    <p className="text-sm text-gray-500 mb-2">
-                      <span className="font-semibold text-gray-700">Before:</span>{" "}
-                      {s.before}
-                    </p>
-                    <p className="text-sm text-emerald-800 flex gap-2">
-                      <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
-                      <span>
-                        <span className="font-semibold">After:</span> {s.after}
-                      </span>
-                    </p>
-                  </div>
-                </div>
+                <Dialog key={s.n}>
+                  <DialogTrigger asChild>
+                    <button
+                      type="button"
+                      className="group bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-emerald-300 transition-all text-left w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    >
+                      <div className="relative w-full aspect-[16/10] bg-gray-100 overflow-hidden">
+                        {s.noBefore ? (
+                          <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center px-6 text-center transition-opacity duration-300 group-hover:opacity-0">
+                            <XCircle className="w-10 h-10 text-gray-400 mb-2" />
+                            <div className="text-sm font-bold text-gray-700">
+                              No pop-up on the live site
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              First-time visitors left with no incentive to return
+                            </div>
+                          </div>
+                        ) : (
+                          <img
+                            src={s.beforeImg}
+                            alt={`${s.title} before`}
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+                          />
+                        )}
+                        <img
+                          src={s.afterImg}
+                          alt={`${s.title} after`}
+                          loading="lazy"
+                          className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                        />
+                        <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-white/95 text-gray-700 px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
+                          Before
+                        </span>
+                        <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
+                          After
+                        </span>
+                        <span className="absolute top-2 right-2 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                          {s.n} / 10
+                        </span>
+                        <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 text-[10px] font-semibold text-white bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                          <ZoomIn className="w-3 h-3" />
+                          Click to enlarge
+                        </span>
+                      </div>
+                      <div className="p-5">
+                        <h3 className="font-semibold text-gray-900 mb-2">{s.title}</h3>
+                        <p className="text-sm text-gray-500 mb-2">
+                          <span className="font-semibold text-gray-700">Before:</span>{" "}
+                          {s.before}
+                        </p>
+                        <p className="text-sm text-emerald-800 flex gap-2">
+                          <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                          <span>
+                            <span className="font-semibold">After:</span> {s.after}
+                          </span>
+                        </p>
+                      </div>
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-6xl w-[95vw] p-0 bg-white max-h-[92vh] overflow-y-auto">
+                    <DialogTitle className="sr-only">
+                      {s.title} — before and after
+                    </DialogTitle>
+                    <div className="px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+                      <div className="text-[11px] font-bold uppercase tracking-widest text-emerald-700 mb-1">
+                        {s.n} / 10
+                      </div>
+                      <h3 className="text-xl md:text-2xl font-bold text-gray-900">
+                        {s.title}
+                      </h3>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-px bg-gray-200">
+                      <div className="bg-white p-5">
+                        <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500 mb-3">
+                          Before
+                        </div>
+                        {s.noBefore ? (
+                          <div className="aspect-[16/10] w-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-md flex flex-col items-center justify-center px-6 text-center">
+                            <XCircle className="w-14 h-14 text-gray-400 mb-3" />
+                            <div className="text-base font-bold text-gray-700">
+                              No pop-up on the live site
+                            </div>
+                            <div className="text-sm text-gray-500 mt-1 max-w-sm">
+                              First-time visitors left with no incentive to return.
+                            </div>
+                          </div>
+                        ) : (
+                          <img
+                            src={s.beforeImg}
+                            alt={`${s.title} before`}
+                            className="w-full h-auto rounded-md border border-gray-100"
+                          />
+                        )}
+                        <p className="text-sm text-gray-600 mt-3">{s.before}</p>
+                      </div>
+                      <div className="bg-white p-5">
+                        <div className="text-[11px] font-bold uppercase tracking-widest text-emerald-700 mb-3">
+                          After
+                        </div>
+                        <img
+                          src={s.afterImg}
+                          alt={`${s.title} after`}
+                          className="w-full h-auto rounded-md border border-emerald-100"
+                        />
+                        <p className="text-sm text-emerald-900 mt-3 flex gap-2">
+                          <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                          <span>{s.after}</span>
+                        </p>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               ))}
             </div>
             <p className="text-center text-xs text-gray-500 mt-8">
-              Hover any tile to see the after. On mobile, tap to toggle.
+              Hover any tile to see the after — click to enlarge the full comparison.
             </p>
           </div>
         </section>
