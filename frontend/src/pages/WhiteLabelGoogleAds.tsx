@@ -248,6 +248,9 @@ const WhiteLabelGoogleAds = () => {
         <section className="py-14 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-background via-emerald-50/40 to-emerald-100/30">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-6">
+              <span className="inline-block bg-emerald-100 text-emerald-700 text-[11px] font-semibold uppercase tracking-widest rounded-full px-3 py-1 mb-3">
+                The overview
+              </span>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
                 Watch this first
               </h2>
@@ -255,113 +258,209 @@ const WhiteLabelGoogleAds = () => {
                 The full partnership model in a few minutes.
               </p>
             </div>
-            <div className="rounded-xl overflow-hidden shadow-xl border border-emerald-100 bg-black aspect-video">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-emerald-100/60 aspect-video bg-gradient-to-br from-emerald-950 via-gray-900 to-emerald-900">
               {MAIN_VSL_YOUTUBE_ID ? (
-                <iframe
-                  className="w-full h-full"
-                  src={`https://www.youtube.com/embed/${MAIN_VSL_YOUTUBE_ID}?autoplay=1&mute=1&rel=0`}
+                <LiteYouTube
+                  id={MAIN_VSL_YOUTUBE_ID}
                   title="White Label Partnership Overview"
-                  frameBorder={0}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
                 />
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-emerald-100/80 gap-3">
-                  <PlayCircle className="w-14 h-14" />
-                  <p className="text-sm">Overview video coming soon</p>
-                </div>
+                <>
+                  {/* Decorative blurred orbs */}
+                  <div className="absolute -top-20 -left-20 w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl" />
+                  <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl" />
+                  {/* Subtle grid pattern */}
+                  <div
+                    className="absolute inset-0 opacity-[0.08]"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)",
+                      backgroundSize: "40px 40px",
+                    }}
+                  />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+                    <div className="relative">
+                      <div className="w-[72px] h-[50px] rounded-[14px] bg-[#cc0000]/90 flex items-center justify-center shadow-2xl shadow-red-900/40">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="w-7 h-7 text-white ml-1"
+                        >
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                      <div className="absolute inset-0 rounded-[14px] bg-[#cc0000] animate-ping opacity-20" />
+                    </div>
+                    <div className="text-white font-semibold text-base md:text-lg mt-5">
+                      Overview video coming soon
+                    </div>
+                    <p className="text-emerald-200/70 text-sm mt-2 max-w-md">
+                      Book a partnership call and we'll walk you through it
+                      live — no recording needed.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={bookCall}
+                      className="mt-5 inline-flex items-center gap-2 bg-white/95 hover:bg-white text-emerald-700 text-sm font-semibold px-4 py-2 rounded-full shadow-lg transition-all hover:shadow-xl hover:-translate-y-0.5"
+                    >
+                      <Calendar className="w-4 h-4" />
+                      Book a partnership call
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           </div>
         </section>
 
         {/* ===================== HOW IT WORKS ===================== */}
-        <section id="how-it-works" className="py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-12">
-              <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold uppercase tracking-wide rounded-full px-3 py-1 mb-3">
+        <section
+          id="how-it-works"
+          className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
+        >
+          {/* Soft background mesh */}
+          <div className="absolute inset-0 -z-10 pointer-events-none">
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-200/40 rounded-full mix-blend-multiply filter blur-3xl" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-100/50 rounded-full mix-blend-multiply filter blur-3xl" />
+          </div>
+
+          <div className="max-w-6xl mx-auto relative">
+            <div className="text-center mb-14">
+              <span className="inline-block bg-emerald-100 text-emerald-700 text-[11px] font-semibold uppercase tracking-widest rounded-full px-3 py-1 mb-3">
                 The Process
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+              <h2 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight">
                 Three steps, value at every one
               </h2>
-              <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
+              <p className="text-gray-600 mt-4 max-w-2xl mx-auto text-base md:text-lg">
                 We never walk into the end client empty-handed. Each step
                 delivers something useful before any commitment.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
-              <Card className="border-2 border-emerald-100">
-                <CardHeader>
-                  <div className="flex items-center gap-3 mb-1">
-                    <span className="bg-emerald-600 text-white rounded-full w-9 h-9 flex items-center justify-center font-bold">
-                      1
-                    </span>
-                    <CardTitle className="text-xl">Free CRO analysis</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="text-sm text-gray-700 leading-relaxed space-y-2">
-                  <p>
-                    We analyze the end client's store and record a video that
-                    visually redesigns their pages, showing exactly how to
-                    convert more of their current visitors into sales.
-                  </p>
-                  <p>
-                    In the same video we preview four Google Ads analyses our
-                    software can run to find wasted budget.
-                  </p>
-                </CardContent>
-              </Card>
+            <div className="grid md:grid-cols-3 gap-6 relative">
+              {/* Connecting dashed line on desktop */}
+              <div className="hidden md:block absolute top-[88px] left-[16%] right-[16%] h-px -z-10">
+                <div className="w-full h-full bg-gradient-to-r from-transparent via-emerald-300 to-transparent" />
+              </div>
 
-              <Card className="border-2 border-emerald-100">
-                <CardHeader>
-                  <div className="flex items-center gap-3 mb-1">
-                    <span className="bg-emerald-600 text-white rounded-full w-9 h-9 flex items-center justify-center font-bold">
-                      2
-                    </span>
-                    <CardTitle className="text-xl">Deep Ads analysis</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="text-sm text-gray-700 leading-relaxed space-y-2">
-                  <p>
-                    Once they're interested, we take read-only Google Ads
-                    access and do a full account analysis, finding exactly
-                    where budget is being wasted and where the opportunity is.
-                  </p>
-                </CardContent>
-              </Card>
+              {[
+                {
+                  n: 1,
+                  Icon: Sparkles,
+                  tag: "CRO",
+                  title: "Free CRO analysis",
+                  body:
+                    "We analyze the end client's store and record a video that visually redesigns their pages, showing exactly how to convert more of their current visitors into sales. In the same video we preview four Google Ads analyses our software can run to find wasted budget.",
+                  deliverable: "Free CRO video + ads preview",
+                },
+                {
+                  n: 2,
+                  Icon: TrendingUp,
+                  tag: "Ads",
+                  title: "Deep Ads analysis",
+                  body:
+                    "Once they're interested, we take read-only Google Ads access and do a full account analysis — finding exactly where budget is being wasted and where the opportunity is.",
+                  deliverable: "Detailed ads audit report",
+                },
+                {
+                  n: 3,
+                  Icon: Handshake,
+                  tag: "Plan",
+                  title: "The growth plan",
+                  body:
+                    "We hand them a clear plan that will actually generate sales. They can have us execute it, or implement it themselves. Either way they win, and you earn commission on the ones we run.",
+                  deliverable: "Concrete growth plan",
+                },
+              ].map((step) => {
+                const Icon = step.Icon;
+                return (
+                  <div
+                    key={step.n}
+                    className="group relative bg-white/80 backdrop-blur-sm border border-emerald-100/80 rounded-2xl p-7 shadow-sm hover:shadow-2xl hover:shadow-emerald-100 hover:-translate-y-1 hover:border-emerald-300 transition-all duration-300 overflow-hidden flex flex-col"
+                  >
+                    {/* Giant faded background number */}
+                    <div
+                      aria-hidden
+                      className="absolute -top-2 right-3 text-[110px] font-black text-emerald-100/80 leading-none select-none pointer-events-none group-hover:text-emerald-200/80 transition-colors"
+                    >
+                      0{step.n}
+                    </div>
 
-              <Card className="border-2 border-emerald-100">
-                <CardHeader>
-                  <div className="flex items-center gap-3 mb-1">
-                    <span className="bg-emerald-600 text-white rounded-full w-9 h-9 flex items-center justify-center font-bold">
-                      3
-                    </span>
-                    <CardTitle className="text-xl">The growth plan</CardTitle>
+                    {/* Step pill */}
+                    <div className="inline-flex w-fit items-center gap-2 bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-5 relative shadow-sm">
+                      <span className="w-1.5 h-1.5 bg-white rounded-full" />
+                      Step 0{step.n} · {step.tag}
+                    </div>
+
+                    {/* Icon tile */}
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shadow-lg shadow-emerald-200 mb-4 relative group-hover:scale-110 transition-transform">
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 relative">
+                      {step.title}
+                    </h3>
+
+                    <p className="text-sm text-gray-600 leading-relaxed mb-5 relative flex-grow">
+                      {step.body}
+                    </p>
+
+                    {/* Deliverable strip */}
+                    <div className="pt-4 mt-auto border-t border-emerald-100 relative">
+                      <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-700/70 mb-1">
+                        What you get
+                      </div>
+                      <div className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                        <span>{step.deliverable}</span>
+                      </div>
+                    </div>
                   </div>
-                </CardHeader>
-                <CardContent className="text-sm text-gray-700 leading-relaxed space-y-2">
-                  <p>
-                    We hand them a clear plan that will actually generate
-                    sales. They can have us execute it, or implement it
-                    themselves. Either way they win, and you earn commission
-                    on the ones we run.
-                  </p>
-                </CardContent>
-              </Card>
+                );
+              })}
             </div>
 
-            <div className="mt-8 bg-emerald-50 border-l-4 border-emerald-500 p-5 rounded-r-lg max-w-4xl mx-auto">
-              <p className="text-sm text-emerald-900/90 leading-relaxed">
-                <strong>Why this works:</strong> the end client receives
-                genuine value at every step, a CRO redesign, a detailed Google
-                Ads audit, and a concrete growth plan, before any money
-                changes hands. By the time we propose execution, trust is
-                already built. You introduce the client; we close and deliver;
-                you earn.
-              </p>
+            {/* Upgraded "Why this works" callout */}
+            <div className="mt-12 relative max-w-4xl mx-auto">
+              <div className="relative bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 rounded-2xl p-7 md:p-9 shadow-2xl shadow-emerald-200 text-white overflow-hidden">
+                {/* Decorative dot pattern */}
+                <div
+                  aria-hidden
+                  className="absolute inset-0 opacity-[0.12]"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(circle at center, white 1px, transparent 1px)",
+                    backgroundSize: "22px 22px",
+                  }}
+                />
+                {/* Soft accent orb */}
+                <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
+
+                <div className="relative flex flex-col md:flex-row gap-5">
+                  <div className="flex-shrink-0">
+                    <div className="bg-white/15 backdrop-blur-sm w-14 h-14 rounded-2xl flex items-center justify-center border border-white/20 shadow-lg">
+                      <Sparkles className="w-7 h-7 text-white" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-bold uppercase tracking-widest text-emerald-100 mb-2">
+                      Why this works
+                    </div>
+                    <p className="text-emerald-50 leading-relaxed text-[15px]">
+                      The end client receives genuine value at every step — a
+                      CRO redesign, a detailed Google Ads audit, and a
+                      concrete growth plan — before any money changes hands.
+                      By the time we propose execution, trust is already
+                      built.{" "}
+                      <span className="font-semibold text-white">
+                        You introduce the client; we close and deliver; you
+                        earn.
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -787,14 +886,21 @@ const WhiteLabelGoogleAds = () => {
                     <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
                       After
                     </span>
+                    {/* Hover CTA — appears over the image on hover */}
+                    <div className="absolute inset-x-0 bottom-0 p-3 flex items-end justify-center pointer-events-none">
+                      <span className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                        Open case study
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
                   </div>
                   <CardContent className="p-6 text-center">
                     <Badge className="mb-3">{c.name}</Badge>
                     <div className="text-xl font-bold text-emerald-700 mb-1">
                       {c.result}
                     </div>
-                    <div className="text-xs text-emerald-700 flex items-center justify-center gap-1 mt-3">
-                      View case study <ArrowRight className="w-3 h-3" />
+                    <div className="text-xs text-emerald-700 flex items-center justify-center gap-1 mt-3 group-hover:text-emerald-800 transition-colors">
+                      View case study <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </CardContent>
                 </Card>
