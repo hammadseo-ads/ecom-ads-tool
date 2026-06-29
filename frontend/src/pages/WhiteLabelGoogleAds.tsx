@@ -188,7 +188,7 @@ const WhiteLabelGoogleAds = () => {
 
       <div className="min-h-screen bg-background">
         {/* ===================== HERO ===================== */}
-        <section className="relative overflow-hidden py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+        <section className="relative isolate overflow-hidden py-16 md:py-24 px-4 sm:px-6 lg:px-8">
           {/* Backdrop layers */}
           <div className="absolute inset-0 -z-10">
             <div className="absolute inset-0 bg-gray-900" />
