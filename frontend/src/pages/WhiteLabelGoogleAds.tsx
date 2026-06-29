@@ -55,12 +55,13 @@ const CALENDLY_URL =
 // Leave null to render the "coming soon" placeholder.
 const MAIN_VSL_YOUTUBE_ID: string | null = null;
 
-// Three sample explainer videos (the first-step CRO walkthroughs we send
+// Four sample explainer videos (the first-step CRO walkthroughs we send
 // to a prospect's end client).
 const SAMPLE_VIDEOS = [
   { id: "z0l5mKyJb2k", label: "Sample 1, CRO walkthrough" },
   { id: "DVGogrban_s", label: "Sample 2, CRO walkthrough" },
   { id: "XLVb_zvIZLY", label: "Sample 3, CRO walkthrough" },
+  { id: "-vkPJTQLlNI", label: "Sample 4, CRO walkthrough" },
 ];
 
 // Tool screenshots reused from the /ads-tool InsightsShowcase.
@@ -158,7 +159,7 @@ const LiteYouTube = ({ id, title }: { id: string; title: string }) => {
       />
       <div className="absolute inset-0 bg-black/5 group-hover:bg-black/15 transition-colors" />
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-[68px] h-[48px] rounded-[14px] bg-[#cc0000] group-hover:bg-[#ff0000] flex items-center justify-center shadow-lg transition-all group-hover:scale-110">
+        <div className="w-[68px] h-[48px] rounded-[14px] bg-emerald-600 group-hover:bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-900/40 transition-all group-hover:scale-110">
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -322,7 +323,7 @@ const WhiteLabelGoogleAds = () => {
                         />
                         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
                           <div className="relative">
-                            <div className="w-[64px] h-[44px] rounded-[12px] bg-[#cc0000]/90 flex items-center justify-center shadow-2xl shadow-red-900/40">
+                            <div className="w-[64px] h-[44px] rounded-[12px] bg-emerald-600 flex items-center justify-center shadow-2xl shadow-emerald-900/40">
                               <svg
                                 viewBox="0 0 24 24"
                                 fill="currentColor"
@@ -331,7 +332,7 @@ const WhiteLabelGoogleAds = () => {
                                 <path d="M8 5v14l11-7z" />
                               </svg>
                             </div>
-                            <div className="absolute inset-0 rounded-[12px] bg-[#cc0000] animate-ping opacity-20" />
+                            <div className="absolute inset-0 rounded-[12px] bg-emerald-500 animate-ping opacity-30" />
                           </div>
                           <div className="text-white font-semibold text-sm md:text-base mt-4">
                             Overview video coming soon
@@ -954,11 +955,11 @@ const WhiteLabelGoogleAds = () => {
                 Real Step-1 walkthroughs we've sent
               </h2>
               <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
-                Three actual CRO analysis videos we recorded for prospects'
+                Four actual CRO analysis videos we recorded for prospects'
                 end clients. This is the value they get before paying anything.
               </p>
             </div>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {SAMPLE_VIDEOS.map((v) => (
                 <div
                   key={v.id}
