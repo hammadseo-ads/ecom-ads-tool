@@ -119,7 +119,7 @@ const ADS_ANALYSES = [
 
 // Clean YouTube embed: shows just the video thumbnail with our own red play
 // button (no profile, no "Watch on YouTube" bar, no related chrome).
-// Loads the actual iframe only when the user clicks — also a perf win.
+// Loads the actual iframe only when the user clicks, also a perf win.
 const LiteYouTube = ({ id, title }: { id: string; title: string }) => {
   const [playing, setPlaying] = useState(false);
 
@@ -234,7 +234,7 @@ const WhiteLabelGoogleAds = () => {
 
           <div className="relative max-w-7xl mx-auto isolate">
             <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-              {/* LEFT — text */}
+              {/* LEFT, text */}
               <div className="lg:col-span-7 text-white">
                 <div className="inline-flex items-center gap-2 bg-emerald-500/15 border border-emerald-400/30 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-[0.18em] uppercase text-emerald-100 mb-6">
                   <Handshake className="w-3.5 h-3.5" />
@@ -253,18 +253,18 @@ const WhiteLabelGoogleAds = () => {
                   <span className="relative inline-block mt-2">
                     <span
                       aria-hidden
-                      className="absolute -inset-x-3 inset-y-2 md:inset-y-3 bg-emerald-300 rotate-[-0.8deg] -z-10 rounded-sm"
+                      className="absolute -inset-x-3 inset-y-1 md:inset-y-2 bg-emerald-600 rotate-[-0.8deg] -z-10 rounded-sm"
                     />
-                    <span className="relative text-emerald-950">
+                    <span className="relative text-white">
                       without doing the work.
                     </span>
                   </span>
                 </h1>
                 <p className="text-base md:text-lg text-emerald-50/85 max-w-2xl mb-8 leading-relaxed">
-                  You already have eCommerce clients. We deliver the Google Ads
-                  — under your brand or ours — while you earn commission. Every
-                  step gives the end client real value before they ever pay
-                  anything.
+                  You already have eCommerce clients. We deliver the Google
+                  Ads, under your brand or ours, while you earn commission.
+                  Every step gives the end client real value before they ever
+                  pay anything.
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <Button
@@ -290,7 +290,7 @@ const WhiteLabelGoogleAds = () => {
                 </div>
               </div>
 
-              {/* RIGHT — VSL */}
+              {/* RIGHT, VSL */}
               <div className="lg:col-span-5">
                 <div className="relative">
                   {/* Floating eyebrow label above video */}
@@ -373,7 +373,7 @@ const WhiteLabelGoogleAds = () => {
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-gradient-to-br from-emerald-50 to-white">
                     <img
                       src="/lovable-uploads/ceo-hammad-cropped.jpg"
-                      alt="Hammad — Founder, ManagingSEO"
+                      alt="Hammad, Founder, ManagingSEO"
                       className="w-full h-auto block"
                       loading="lazy"
                     />
@@ -418,7 +418,7 @@ const WhiteLabelGoogleAds = () => {
                     <strong>Google Ads and SEO for eCommerce brands</strong>{" "}
                     across apparel, home goods, fitness, automotive, and DTC.
                     The frustration that built ManagingSEO? Most agencies run
-                    paid traffic on autopilot — bids on instinct, no real
+                    paid traffic on autopilot, bids on instinct, no real
                     product-level analysis, every account a slightly different
                     version of the last.
                   </p>
@@ -434,7 +434,7 @@ const WhiteLabelGoogleAds = () => {
 
                 <div className="mt-6 flex items-baseline gap-3 text-emerald-700">
                   <span className="font-serif italic text-2xl font-semibold">
-                    — Hammad
+                    Hammad
                   </span>
                   <span className="text-sm text-gray-500">
                     Founder, ManagingSEO
@@ -512,7 +512,7 @@ const WhiteLabelGoogleAds = () => {
                   tag: "Ads",
                   title: "Deep Ads analysis",
                   body:
-                    "Once they're interested, we take read-only Google Ads access and do a full account analysis — finding exactly where budget is being wasted and where the opportunity is.",
+                    "Once they're interested, we take read-only Google Ads access and do a full account analysis, finding exactly where budget is being wasted and where the opportunity is.",
                   deliverable: "Detailed ads audit report",
                 },
                 {
@@ -600,9 +600,9 @@ const WhiteLabelGoogleAds = () => {
                       Why this works
                     </div>
                     <p className="text-emerald-50 leading-relaxed text-[15px]">
-                      The end client receives genuine value at every step — a
+                      The end client receives genuine value at every step, a
                       CRO redesign, a detailed Google Ads audit, and a
-                      concrete growth plan — before any money changes hands.
+                      concrete growth plan, before any money changes hands.
                       By the time we propose execution, trust is already
                       built.{" "}
                       <span className="font-semibold text-white">
@@ -691,7 +691,7 @@ const WhiteLabelGoogleAds = () => {
                   to see the after, click to enlarge. Together these typically{" "}
                   <strong>double mobile conversion</strong>, raise{" "}
                   <strong>AOV 20–30%</strong>, and lift{" "}
-                  <strong>Google Ads ROAS 30–50%</strong> — without spending one
+                  <strong>Google Ads ROAS 30–50%</strong>,without spending one
                   extra dollar on ads.
                 </p>
               </div>
@@ -719,7 +719,7 @@ const WhiteLabelGoogleAds = () => {
                   {
                     n: "03",
                     title: "Suggestion-driven search",
-                    before: "Basic search input — no suggestions, no product preview, no category shortcuts.",
+                    before: "Basic search input, no suggestions, no product preview, no category shortcuts.",
                     after: "Category dropdown + autocomplete with trending searches, top products with images & prices, category links.",
                     beforeImg: "/lovable-uploads/sleekpro-cro/03-search-before.webp",
                     afterImg: "/lovable-uploads/sleekpro-cro/03-search-after.webp",
@@ -741,7 +741,7 @@ const WhiteLabelGoogleAds = () => {
                     afterImg: "/lovable-uploads/sleekpro-cro/05-sticky-atc-after.webp",
                     noBefore: true,
                     noBeforeHeading: "No sticky add-to-cart on mobile",
-                    noBeforeSub: "Buyers had to scroll back up to add — most never bothered",
+                    noBeforeSub: "Buyers had to scroll back up to add, most never bothered",
                   },
                   {
                     n: "06",
@@ -758,7 +758,7 @@ const WhiteLabelGoogleAds = () => {
                     n: "07",
                     title: "Video + photo reviews",
                     before: "No video or photo reviews on the homepage. Trust-building was entirely text-based.",
-                    after: "'See it in action' video + photo review grid — verified buyers with star ratings and caption snippets.",
+                    after: "'See it in action' video + photo review grid, verified buyers with star ratings and caption snippets.",
                     beforeImg: "",
                     afterImg: "/lovable-uploads/sleekpro-cro/07-reviews-after.webp",
                     noBefore: true,
@@ -776,7 +776,7 @@ const WhiteLabelGoogleAds = () => {
                   {
                     n: "09",
                     title: "PDP bundles & upsells",
-                    before: "Standard PDP — no bundle suggestion. Customer buys 1 item and leaves.",
+                    before: "Standard PDP, no bundle suggestion. Customer buys 1 item and leaves.",
                     after: "'Frequently bought together' bundle: 3 products + Save 15% CTA. Pushes AOV up immediately.",
                     beforeImg: "/lovable-uploads/sleekpro-cro/09-bundles-before.webp",
                     afterImg: "/lovable-uploads/sleekpro-cro/09-bundles-after.webp",
@@ -852,7 +852,7 @@ const WhiteLabelGoogleAds = () => {
                     </DialogTrigger>
                     <DialogContent className="max-w-6xl w-[95vw] p-0 bg-white max-h-[92vh] overflow-y-auto">
                       <DialogTitle className="sr-only">
-                        {s.title} — before and after
+                        {s.title},before and after
                       </DialogTitle>
                       <div className="px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
                         <div className="text-[11px] font-bold uppercase tracking-widest text-emerald-700 mb-1">
@@ -906,7 +906,7 @@ const WhiteLabelGoogleAds = () => {
                 ))}
               </div>
               <p className="text-center text-xs text-gray-500 mt-8">
-                Hover any tile to see the after — click to enlarge the full comparison.
+                Hover any tile to see the after, click to enlarge the full comparison.
               </p>
             </div>
           </div>
@@ -1038,7 +1038,7 @@ const WhiteLabelGoogleAds = () => {
                     <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
                       After
                     </span>
-                    {/* Hover CTA — appears over the image on hover */}
+                    {/* Hover CTA, appears over the image on hover */}
                     <div className="absolute inset-x-0 bottom-0 p-3 flex items-end justify-center pointer-events-none">
                       <span className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                         Open case study
