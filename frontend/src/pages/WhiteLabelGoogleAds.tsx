@@ -188,8 +188,9 @@ const WhiteLabelGoogleAds = () => {
 
       <div className="min-h-screen bg-background">
         {/* ===================== HERO ===================== */}
-        <section className="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8">
-          <div className="absolute inset-0">
+        <section className="relative overflow-hidden py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+          {/* Backdrop layers */}
+          <div className="absolute inset-0 -z-10">
             <div className="absolute inset-0 bg-gray-900" />
             <div
               className="absolute inset-0 opacity-80"
@@ -204,140 +205,145 @@ const WhiteLabelGoogleAds = () => {
                   #0a0a0a 100%)`,
               }}
             />
+            {/* Animated emerald orbs */}
+            <div
+              aria-hidden
+              className="absolute -top-32 -left-20 w-[28rem] h-[28rem] bg-emerald-500/30 rounded-full blur-3xl animate-orb-float"
+            />
+            <div
+              aria-hidden
+              className="absolute top-1/3 -right-32 w-[32rem] h-[32rem] bg-emerald-400/20 rounded-full blur-3xl animate-orb-float"
+              style={{ animationDelay: "4s" }}
+            />
+            <div
+              aria-hidden
+              className="absolute -bottom-24 left-1/3 w-80 h-80 bg-emerald-300/15 rounded-full blur-3xl animate-float"
+              style={{ animationDelay: "2s" }}
+            />
+            {/* Faint grid pattern overlay */}
+            <div
+              aria-hidden
+              className="absolute inset-0 opacity-[0.07] pointer-events-none"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px)",
+                backgroundSize: "56px 56px",
+              }}
+            />
           </div>
 
-          {/* Faint grid pattern overlay */}
-          <div
-            aria-hidden
-            className="absolute inset-0 opacity-[0.07] pointer-events-none"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px)",
-              backgroundSize: "56px 56px",
-            }}
-          />
+          <div className="relative max-w-7xl mx-auto isolate">
+            <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+              {/* LEFT — text */}
+              <div className="lg:col-span-7 text-white">
+                <div className="inline-flex items-center gap-2 bg-emerald-500/15 border border-emerald-400/30 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-[0.18em] uppercase text-emerald-100 mb-6">
+                  <Handshake className="w-3.5 h-3.5" />
+                  White Label Google Ads Partnership
+                </div>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.08] tracking-tight mb-6">
+                  Upsell{" "}
+                  <span className="relative inline-block">
+                    <span
+                      aria-hidden
+                      className="absolute -inset-x-2 inset-y-1 md:inset-y-2 bg-emerald-500 -rotate-[1.5deg] -z-10 rounded-sm"
+                    />
+                    <span className="relative">Google Ads</span>
+                  </span>{" "}
+                  to your eCommerce clients,{" "}
+                  <span className="relative inline-block mt-2">
+                    <span
+                      aria-hidden
+                      className="absolute -inset-x-3 inset-y-2 md:inset-y-3 bg-emerald-300 rotate-[-0.8deg] -z-10 rounded-sm"
+                    />
+                    <span className="relative text-emerald-950">
+                      without doing the work.
+                    </span>
+                  </span>
+                </h1>
+                <p className="text-base md:text-lg text-emerald-50/85 max-w-2xl mb-8 leading-relaxed">
+                  You already have eCommerce clients. We deliver the Google Ads
+                  — under your brand or ours — while you earn commission. Every
+                  step gives the end client real value before they ever pay
+                  anything.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    size="lg"
+                    className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-900/40 px-6"
+                    onClick={bookCall}
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Book a partnership call
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-white/40 text-white bg-white/10 hover:bg-white/20 px-6"
+                    onClick={() =>
+                      document
+                        .getElementById("how-it-works")
+                        ?.scrollIntoView({ behavior: "smooth" })
+                    }
+                  >
+                    See how it works
+                  </Button>
+                </div>
+              </div>
 
-          <div className="relative max-w-5xl mx-auto text-center text-white isolate">
-            <div className="inline-flex items-center gap-2 bg-emerald-500/15 border border-emerald-400/30 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-[0.18em] uppercase text-emerald-100 mb-7">
-              <Handshake className="w-3.5 h-3.5" />
-              White Label Google Ads Partnership
-            </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-7">
-              Upsell{" "}
-              <span className="relative inline-block">
-                <span
-                  aria-hidden
-                  className="absolute -inset-x-2 inset-y-1 md:inset-y-2 bg-emerald-500 -rotate-[1.5deg] -z-10 rounded-sm"
-                />
-                <span className="relative">Google Ads</span>
-              </span>{" "}
-              to your eCommerce clients,
-              <br className="hidden md:block" />{" "}
-              <span className="relative inline-block mt-2 md:mt-3">
-                <span
-                  aria-hidden
-                  className="absolute -inset-x-3 inset-y-2 md:inset-y-3 bg-amber-300 rotate-[-0.8deg] -z-10 rounded-sm"
-                />
-                <span className="relative text-gray-900">
-                  without doing the work.
-                </span>
-              </span>
-            </h1>
-            <p className="text-lg md:text-xl text-emerald-50/85 max-w-3xl mx-auto mb-9 leading-relaxed">
-              You already have eCommerce clients. We deliver the Google Ads —
-              under your brand or ours — while you earn commission. Every step
-              gives the end client real value before they ever pay anything.
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <Button
-                size="lg"
-                className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-900/40 px-6"
-                onClick={bookCall}
-              >
-                <Calendar className="w-4 h-4 mr-2" />
-                Book a partnership call
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white/40 text-white bg-white/10 hover:bg-white/20 px-6"
-                onClick={() =>
-                  document
-                    .getElementById("how-it-works")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                See how it works
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* ===================== MAIN VIDEO ===================== */}
-        <section className="py-14 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-background via-emerald-50/40 to-emerald-100/30">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-6">
-              <span className="inline-block bg-emerald-100 text-emerald-700 text-[11px] font-semibold uppercase tracking-widest rounded-full px-3 py-1 mb-3">
-                The overview
-              </span>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                Watch this first
-              </h2>
-              <p className="text-gray-600 mt-2">
-                The full partnership model in a few minutes.
-              </p>
-            </div>
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-emerald-100/60 aspect-video bg-gradient-to-br from-emerald-950 via-gray-900 to-emerald-900">
-              {MAIN_VSL_YOUTUBE_ID ? (
-                <LiteYouTube
-                  id={MAIN_VSL_YOUTUBE_ID}
-                  title="White Label Partnership Overview"
-                />
-              ) : (
-                <>
-                  {/* Decorative blurred orbs */}
-                  <div className="absolute -top-20 -left-20 w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl" />
-                  <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl" />
-                  {/* Subtle grid pattern */}
-                  <div
-                    className="absolute inset-0 opacity-[0.08]"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)",
-                      backgroundSize: "40px 40px",
-                    }}
-                  />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-                    <div className="relative">
-                      <div className="w-[72px] h-[50px] rounded-[14px] bg-[#cc0000]/90 flex items-center justify-center shadow-2xl shadow-red-900/40">
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="w-7 h-7 text-white ml-1"
-                        >
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                      </div>
-                      <div className="absolute inset-0 rounded-[14px] bg-[#cc0000] animate-ping opacity-20" />
-                    </div>
-                    <div className="text-white font-semibold text-base md:text-lg mt-5">
-                      Overview video coming soon
-                    </div>
-                    <p className="text-emerald-200/70 text-sm mt-2 max-w-md">
-                      Book a partnership call and we'll walk you through it
-                      live — no recording needed.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={bookCall}
-                      className="mt-5 inline-flex items-center gap-2 bg-white/95 hover:bg-white text-emerald-700 text-sm font-semibold px-4 py-2 rounded-full shadow-lg transition-all hover:shadow-xl hover:-translate-y-0.5"
-                    >
-                      <Calendar className="w-4 h-4" />
-                      Book a partnership call
-                    </button>
+              {/* RIGHT — VSL */}
+              <div className="lg:col-span-5">
+                <div className="relative">
+                  {/* Floating eyebrow label above video */}
+                  <div className="absolute -top-3 left-4 z-20 inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-100">
+                    <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+                    Watch this first
                   </div>
-                </>
-              )}
+                  {/* Video frame */}
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/40 border border-emerald-100/15 aspect-video bg-gradient-to-br from-emerald-950 via-gray-900 to-emerald-900">
+                    {MAIN_VSL_YOUTUBE_ID ? (
+                      <LiteYouTube
+                        id={MAIN_VSL_YOUTUBE_ID}
+                        title="White Label Partnership Overview"
+                      />
+                    ) : (
+                      <>
+                        {/* Decorative blurred orbs */}
+                        <div className="absolute -top-20 -left-20 w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl" />
+                        <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl" />
+                        <div
+                          className="absolute inset-0 opacity-[0.08]"
+                          style={{
+                            backgroundImage:
+                              "linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)",
+                            backgroundSize: "40px 40px",
+                          }}
+                        />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+                          <div className="relative">
+                            <div className="w-[64px] h-[44px] rounded-[12px] bg-[#cc0000]/90 flex items-center justify-center shadow-2xl shadow-red-900/40">
+                              <svg
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                className="w-6 h-6 text-white ml-1"
+                              >
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            </div>
+                            <div className="absolute inset-0 rounded-[12px] bg-[#cc0000] animate-ping opacity-20" />
+                          </div>
+                          <div className="text-white font-semibold text-sm md:text-base mt-4">
+                            Overview video coming soon
+                          </div>
+                          <p className="text-emerald-200/70 text-xs mt-2 max-w-xs">
+                            Book a partnership call and we'll walk you through
+                            it live.
+                          </p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -350,7 +356,7 @@ const WhiteLabelGoogleAds = () => {
             className="absolute inset-0 -z-10 pointer-events-none"
           >
             <div className="absolute top-1/3 -left-32 w-96 h-96 bg-emerald-100/60 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 right-0 w-72 h-72 bg-amber-100/40 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-0 w-72 h-72 bg-emerald-50 rounded-full blur-3xl" />
           </div>
 
           <div className="max-w-6xl mx-auto">
@@ -366,7 +372,7 @@ const WhiteLabelGoogleAds = () => {
                   {/* Photo frame */}
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-gradient-to-br from-emerald-50 to-white">
                     <img
-                      src="/lovable-uploads/ceo-hammad.jpg"
+                      src="/lovable-uploads/ceo-hammad-cropped.jpg"
                       alt="Hammad — Founder, ManagingSEO"
                       className="w-full h-auto block"
                       loading="lazy"
