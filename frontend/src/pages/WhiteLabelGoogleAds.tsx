@@ -385,11 +385,11 @@ const WhiteLabelGoogleAds = () => {
                   </div>
                   {/* Floating credibility card */}
                   <div className="absolute -bottom-5 -right-3 lg:-right-6 bg-white rounded-xl shadow-xl border border-gray-100 px-4 py-3">
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-700">
-                      Years running
+                    <div className="text-2xl font-black text-emerald-700 leading-none">
+                      6<span className="text-base font-bold ml-0.5">yrs</span>
                     </div>
-                    <div className="text-base font-bold text-gray-900">
-                      Google Ads & SEO
+                    <div className="text-xs font-semibold text-gray-700 mt-1">
+                      of digital marketing
                     </div>
                   </div>
                 </div>
