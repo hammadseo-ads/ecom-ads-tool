@@ -520,6 +520,156 @@ const WhiteLabelGoogleAds = () => {
           </div>
         </section>
 
+        {/* ===================== CRO BEFORE / AFTER SHOWCASE ===================== */}
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-10">
+              <div className="text-xs font-semibold uppercase tracking-widest text-emerald-700 mb-2">
+                How we lift conversion
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+                10 CRO upgrades we ship on the store before the ads run
+              </h2>
+              <p className="text-gray-600 mt-3 max-w-3xl mx-auto">
+                Real before/after from a SleekPro Fitness redesign. Hover any tile to
+                see the after. Together these typically <strong>double mobile
+                conversion</strong>, raise <strong>AOV 20–30%</strong>, and lift{" "}
+                <strong>Google Ads ROAS 30–50%</strong> — without spending one extra
+                dollar on ads.
+              </p>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                {
+                  n: "01",
+                  title: "Entry discount pop-up",
+                  before: "Live site loads with no welcome offer. First-time visitors leave with nothing pulling them back.",
+                  after: "Premium popup auto-shows in 2 seconds: 15% off + email capture + trust strip. Builds the remarketing list.",
+                  beforeImg: "/lovable-uploads/sleekpro-cro/01-popup-before.webp",
+                  afterImg: "/lovable-uploads/sleekpro-cro/01-popup-after.webp",
+                },
+                {
+                  n: "02",
+                  title: "Mobile mega-menu",
+                  before: "Text-only hamburger. Customer reads every link to find what they want.",
+                  after: "Image-tile drawer with featured banner + visual category cards + quick CTAs.",
+                  beforeImg: "/lovable-uploads/sleekpro-cro/02-mobile-menu-before.webp",
+                  afterImg: "/lovable-uploads/sleekpro-cro/02-mobile-menu-after.webp",
+                },
+                {
+                  n: "03",
+                  title: "Suggestion-driven search",
+                  before: "Basic search input — no suggestions, no product preview, no category shortcuts.",
+                  after: "Category dropdown + autocomplete with trending searches, top products with images & prices, category links.",
+                  beforeImg: "/lovable-uploads/sleekpro-cro/03-search-before.webp",
+                  afterImg: "/lovable-uploads/sleekpro-cro/03-search-after.webp",
+                },
+                {
+                  n: "04",
+                  title: "Moving USP banner",
+                  before: "Static announcement bar with a single message. No USPs visible above the fold.",
+                  after: "Animated USP marquee: shipping · returns · squat-proof guarantee · 4-way stretch · 12,000 reviews.",
+                  beforeImg: "/lovable-uploads/sleekpro-cro/04-usp-banner-before.webp",
+                  afterImg: "/lovable-uploads/sleekpro-cro/04-usp-banner-after.webp",
+                },
+                {
+                  n: "05",
+                  title: "Sticky add-to-cart (mobile)",
+                  before: "Mobile PDP: scrolling past product info hides the ATC button. Buyer has to scroll back up.",
+                  after: "Sticky bottom bar with image + price + ATC, pinned no matter how far the buyer scrolls.",
+                  beforeImg: "/lovable-uploads/sleekpro-cro/05-sticky-atc-before.webp",
+                  afterImg: "/lovable-uploads/sleekpro-cro/05-sticky-atc-after.webp",
+                },
+                {
+                  n: "06",
+                  title: "Instagram / UGC on homepage",
+                  before: "Homepage has no customer photos. Real-people social proof is missing.",
+                  after: "#SleekProArmy 6-photo Instagram grid with @handles + 'Shop the look' overlay. Real customers in your gear.",
+                  beforeImg: "/lovable-uploads/sleekpro-cro/06-instagram-before.webp",
+                  afterImg: "/lovable-uploads/sleekpro-cro/06-instagram-after.webp",
+                },
+                {
+                  n: "07",
+                  title: "Video + photo reviews",
+                  before: "No video reviews on the homepage. Trust building is entirely text-based.",
+                  after: "'See it in action' video + photo review grid — verified buyers with star ratings and caption snippets.",
+                  beforeImg: "/lovable-uploads/sleekpro-cro/07-reviews-before.webp",
+                  afterImg: "/lovable-uploads/sleekpro-cro/07-reviews-after.webp",
+                },
+                {
+                  n: "08",
+                  title: "Lifestyle on collection pages",
+                  before: "Collection page is a plain product grid. No visual context for how the product looks in use.",
+                  after: "Lifestyle banner + filter sidebar (color swatches & sizes) + product cards with color options and reviews.",
+                  beforeImg: "/lovable-uploads/sleekpro-cro/08-lifestyle-before.webp",
+                  afterImg: "/lovable-uploads/sleekpro-cro/08-lifestyle-after.webp",
+                },
+                {
+                  n: "09",
+                  title: "PDP bundles & upsells",
+                  before: "Standard PDP — no bundle suggestion. Customer buys 1 item and leaves.",
+                  after: "'Frequently bought together' bundle: 3 products + Save 15% CTA. Pushes AOV up immediately.",
+                  beforeImg: "/lovable-uploads/sleekpro-cro/09-bundles-before.webp",
+                  afterImg: "/lovable-uploads/sleekpro-cro/09-bundles-after.webp",
+                },
+                {
+                  n: "10",
+                  title: "Related-product recommendations",
+                  before: "PDP ends at the product description. No cross-sell, no recently-viewed, no 'complete the look'.",
+                  after: "Three rails: 'Perfect with this set' (stylist picks) + 'Recommended for you' + 'Recently viewed'.",
+                  beforeImg: "/lovable-uploads/sleekpro-cro/10-related-before.webp",
+                  afterImg: "/lovable-uploads/sleekpro-cro/10-related-after.webp",
+                },
+              ].map((s) => (
+                <div
+                  key={s.n}
+                  className="group bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-emerald-300 transition-all"
+                >
+                  <div className="relative w-full aspect-[16/10] bg-gray-100 overflow-hidden">
+                    <img
+                      src={s.beforeImg}
+                      alt={`${s.title} before`}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+                    />
+                    <img
+                      src={s.afterImg}
+                      alt={`${s.title} after`}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    />
+                    <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-white/95 text-gray-700 px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
+                      Before
+                    </span>
+                    <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
+                      After
+                    </span>
+                    <span className="absolute top-2 right-2 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                      {s.n} / 10
+                    </span>
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-semibold text-gray-900 mb-2">{s.title}</h3>
+                    <p className="text-sm text-gray-500 mb-2">
+                      <span className="font-semibold text-gray-700">Before:</span>{" "}
+                      {s.before}
+                    </p>
+                    <p className="text-sm text-emerald-800 flex gap-2">
+                      <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                      <span>
+                        <span className="font-semibold">After:</span> {s.after}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-center text-xs text-gray-500 mt-8">
+              Hover any tile to see the after. On mobile, tap to toggle.
+            </p>
+          </div>
+        </section>
+
         {/* ===================== COMMISSION / CTA ===================== */}
         <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-emerald-600 to-emerald-800 text-white">
           <div className="max-w-3xl mx-auto text-center">

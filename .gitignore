@@ -21,3 +21,6 @@ logs/
 
 # Local Claude/agent files
 .claude/
+
+# Local source assets (docx, brand decks, raw screenshots)
+Extra files folder/
