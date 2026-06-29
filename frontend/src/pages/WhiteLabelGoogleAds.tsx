@@ -45,6 +45,7 @@ import {
   DollarSign,
   XCircle,
   ZoomIn,
+  Linkedin,
 } from "lucide-react";
 
 const CALENDLY_URL =
@@ -205,24 +206,52 @@ const WhiteLabelGoogleAds = () => {
             />
           </div>
 
-          <div className="relative max-w-5xl mx-auto text-center text-white">
-            <div className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 rounded-full px-4 py-1.5 text-xs font-semibold text-emerald-100 mb-6">
+          {/* Faint grid pattern overlay */}
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-[0.07] pointer-events-none"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px)",
+              backgroundSize: "56px 56px",
+            }}
+          />
+
+          <div className="relative max-w-5xl mx-auto text-center text-white isolate">
+            <div className="inline-flex items-center gap-2 bg-emerald-500/15 border border-emerald-400/30 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-[0.18em] uppercase text-emerald-100 mb-7">
               <Handshake className="w-3.5 h-3.5" />
-              White Label Partnership
+              White Label Google Ads Partnership
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
-              Upsell Google Ads to your eCommerce clients,{" "}
-              <span className="text-emerald-300">without doing the work.</span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-7">
+              Upsell{" "}
+              <span className="relative inline-block">
+                <span
+                  aria-hidden
+                  className="absolute -inset-x-2 inset-y-1 md:inset-y-2 bg-emerald-500 -rotate-[1.5deg] -z-10 rounded-sm"
+                />
+                <span className="relative">Google Ads</span>
+              </span>{" "}
+              to your eCommerce clients,
+              <br className="hidden md:block" />{" "}
+              <span className="relative inline-block mt-2 md:mt-3">
+                <span
+                  aria-hidden
+                  className="absolute -inset-x-3 inset-y-2 md:inset-y-3 bg-amber-300 rotate-[-0.8deg] -z-10 rounded-sm"
+                />
+                <span className="relative text-gray-900">
+                  without doing the work.
+                </span>
+              </span>
             </h1>
-            <p className="text-lg md:text-xl text-emerald-50/90 max-w-3xl mx-auto mb-8">
-              You already have eCommerce clients. We deliver the Google Ads,
-              under your brand or ours, while you earn commission. Every step
+            <p className="text-lg md:text-xl text-emerald-50/85 max-w-3xl mx-auto mb-9 leading-relaxed">
+              You already have eCommerce clients. We deliver the Google Ads —
+              under your brand or ours — while you earn commission. Every step
               gives the end client real value before they ever pay anything.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Button
                 size="lg"
-                className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-900/40 px-6"
                 onClick={bookCall}
               >
                 <Calendar className="w-4 h-4 mr-2" />
@@ -231,7 +260,7 @@ const WhiteLabelGoogleAds = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white/40 text-white bg-white/10 hover:bg-white/20"
+                className="border-white/40 text-white bg-white/10 hover:bg-white/20 px-6"
                 onClick={() =>
                   document
                     .getElementById("how-it-works")
@@ -309,6 +338,123 @@ const WhiteLabelGoogleAds = () => {
                   </div>
                 </>
               )}
+            </div>
+          </div>
+        </section>
+
+        {/* ===================== MEET THE FOUNDER ===================== */}
+        <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-white">
+          {/* Soft background accent */}
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10 pointer-events-none"
+          >
+            <div className="absolute top-1/3 -left-32 w-96 h-96 bg-emerald-100/60 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-0 w-72 h-72 bg-amber-100/40 rounded-full blur-3xl" />
+          </div>
+
+          <div className="max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+              {/* PHOTO COLUMN */}
+              <div className="lg:col-span-5 relative">
+                <div className="relative max-w-md mx-auto lg:mx-0">
+                  {/* Accent emerald block behind photo */}
+                  <div
+                    aria-hidden
+                    className="absolute -top-3 -left-3 w-full h-full bg-emerald-500 rounded-2xl -rotate-2 -z-10"
+                  />
+                  {/* Photo frame */}
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-gradient-to-br from-emerald-50 to-white">
+                    <img
+                      src="/lovable-uploads/ceo-hammad.jpg"
+                      alt="Hammad — Founder, ManagingSEO"
+                      className="w-full h-auto block"
+                      loading="lazy"
+                    />
+                    {/* FOUNDER pill, top-left */}
+                    <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 bg-black/70 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full">
+                      <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+                      Founder
+                    </span>
+                  </div>
+                  {/* Floating credibility card */}
+                  <div className="absolute -bottom-5 -right-3 lg:-right-6 bg-white rounded-xl shadow-xl border border-gray-100 px-4 py-3">
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-700">
+                      Years running
+                    </div>
+                    <div className="text-base font-bold text-gray-900">
+                      Google Ads & SEO
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* TEXT COLUMN */}
+              <div className="lg:col-span-7">
+                <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 text-[11px] font-bold uppercase tracking-[0.18em] rounded-full px-3 py-1.5 mb-5">
+                  <span className="w-1.5 h-1.5 bg-emerald-600 rounded-full" />
+                  Meet the founder
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight leading-tight mb-6 relative isolate">
+                  Hi, I'm{" "}
+                  <span className="relative inline-block">
+                    <span
+                      aria-hidden
+                      className="absolute -inset-x-2 inset-y-1 md:inset-y-2 bg-emerald-400 -rotate-[1.5deg] -z-10 rounded-sm"
+                    />
+                    <span className="relative">Hammad</span>
+                  </span>
+                  .
+                </h2>
+                <div className="space-y-4 text-gray-700 leading-relaxed text-[15px] md:text-base">
+                  <p>
+                    I've spent years running{" "}
+                    <strong>Google Ads and SEO for eCommerce brands</strong>{" "}
+                    across apparel, home goods, fitness, automotive, and DTC.
+                    The frustration that built ManagingSEO? Most agencies run
+                    paid traffic on autopilot — bids on instinct, no real
+                    product-level analysis, every account a slightly different
+                    version of the last.
+                  </p>
+                  <p>
+                    I built a documented system instead.{" "}
+                    <strong>Every store gets a real CRO redesign first</strong>
+                    , every ad account gets a Claude-powered product and
+                    search-term analysis, and every dollar of spend gets
+                    bucketed: profitable, costly, zero-conv, zombie. Fewer
+                    brands, full attention, results that compound.
+                  </p>
+                </div>
+
+                <div className="mt-6 flex items-baseline gap-3 text-emerald-700">
+                  <span className="font-serif italic text-2xl font-semibold">
+                    — Hammad
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    Founder, ManagingSEO
+                  </span>
+                </div>
+
+                <div className="mt-7 flex flex-wrap gap-3">
+                  <Button
+                    size="lg"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-100"
+                    onClick={bookCall}
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Book a partnership call
+                  </Button>
+                  <a
+                    href="https://www.linkedin.com/in/sheikh-hammad-4045b4134/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 border border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-800 text-sm font-semibold px-5 py-2.5 rounded-md transition-colors"
+                  >
+                    <Linkedin className="w-4 h-4 text-[#0a66c2]" />
+                    Connect on LinkedIn
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </section>
