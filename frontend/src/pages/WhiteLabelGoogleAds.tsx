@@ -55,13 +55,14 @@ const CALENDLY_URL =
 // Leave null to render the "coming soon" placeholder.
 const MAIN_VSL_YOUTUBE_ID: string | null = null;
 
-// Four sample explainer videos (the first-step CRO walkthroughs we send
+// Five sample explainer videos (the first-step CRO walkthroughs we send
 // to a prospect's end client).
 const SAMPLE_VIDEOS = [
   { id: "z0l5mKyJb2k", label: "Sample 1, CRO walkthrough" },
   { id: "DVGogrban_s", label: "Sample 2, CRO walkthrough" },
   { id: "XLVb_zvIZLY", label: "Sample 3, CRO walkthrough" },
   { id: "-vkPJTQLlNI", label: "Sample 4, CRO walkthrough" },
+  { id: "IZsJ0PbPfoU", label: "Sample 5, CRO walkthrough" },
 ];
 
 // Tool screenshots reused from the /ads-tool InsightsShowcase.
@@ -955,11 +956,11 @@ const WhiteLabelGoogleAds = () => {
                 Real Step-1 walkthroughs we've sent
               </h2>
               <p className="text-gray-600 mt-3 max-w-2xl mx-auto">
-                Four actual CRO analysis videos we recorded for prospects'
+                Five actual CRO analysis videos we recorded for prospects'
                 end clients. This is the value they get before paying anything.
               </p>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-5">
               {SAMPLE_VIDEOS.map((v) => (
                 <div
                   key={v.id}
