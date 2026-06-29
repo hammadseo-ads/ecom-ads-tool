@@ -604,6 +604,8 @@ const WhiteLabelGoogleAds = () => {
                   beforeImg: "",
                   afterImg: "/lovable-uploads/sleekpro-cro/01-popup-after.webp",
                   noBefore: true,
+                  noBeforeHeading: "No pop-up on the live site",
+                  noBeforeSub: "First-time visitors left with no incentive to return",
                 },
                 {
                   n: "02",
@@ -632,26 +634,35 @@ const WhiteLabelGoogleAds = () => {
                 {
                   n: "05",
                   title: "Sticky add-to-cart (mobile)",
-                  before: "Mobile PDP: scrolling past product info hides the ATC button. Buyer has to scroll back up.",
+                  before: "No sticky add-to-cart on mobile. Buyers had to scroll all the way back up every time they wanted to add.",
                   after: "Sticky bottom bar with image + price + ATC, pinned no matter how far the buyer scrolls.",
-                  beforeImg: "/lovable-uploads/sleekpro-cro/05-sticky-atc-before.webp",
+                  beforeImg: "",
                   afterImg: "/lovable-uploads/sleekpro-cro/05-sticky-atc-after.webp",
+                  noBefore: true,
+                  noBeforeHeading: "No sticky add-to-cart on mobile",
+                  noBeforeSub: "Buyers had to scroll back up to add — most never bothered",
                 },
                 {
                   n: "06",
                   title: "Instagram / UGC on homepage",
-                  before: "Homepage has no customer photos. Real-people social proof is missing.",
+                  before: "No Instagram or customer-photo section on the homepage. Real-people social proof was missing.",
                   after: "#SleekProArmy 6-photo Instagram grid with @handles + 'Shop the look' overlay. Real customers in your gear.",
-                  beforeImg: "/lovable-uploads/sleekpro-cro/06-instagram-before.webp",
+                  beforeImg: "",
                   afterImg: "/lovable-uploads/sleekpro-cro/06-instagram-after.webp",
+                  noBefore: true,
+                  noBeforeHeading: "No Instagram or customer-photo section",
+                  noBeforeSub: "Homepage had zero real-people social proof",
                 },
                 {
                   n: "07",
                   title: "Video + photo reviews",
-                  before: "No video reviews on the homepage. Trust building is entirely text-based.",
+                  before: "No video or photo reviews on the homepage. Trust-building was entirely text-based.",
                   after: "'See it in action' video + photo review grid — verified buyers with star ratings and caption snippets.",
-                  beforeImg: "/lovable-uploads/sleekpro-cro/07-reviews-before.webp",
+                  beforeImg: "",
                   afterImg: "/lovable-uploads/sleekpro-cro/07-reviews-after.webp",
+                  noBefore: true,
+                  noBeforeHeading: "No video or photo reviews",
+                  noBeforeSub: "Trust-building was entirely text-based",
                 },
                 {
                   n: "08",
@@ -689,10 +700,10 @@ const WhiteLabelGoogleAds = () => {
                           <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center px-6 text-center transition-opacity duration-300 group-hover:opacity-0">
                             <XCircle className="w-10 h-10 text-gray-400 mb-2" />
                             <div className="text-sm font-bold text-gray-700">
-                              No pop-up on the live site
+                              {s.noBeforeHeading}
                             </div>
                             <div className="text-xs text-gray-500 mt-1">
-                              First-time visitors left with no incentive to return
+                              {s.noBeforeSub}
                             </div>
                           </div>
                         ) : (
@@ -759,10 +770,10 @@ const WhiteLabelGoogleAds = () => {
                           <div className="aspect-[16/10] w-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-md flex flex-col items-center justify-center px-6 text-center">
                             <XCircle className="w-14 h-14 text-gray-400 mb-3" />
                             <div className="text-base font-bold text-gray-700">
-                              No pop-up on the live site
+                              {s.noBeforeHeading}
                             </div>
                             <div className="text-sm text-gray-500 mt-1 max-w-sm">
-                              First-time visitors left with no incentive to return.
+                              {s.noBeforeSub}
                             </div>
                           </div>
                         ) : (
