@@ -426,10 +426,237 @@ const WhiteLabelGoogleAds = () => {
               </Card>
             </div>
 
-            {/* CRO redesign screenshots, placeholder until user provides */}
-            <div className="mt-8 bg-gray-50 border border-dashed border-gray-300 rounded-lg p-6 text-center text-sm text-gray-500">
-              CRO redesign screenshots (before / after page mockups) will be
-              placed here. Provide the images and they slot straight in.
+            {/* CRO redesign screenshots, embedded showcase */}
+            <div className="mt-14">
+              <div className="text-center mb-8">
+                <div className="text-xs font-semibold uppercase tracking-widest text-emerald-700 mb-2">
+                  See it on a real client
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-900">
+                  10 CRO upgrades we ship on the store before the ads run
+                </h3>
+                <p className="text-gray-600 mt-3 max-w-3xl mx-auto">
+                  Real before/after from a SleekPro Fitness redesign. Hover any tile
+                  to see the after, click to enlarge. Together these typically{" "}
+                  <strong>double mobile conversion</strong>, raise{" "}
+                  <strong>AOV 20–30%</strong>, and lift{" "}
+                  <strong>Google Ads ROAS 30–50%</strong> — without spending one
+                  extra dollar on ads.
+                </p>
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[
+                  {
+                    n: "01",
+                    title: "Entry discount pop-up",
+                    before: "No pop-up on the live site. First-time visitors leave with no incentive to come back.",
+                    after: "Premium popup auto-shows in 2 seconds: 15% off + email capture + trust strip. Builds the remarketing list.",
+                    beforeImg: "",
+                    afterImg: "/lovable-uploads/sleekpro-cro/01-popup-after.webp",
+                    noBefore: true,
+                    noBeforeHeading: "No pop-up on the live site",
+                    noBeforeSub: "First-time visitors left with no incentive to return",
+                  },
+                  {
+                    n: "02",
+                    title: "Mobile mega-menu",
+                    before: "Text-only hamburger. Customer reads every link to find what they want.",
+                    after: "Image-tile drawer with featured banner + visual category cards + quick CTAs.",
+                    beforeImg: "/lovable-uploads/sleekpro-cro/02-mobile-menu-before.webp",
+                    afterImg: "/lovable-uploads/sleekpro-cro/02-mobile-menu-after.webp",
+                  },
+                  {
+                    n: "03",
+                    title: "Suggestion-driven search",
+                    before: "Basic search input — no suggestions, no product preview, no category shortcuts.",
+                    after: "Category dropdown + autocomplete with trending searches, top products with images & prices, category links.",
+                    beforeImg: "/lovable-uploads/sleekpro-cro/03-search-before.webp",
+                    afterImg: "/lovable-uploads/sleekpro-cro/03-search-after.webp",
+                  },
+                  {
+                    n: "04",
+                    title: "Moving USP banner",
+                    before: "Static announcement bar with a single message. No USPs visible above the fold.",
+                    after: "Animated USP marquee: shipping · returns · squat-proof guarantee · 4-way stretch · 12,000 reviews.",
+                    beforeImg: "/lovable-uploads/sleekpro-cro/04-usp-banner-before.webp",
+                    afterImg: "/lovable-uploads/sleekpro-cro/04-usp-banner-after.webp",
+                  },
+                  {
+                    n: "05",
+                    title: "Sticky add-to-cart (mobile)",
+                    before: "No sticky add-to-cart on mobile. Buyers had to scroll all the way back up every time they wanted to add.",
+                    after: "Sticky bottom bar with image + price + ATC, pinned no matter how far the buyer scrolls.",
+                    beforeImg: "",
+                    afterImg: "/lovable-uploads/sleekpro-cro/05-sticky-atc-after.webp",
+                    noBefore: true,
+                    noBeforeHeading: "No sticky add-to-cart on mobile",
+                    noBeforeSub: "Buyers had to scroll back up to add — most never bothered",
+                  },
+                  {
+                    n: "06",
+                    title: "Instagram / UGC on homepage",
+                    before: "No Instagram or customer-photo section on the homepage. Real-people social proof was missing.",
+                    after: "#SleekProArmy 6-photo Instagram grid with @handles + 'Shop the look' overlay. Real customers in your gear.",
+                    beforeImg: "",
+                    afterImg: "/lovable-uploads/sleekpro-cro/06-instagram-after.webp",
+                    noBefore: true,
+                    noBeforeHeading: "No Instagram or customer-photo section",
+                    noBeforeSub: "Homepage had zero real-people social proof",
+                  },
+                  {
+                    n: "07",
+                    title: "Video + photo reviews",
+                    before: "No video or photo reviews on the homepage. Trust-building was entirely text-based.",
+                    after: "'See it in action' video + photo review grid — verified buyers with star ratings and caption snippets.",
+                    beforeImg: "",
+                    afterImg: "/lovable-uploads/sleekpro-cro/07-reviews-after.webp",
+                    noBefore: true,
+                    noBeforeHeading: "No video or photo reviews",
+                    noBeforeSub: "Trust-building was entirely text-based",
+                  },
+                  {
+                    n: "08",
+                    title: "Lifestyle on collection pages",
+                    before: "Collection page is a plain product grid. No visual context for how the product looks in use.",
+                    after: "Lifestyle banner + filter sidebar (color swatches & sizes) + product cards with color options and reviews.",
+                    beforeImg: "/lovable-uploads/sleekpro-cro/08-lifestyle-before.webp",
+                    afterImg: "/lovable-uploads/sleekpro-cro/08-lifestyle-after.webp",
+                  },
+                  {
+                    n: "09",
+                    title: "PDP bundles & upsells",
+                    before: "Standard PDP — no bundle suggestion. Customer buys 1 item and leaves.",
+                    after: "'Frequently bought together' bundle: 3 products + Save 15% CTA. Pushes AOV up immediately.",
+                    beforeImg: "/lovable-uploads/sleekpro-cro/09-bundles-before.webp",
+                    afterImg: "/lovable-uploads/sleekpro-cro/09-bundles-after.webp",
+                  },
+                  {
+                    n: "10",
+                    title: "Related-product recommendations",
+                    before: "PDP ends at the product description. No cross-sell, no recently-viewed, no 'complete the look'.",
+                    after: "Three rails: 'Perfect with this set' (stylist picks) + 'Recommended for you' + 'Recently viewed'.",
+                    beforeImg: "/lovable-uploads/sleekpro-cro/10-related-before.webp",
+                    afterImg: "/lovable-uploads/sleekpro-cro/10-related-after.webp",
+                  },
+                ].map((s) => (
+                  <Dialog key={s.n}>
+                    <DialogTrigger asChild>
+                      <button
+                        type="button"
+                        className="group bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-emerald-300 transition-all text-left w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      >
+                        <div className="relative w-full aspect-[16/10] bg-gray-100 overflow-hidden">
+                          {s.noBefore ? (
+                            <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center px-6 text-center transition-opacity duration-300 group-hover:opacity-0">
+                              <XCircle className="w-10 h-10 text-gray-400 mb-2" />
+                              <div className="text-sm font-bold text-gray-700">
+                                {s.noBeforeHeading}
+                              </div>
+                              <div className="text-xs text-gray-500 mt-1">
+                                {s.noBeforeSub}
+                              </div>
+                            </div>
+                          ) : (
+                            <img
+                              src={s.beforeImg}
+                              alt={`${s.title} before`}
+                              loading="lazy"
+                              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+                            />
+                          )}
+                          <img
+                            src={s.afterImg}
+                            alt={`${s.title} after`}
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                          />
+                          <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-white/95 text-gray-700 px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
+                            Before
+                          </span>
+                          <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
+                            After
+                          </span>
+                          <span className="absolute top-2 right-2 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                            {s.n} / 10
+                          </span>
+                          <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 text-[10px] font-semibold text-white bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                            <ZoomIn className="w-3 h-3" />
+                            Click to enlarge
+                          </span>
+                        </div>
+                        <div className="p-5">
+                          <h4 className="font-semibold text-gray-900 mb-2">{s.title}</h4>
+                          <p className="text-sm text-gray-500 mb-2">
+                            <span className="font-semibold text-gray-700">Before:</span>{" "}
+                            {s.before}
+                          </p>
+                          <p className="text-sm text-emerald-800 flex gap-2">
+                            <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                            <span>
+                              <span className="font-semibold">After:</span> {s.after}
+                            </span>
+                          </p>
+                        </div>
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-6xl w-[95vw] p-0 bg-white max-h-[92vh] overflow-y-auto">
+                      <DialogTitle className="sr-only">
+                        {s.title} — before and after
+                      </DialogTitle>
+                      <div className="px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
+                        <div className="text-[11px] font-bold uppercase tracking-widest text-emerald-700 mb-1">
+                          {s.n} / 10
+                        </div>
+                        <h3 className="text-xl md:text-2xl font-bold text-gray-900">
+                          {s.title}
+                        </h3>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-px bg-gray-200">
+                        <div className="bg-white p-5">
+                          <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500 mb-3">
+                            Before
+                          </div>
+                          {s.noBefore ? (
+                            <div className="aspect-[16/10] w-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-md flex flex-col items-center justify-center px-6 text-center">
+                              <XCircle className="w-14 h-14 text-gray-400 mb-3" />
+                              <div className="text-base font-bold text-gray-700">
+                                {s.noBeforeHeading}
+                              </div>
+                              <div className="text-sm text-gray-500 mt-1 max-w-sm">
+                                {s.noBeforeSub}
+                              </div>
+                            </div>
+                          ) : (
+                            <img
+                              src={s.beforeImg}
+                              alt={`${s.title} before`}
+                              className="w-full h-auto rounded-md border border-gray-100"
+                            />
+                          )}
+                          <p className="text-sm text-gray-600 mt-3">{s.before}</p>
+                        </div>
+                        <div className="bg-white p-5">
+                          <div className="text-[11px] font-bold uppercase tracking-widest text-emerald-700 mb-3">
+                            After
+                          </div>
+                          <img
+                            src={s.afterImg}
+                            alt={`${s.title} after`}
+                            className="w-full h-auto rounded-md border border-emerald-100"
+                          />
+                          <p className="text-sm text-emerald-900 mt-3 flex gap-2">
+                            <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                            <span>{s.after}</span>
+                          </p>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                ))}
+              </div>
+              <p className="text-center text-xs text-gray-500 mt-8">
+                Hover any tile to see the after — click to enlarge the full comparison.
+              </p>
             </div>
           </div>
         </section>
@@ -573,240 +800,6 @@ const WhiteLabelGoogleAds = () => {
                 </Card>
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* ===================== CRO BEFORE / AFTER SHOWCASE ===================== */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-10">
-              <div className="text-xs font-semibold uppercase tracking-widest text-emerald-700 mb-2">
-                How we lift conversion
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-                10 CRO upgrades we ship on the store before the ads run
-              </h2>
-              <p className="text-gray-600 mt-3 max-w-3xl mx-auto">
-                Real before/after from a SleekPro Fitness redesign. Hover any tile to
-                see the after. Together these typically <strong>double mobile
-                conversion</strong>, raise <strong>AOV 20–30%</strong>, and lift{" "}
-                <strong>Google Ads ROAS 30–50%</strong> — without spending one extra
-                dollar on ads.
-              </p>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                {
-                  n: "01",
-                  title: "Entry discount pop-up",
-                  before: "No pop-up on the live site. First-time visitors leave with no incentive to come back.",
-                  after: "Premium popup auto-shows in 2 seconds: 15% off + email capture + trust strip. Builds the remarketing list.",
-                  beforeImg: "",
-                  afterImg: "/lovable-uploads/sleekpro-cro/01-popup-after.webp",
-                  noBefore: true,
-                  noBeforeHeading: "No pop-up on the live site",
-                  noBeforeSub: "First-time visitors left with no incentive to return",
-                },
-                {
-                  n: "02",
-                  title: "Mobile mega-menu",
-                  before: "Text-only hamburger. Customer reads every link to find what they want.",
-                  after: "Image-tile drawer with featured banner + visual category cards + quick CTAs.",
-                  beforeImg: "/lovable-uploads/sleekpro-cro/02-mobile-menu-before.webp",
-                  afterImg: "/lovable-uploads/sleekpro-cro/02-mobile-menu-after.webp",
-                },
-                {
-                  n: "03",
-                  title: "Suggestion-driven search",
-                  before: "Basic search input — no suggestions, no product preview, no category shortcuts.",
-                  after: "Category dropdown + autocomplete with trending searches, top products with images & prices, category links.",
-                  beforeImg: "/lovable-uploads/sleekpro-cro/03-search-before.webp",
-                  afterImg: "/lovable-uploads/sleekpro-cro/03-search-after.webp",
-                },
-                {
-                  n: "04",
-                  title: "Moving USP banner",
-                  before: "Static announcement bar with a single message. No USPs visible above the fold.",
-                  after: "Animated USP marquee: shipping · returns · squat-proof guarantee · 4-way stretch · 12,000 reviews.",
-                  beforeImg: "/lovable-uploads/sleekpro-cro/04-usp-banner-before.webp",
-                  afterImg: "/lovable-uploads/sleekpro-cro/04-usp-banner-after.webp",
-                },
-                {
-                  n: "05",
-                  title: "Sticky add-to-cart (mobile)",
-                  before: "No sticky add-to-cart on mobile. Buyers had to scroll all the way back up every time they wanted to add.",
-                  after: "Sticky bottom bar with image + price + ATC, pinned no matter how far the buyer scrolls.",
-                  beforeImg: "",
-                  afterImg: "/lovable-uploads/sleekpro-cro/05-sticky-atc-after.webp",
-                  noBefore: true,
-                  noBeforeHeading: "No sticky add-to-cart on mobile",
-                  noBeforeSub: "Buyers had to scroll back up to add — most never bothered",
-                },
-                {
-                  n: "06",
-                  title: "Instagram / UGC on homepage",
-                  before: "No Instagram or customer-photo section on the homepage. Real-people social proof was missing.",
-                  after: "#SleekProArmy 6-photo Instagram grid with @handles + 'Shop the look' overlay. Real customers in your gear.",
-                  beforeImg: "",
-                  afterImg: "/lovable-uploads/sleekpro-cro/06-instagram-after.webp",
-                  noBefore: true,
-                  noBeforeHeading: "No Instagram or customer-photo section",
-                  noBeforeSub: "Homepage had zero real-people social proof",
-                },
-                {
-                  n: "07",
-                  title: "Video + photo reviews",
-                  before: "No video or photo reviews on the homepage. Trust-building was entirely text-based.",
-                  after: "'See it in action' video + photo review grid — verified buyers with star ratings and caption snippets.",
-                  beforeImg: "",
-                  afterImg: "/lovable-uploads/sleekpro-cro/07-reviews-after.webp",
-                  noBefore: true,
-                  noBeforeHeading: "No video or photo reviews",
-                  noBeforeSub: "Trust-building was entirely text-based",
-                },
-                {
-                  n: "08",
-                  title: "Lifestyle on collection pages",
-                  before: "Collection page is a plain product grid. No visual context for how the product looks in use.",
-                  after: "Lifestyle banner + filter sidebar (color swatches & sizes) + product cards with color options and reviews.",
-                  beforeImg: "/lovable-uploads/sleekpro-cro/08-lifestyle-before.webp",
-                  afterImg: "/lovable-uploads/sleekpro-cro/08-lifestyle-after.webp",
-                },
-                {
-                  n: "09",
-                  title: "PDP bundles & upsells",
-                  before: "Standard PDP — no bundle suggestion. Customer buys 1 item and leaves.",
-                  after: "'Frequently bought together' bundle: 3 products + Save 15% CTA. Pushes AOV up immediately.",
-                  beforeImg: "/lovable-uploads/sleekpro-cro/09-bundles-before.webp",
-                  afterImg: "/lovable-uploads/sleekpro-cro/09-bundles-after.webp",
-                },
-                {
-                  n: "10",
-                  title: "Related-product recommendations",
-                  before: "PDP ends at the product description. No cross-sell, no recently-viewed, no 'complete the look'.",
-                  after: "Three rails: 'Perfect with this set' (stylist picks) + 'Recommended for you' + 'Recently viewed'.",
-                  beforeImg: "/lovable-uploads/sleekpro-cro/10-related-before.webp",
-                  afterImg: "/lovable-uploads/sleekpro-cro/10-related-after.webp",
-                },
-              ].map((s) => (
-                <Dialog key={s.n}>
-                  <DialogTrigger asChild>
-                    <button
-                      type="button"
-                      className="group bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-emerald-300 transition-all text-left w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    >
-                      <div className="relative w-full aspect-[16/10] bg-gray-100 overflow-hidden">
-                        {s.noBefore ? (
-                          <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center px-6 text-center transition-opacity duration-300 group-hover:opacity-0">
-                            <XCircle className="w-10 h-10 text-gray-400 mb-2" />
-                            <div className="text-sm font-bold text-gray-700">
-                              {s.noBeforeHeading}
-                            </div>
-                            <div className="text-xs text-gray-500 mt-1">
-                              {s.noBeforeSub}
-                            </div>
-                          </div>
-                        ) : (
-                          <img
-                            src={s.beforeImg}
-                            alt={`${s.title} before`}
-                            loading="lazy"
-                            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
-                          />
-                        )}
-                        <img
-                          src={s.afterImg}
-                          alt={`${s.title} after`}
-                          loading="lazy"
-                          className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                        />
-                        <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-white/95 text-gray-700 px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
-                          Before
-                        </span>
-                        <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
-                          After
-                        </span>
-                        <span className="absolute top-2 right-2 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                          {s.n} / 10
-                        </span>
-                        <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 text-[10px] font-semibold text-white bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                          <ZoomIn className="w-3 h-3" />
-                          Click to enlarge
-                        </span>
-                      </div>
-                      <div className="p-5">
-                        <h3 className="font-semibold text-gray-900 mb-2">{s.title}</h3>
-                        <p className="text-sm text-gray-500 mb-2">
-                          <span className="font-semibold text-gray-700">Before:</span>{" "}
-                          {s.before}
-                        </p>
-                        <p className="text-sm text-emerald-800 flex gap-2">
-                          <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
-                          <span>
-                            <span className="font-semibold">After:</span> {s.after}
-                          </span>
-                        </p>
-                      </div>
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-6xl w-[95vw] p-0 bg-white max-h-[92vh] overflow-y-auto">
-                    <DialogTitle className="sr-only">
-                      {s.title} — before and after
-                    </DialogTitle>
-                    <div className="px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
-                      <div className="text-[11px] font-bold uppercase tracking-widest text-emerald-700 mb-1">
-                        {s.n} / 10
-                      </div>
-                      <h3 className="text-xl md:text-2xl font-bold text-gray-900">
-                        {s.title}
-                      </h3>
-                    </div>
-                    <div className="grid md:grid-cols-2 gap-px bg-gray-200">
-                      <div className="bg-white p-5">
-                        <div className="text-[11px] font-bold uppercase tracking-widest text-gray-500 mb-3">
-                          Before
-                        </div>
-                        {s.noBefore ? (
-                          <div className="aspect-[16/10] w-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-md flex flex-col items-center justify-center px-6 text-center">
-                            <XCircle className="w-14 h-14 text-gray-400 mb-3" />
-                            <div className="text-base font-bold text-gray-700">
-                              {s.noBeforeHeading}
-                            </div>
-                            <div className="text-sm text-gray-500 mt-1 max-w-sm">
-                              {s.noBeforeSub}
-                            </div>
-                          </div>
-                        ) : (
-                          <img
-                            src={s.beforeImg}
-                            alt={`${s.title} before`}
-                            className="w-full h-auto rounded-md border border-gray-100"
-                          />
-                        )}
-                        <p className="text-sm text-gray-600 mt-3">{s.before}</p>
-                      </div>
-                      <div className="bg-white p-5">
-                        <div className="text-[11px] font-bold uppercase tracking-widest text-emerald-700 mb-3">
-                          After
-                        </div>
-                        <img
-                          src={s.afterImg}
-                          alt={`${s.title} after`}
-                          className="w-full h-auto rounded-md border border-emerald-100"
-                        />
-                        <p className="text-sm text-emerald-900 mt-3 flex gap-2">
-                          <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
-                          <span>{s.after}</span>
-                        </p>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              ))}
-            </div>
-            <p className="text-center text-xs text-gray-500 mt-8">
-              Hover any tile to see the after — click to enlarge the full comparison.
-            </p>
           </div>
         </section>
 
