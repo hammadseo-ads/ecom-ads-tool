@@ -19,6 +19,8 @@ import ProductRoasPage from "./pages/ProductRoasPage";
 import HeatMapPage from "./pages/HeatMapPage";
 import GeoPage from "./pages/GeoPage";
 import NGramPage from "./pages/NGramPage";
+import AuditIndexPage from "./pages/AuditIndexPage";
+import AuditWorkspacePage from "./pages/AuditWorkspacePage";
 import Account from "./pages/Account";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
@@ -98,6 +100,8 @@ const App = () => {
                   <Route path="/dashboard/heatmap" element={<HeatMapPage />} />
                   <Route path="/dashboard/geo" element={<GeoPage />} />
                   <Route path="/dashboard/ngrams" element={<NGramPage />} />
+                  <Route path="/dashboard/audit" element={<AuditIndexPage />} />
+                  <Route path="/dashboard/audit/:id" element={<AuditWorkspacePage />} />
                   <Route path="/dashboard/lead-gen/wasted-keywords" element={<LeadGenWastedKeywordsPage />} />
                   <Route path="/dashboard/lead-gen/heatmap" element={<LeadGenHeatMapPage />} />
                   <Route path="/dashboard/lead-gen/geo" element={<LeadGenGeoPage />} />
