@@ -24,6 +24,11 @@ import { StructurePanel } from "@/components/audit/panels/StructurePanel";
 import { WhereWhenPanel } from "@/components/audit/panels/WhereWhenPanel";
 import { ConversionTrackingPanel } from "@/components/audit/panels/ConversionTrackingPanel";
 import { LandingPagePanel } from "@/components/audit/panels/LandingPagePanel";
+import { TargetingPanel } from "@/components/audit/panels/TargetingPanel";
+import { CreativeAssetsPanel } from "@/components/audit/panels/CreativeAssetsPanel";
+import { SearchTermsPanel } from "@/components/audit/panels/SearchTermsPanel";
+import { LeadGenPanel } from "@/components/audit/panels/LeadGenPanel";
+import { EcommercePanel } from "@/components/audit/panels/EcommercePanel";
 import {
   ArrowLeft,
   Lock,
@@ -72,14 +77,14 @@ const PANEL_DEFS: Array<{
   { key: "campaign_overview", number: 1, title: "Campaign Overview", subtitle: "Every campaign: type, status, budget, cost, bidding strategy, and prior-period deltas.", impl: true },
   { key: "performance_snapshot", number: 2, title: "Performance Snapshot", subtitle: "Account and per-campaign KPIs. CTR, CPC, CPA, ROAS, Search Lost IS.", impl: true },
   { key: "structure", number: 3, title: "Structure", subtitle: "Ad groups, asset groups, campaign settings, conversion goals, change history thumbnail.", impl: true },
-  { key: "targeting", number: 4, title: "Targeting", subtitle: "Keywords, audience signals, demographics, locations, negatives.", impl: false },
-  { key: "creative_assets", number: 5, title: "Ad Creative & Assets", subtitle: "URLs, headlines, descriptions, sitelinks, images, asset strength.", impl: false },
-  { key: "search_terms", number: 6, title: "Search Terms & Competition", subtitle: "Search terms (Search + PMax), impression share, auction insights link-out.", impl: false },
+  { key: "targeting", number: 4, title: "Targeting", subtitle: "Keywords, audience signals, demographics, locations, negatives.", impl: true },
+  { key: "creative_assets", number: 5, title: "Ad Creative & Assets", subtitle: "URLs, headlines, descriptions, sitelinks, images, asset strength.", impl: true },
+  { key: "search_terms", number: 6, title: "Search Terms & Competition", subtitle: "Search terms (Search + PMax), impression share, auction insights link-out.", impl: true },
   { key: "where_when", number: 7, title: "Where & When Ads Show", subtitle: "Devices, day×hour heatmap, PMax network breakdown.", impl: true },
   { key: "conversion_tracking", number: 8, title: "Conversion Tracking", subtitle: "Conversion actions config + firing patterns.", impl: true },
   { key: "landing_page", number: 9, title: "Landing Page Behaviour", subtitle: "URLs + Clarity / Hotjar link-out (external tool for now).", impl: true },
-  { key: "lead_gen", number: 10, title: "Lead Generation", subtitle: "Lead form performance and submission rates.", impl: false },
-  { key: "ecommerce", number: 11, title: "Ecommerce", subtitle: "Products by asset group, zombie / costly / profitable, eligibility.", impl: false },
+  { key: "lead_gen", number: 10, title: "Lead Generation", subtitle: "Lead form performance and submission rates.", impl: true },
+  { key: "ecommerce", number: 11, title: "Ecommerce", subtitle: "Summary + product eligibility + overlap. Full bucketing lives in Product ROAS page.", impl: true },
   { key: "change_history", number: 12, title: "Change History", subtitle: "Timeline of every change in the account. Overlaid across performance charts.", impl: true },
 ];
 
@@ -378,6 +383,36 @@ const AuditWorkspaceInner = ({ auditId }: { auditId: string }) => {
               )}
               {def.impl && def.key === "landing_page" && (
                 <LandingPagePanel
+                  snapshot={(state.data_snapshot as never) || null}
+                  clientName={audit.customer_name}
+                />
+              )}
+              {def.impl && def.key === "targeting" && (
+                <TargetingPanel
+                  snapshot={(state.data_snapshot as never) || null}
+                  clientName={audit.customer_name}
+                />
+              )}
+              {def.impl && def.key === "creative_assets" && (
+                <CreativeAssetsPanel
+                  snapshot={(state.data_snapshot as never) || null}
+                  clientName={audit.customer_name}
+                />
+              )}
+              {def.impl && def.key === "search_terms" && (
+                <SearchTermsPanel
+                  snapshot={(state.data_snapshot as never) || null}
+                  clientName={audit.customer_name}
+                />
+              )}
+              {def.impl && def.key === "lead_gen" && (
+                <LeadGenPanel
+                  snapshot={(state.data_snapshot as never) || null}
+                  clientName={audit.customer_name}
+                />
+              )}
+              {def.impl && def.key === "ecommerce" && (
+                <EcommercePanel
                   snapshot={(state.data_snapshot as never) || null}
                   clientName={audit.customer_name}
                 />

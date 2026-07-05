@@ -21,16 +21,25 @@ import { refreshStructure } from "./panels/structureController.js";
 import { refreshWhereWhen } from "./panels/whereWhenController.js";
 import { refreshConversionTracking } from "./panels/conversionTrackingController.js";
 import { refreshLandingPage } from "./panels/landingPageController.js";
+import { refreshTargeting } from "./panels/targetingController.js";
+import { refreshCreativeAssets } from "./panels/creativeAssetsController.js";
+import { refreshSearchTerms } from "./panels/searchTermsController.js";
+import { refreshLeadGen } from "./panels/leadGenPanelController.js";
+import { refreshEcommerce } from "./panels/ecommerceController.js";
 
 const PANEL_REFRESH = {
   campaign_overview: refreshCampaignOverview,
   performance_snapshot: refreshPerformanceSnapshot,
   structure: refreshStructure,
+  targeting: refreshTargeting,
+  creative_assets: refreshCreativeAssets,
+  search_terms: refreshSearchTerms,
   where_when: refreshWhereWhen,
   conversion_tracking: refreshConversionTracking,
   landing_page: refreshLandingPage,
+  lead_gen: refreshLeadGen,
+  ecommerce: refreshEcommerce,
   change_history: refreshChangeHistory,
-  // ... (added as panels ship)
 };
 
 // Time-frame → concrete start/end date. `now` is injectable for tests.
