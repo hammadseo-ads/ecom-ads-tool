@@ -15,11 +15,13 @@ import Audit, {
 
 // Panel refresh dispatch table — add each panel here as it's built.
 import { refreshCampaignOverview } from "./panels/campaignOverviewController.js";
+import { refreshPerformanceSnapshot } from "./panels/performanceSnapshotController.js";
+import { refreshChangeHistory } from "./panels/changeHistoryController.js";
 
 const PANEL_REFRESH = {
   campaign_overview: refreshCampaignOverview,
-  // performance_snapshot: refreshPerformanceSnapshot,
-  // structure: refreshStructure,
+  performance_snapshot: refreshPerformanceSnapshot,
+  change_history: refreshChangeHistory,
   // ... (added as panels ship)
 };
 

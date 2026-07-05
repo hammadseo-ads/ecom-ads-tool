@@ -18,6 +18,8 @@ import DashboardShell from "@/components/DashboardShell";
 import { useToast } from "@/hooks/use-toast";
 import { AuditPanel, PanelStatus, AuditFlag } from "@/components/audit/AuditPanel";
 import { CampaignOverviewPanel } from "@/components/audit/panels/CampaignOverviewPanel";
+import { PerformanceSnapshotPanel } from "@/components/audit/panels/PerformanceSnapshotPanel";
+import { ChangeHistoryPanel } from "@/components/audit/panels/ChangeHistoryPanel";
 import {
   ArrowLeft,
   Lock,
@@ -64,7 +66,7 @@ const PANEL_DEFS: Array<{
   impl: boolean;
 }> = [
   { key: "campaign_overview", number: 1, title: "Campaign Overview", subtitle: "Every campaign: type, status, budget, cost, bidding strategy, and prior-period deltas.", impl: true },
-  { key: "performance_snapshot", number: 2, title: "Performance Snapshot", subtitle: "Account and per-campaign KPIs. CTR, CPC, CPA, ROAS, Search Lost IS.", impl: false },
+  { key: "performance_snapshot", number: 2, title: "Performance Snapshot", subtitle: "Account and per-campaign KPIs. CTR, CPC, CPA, ROAS, Search Lost IS.", impl: true },
   { key: "structure", number: 3, title: "Structure", subtitle: "Ad groups, asset groups, campaign settings, conversion goals, change history thumbnail.", impl: false },
   { key: "targeting", number: 4, title: "Targeting", subtitle: "Keywords, audience signals, demographics, locations, negatives.", impl: false },
   { key: "creative_assets", number: 5, title: "Ad Creative & Assets", subtitle: "URLs, headlines, descriptions, sitelinks, images, asset strength.", impl: false },
@@ -74,7 +76,7 @@ const PANEL_DEFS: Array<{
   { key: "landing_page", number: 9, title: "Landing Page Behaviour", subtitle: "URLs + Clarity / Hotjar link-out (external tool for now).", impl: false },
   { key: "lead_gen", number: 10, title: "Lead Generation", subtitle: "Lead form performance and submission rates.", impl: false },
   { key: "ecommerce", number: 11, title: "Ecommerce", subtitle: "Products by asset group, zombie / costly / profitable, eligibility.", impl: false },
-  { key: "change_history", number: 12, title: "Change History", subtitle: "Timeline of every change in the account. Overlaid across performance charts.", impl: false },
+  { key: "change_history", number: 12, title: "Change History", subtitle: "Timeline of every change in the account. Overlaid across performance charts.", impl: true },
 ];
 
 const AuditWorkspaceInner = ({ auditId }: { auditId: string }) => {
@@ -336,6 +338,18 @@ const AuditWorkspaceInner = ({ auditId }: { auditId: string }) => {
             >
               {def.impl && def.key === "campaign_overview" && (
                 <CampaignOverviewPanel
+                  snapshot={(state.data_snapshot as never) || null}
+                  clientName={audit.customer_name}
+                />
+              )}
+              {def.impl && def.key === "performance_snapshot" && (
+                <PerformanceSnapshotPanel
+                  snapshot={(state.data_snapshot as never) || null}
+                  clientName={audit.customer_name}
+                />
+              )}
+              {def.impl && def.key === "change_history" && (
+                <ChangeHistoryPanel
                   snapshot={(state.data_snapshot as never) || null}
                   clientName={audit.customer_name}
                 />
