@@ -3,7 +3,7 @@
 // summary tiles, and CSV export button. Data comes from the panel's
 // data_snapshot (populated by the backend's refresh endpoint).
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Download, TrendingUp, TrendingDown, Minus } from "lucide-react";
@@ -60,10 +60,28 @@ interface Snapshot {
   rows: CampaignRow[];
 }
 
+// Multi-period snapshot shape (from ALL_THREE_PERIODS refresh).
+interface MultiPeriodSnapshot {
+  multi_period: true;
+  primary_key: string;
+  periods: Record<string, { snapshot: Snapshot; flags: unknown[] }>;
+}
+
+type AnySnapshot = Snapshot | MultiPeriodSnapshot | null;
+
 interface Props {
-  snapshot: Snapshot | null;
+  snapshot: AnySnapshot;
   clientName?: string;
 }
+
+const PERIOD_LABEL: Record<string, string> = {
+  LAST_30_DAYS: "Last 30 days",
+  LAST_60_DAYS: "Last 60 days",
+  LAST_90_DAYS: "Last 90 days",
+};
+
+const isMultiPeriod = (s: AnySnapshot): s is MultiPeriodSnapshot =>
+  Boolean(s && (s as MultiPeriodSnapshot).multi_period === true);
 
 const fmtCurrency = (n: number) =>
   `$${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -162,24 +180,66 @@ const downloadCSV = (rows: CampaignRow[], filename: string) => {
 };
 
 export function CampaignOverviewPanel({ snapshot, clientName }: Props) {
-  const groups = useMemo(() => {
-    if (!snapshot?.rows) return { enabled: [], paused: [], removed: [] };
-    return {
-      enabled: snapshot.rows.filter((r) => r.status === "ENABLED"),
-      paused: snapshot.rows.filter((r) => r.status === "PAUSED"),
-      removed: snapshot.rows.filter((r) => r.status === "REMOVED"),
-    };
-  }, [snapshot]);
+  // For multi-period snapshots, keep a selected period key in state.
+  const multi = isMultiPeriod(snapshot);
+  const availableKeys = multi ? Object.keys((snapshot as MultiPeriodSnapshot).periods) : [];
+  const defaultKey = multi
+    ? ((snapshot as MultiPeriodSnapshot).primary_key || availableKeys[0])
+    : null;
+  const [periodKey, setPeriodKey] = useState<string | null>(defaultKey);
 
-  if (!snapshot?.rows?.length) {
+  // Resolve the active single-period snapshot to render.
+  const active: Snapshot | null = useMemo(() => {
+    if (!snapshot) return null;
+    if (multi) {
+      const key = periodKey || (snapshot as MultiPeriodSnapshot).primary_key;
+      return ((snapshot as MultiPeriodSnapshot).periods[key]?.snapshot) || null;
+    }
+    return snapshot as Snapshot;
+  }, [snapshot, multi, periodKey]);
+
+  const groups = useMemo(() => {
+    if (!active?.rows) return { enabled: [], paused: [], removed: [] };
+    return {
+      enabled: active.rows.filter((r) => r.status === "ENABLED"),
+      paused: active.rows.filter((r) => r.status === "PAUSED"),
+      removed: active.rows.filter((r) => r.status === "REMOVED"),
+    };
+  }, [active]);
+
+  if (!active?.rows?.length) {
     return null;
   }
 
-  const s = snapshot.summary;
-  const filename = `${(clientName || "audit").replace(/[^a-z0-9]+/gi, "-").toLowerCase()}_${snapshot.start_date.slice(0, 10)}_campaigns.csv`;
+  const s = active.summary;
+  const filename = `${(clientName || "audit").replace(/[^a-z0-9]+/gi, "-").toLowerCase()}_${active.start_date.slice(0, 10)}_campaigns${multi && periodKey ? `_${periodKey.toLowerCase()}` : ""}.csv`;
 
   return (
     <div className="p-5 space-y-5">
+      {/* Period picker — only shown for multi-period audits */}
+      {multi && availableKeys.length > 1 && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs font-bold uppercase tracking-widest text-gray-500 mr-1">Period:</span>
+          {availableKeys.map((k) => {
+            const active = periodKey === k;
+            return (
+              <button
+                key={k}
+                type="button"
+                onClick={() => setPeriodKey(k)}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                  active
+                    ? "bg-emerald-600 text-white border-emerald-600"
+                    : "bg-white text-gray-700 border-gray-200 hover:border-emerald-300 hover:text-emerald-800"
+                }`}
+              >
+                {PERIOD_LABEL[k] || k.replace(/_/g, " ").toLowerCase()}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {/* Summary tiles */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="border border-gray-200 rounded-lg p-3">
@@ -212,15 +272,15 @@ export function CampaignOverviewPanel({ snapshot, clientName }: Props) {
       {/* Action row */}
       <div className="flex items-center justify-between gap-3">
         <div className="text-xs text-gray-500">
-          Window: <strong>{snapshot.start_date.slice(0, 10)} → {snapshot.end_date.slice(0, 10)}</strong>
-          {snapshot.prior_start_date && (
+          Window: <strong>{active.start_date.slice(0, 10)} → {active.end_date.slice(0, 10)}</strong>
+          {active.prior_start_date && (
             <>
               {" · Prior: "}
-              <strong>{snapshot.prior_start_date.slice(0, 10)} → {snapshot.prior_end_date.slice(0, 10)}</strong>
+              <strong>{active.prior_start_date.slice(0, 10)} → {active.prior_end_date.slice(0, 10)}</strong>
             </>
           )}
         </div>
-        <Button size="sm" variant="outline" onClick={() => downloadCSV(snapshot.rows, filename)}>
+        <Button size="sm" variant="outline" onClick={() => downloadCSV(active.rows, filename)}>
           <Download className="w-3.5 h-3.5 mr-1.5" />
           Export CSV
         </Button>

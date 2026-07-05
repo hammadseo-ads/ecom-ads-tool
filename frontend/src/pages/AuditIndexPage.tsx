@@ -43,7 +43,7 @@ const TIME_FRAME_LABELS: Record<string, string> = {
   LAST_30_DAYS: "Last 30 days",
   LAST_60_DAYS: "Last 60 days",
   LAST_90_DAYS: "Last 90 days",
-  ALL_TIME: "All time",
+  ALL_THREE_PERIODS: "All three (30 / 60 / 90 days)",
   CUSTOM: "Custom",
 };
 

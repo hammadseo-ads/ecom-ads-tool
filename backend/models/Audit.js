@@ -18,7 +18,13 @@ import mongoose from "mongoose";
 
 const PANEL_STATUSES = ["not_reviewed", "reviewed", "flagged", "not_applicable"];
 const AUDIT_STATUSES = ["draft", "in_progress", "sealed"];
-const TIME_FRAMES = ["LAST_30_DAYS", "LAST_60_DAYS", "LAST_90_DAYS", "ALL_TIME", "CUSTOM"];
+const TIME_FRAMES = [
+  "LAST_30_DAYS",
+  "LAST_60_DAYS",
+  "LAST_90_DAYS",
+  "ALL_THREE_PERIODS", // fetch 30/60/90 in one refresh — snapshot stores all 3
+  "CUSTOM",
+];
 const COMPARE_BASES = ["PRIOR_PERIOD", "PRIOR_YEAR", "ROLLING_AVG"];
 
 const flagSchema = new mongoose.Schema({

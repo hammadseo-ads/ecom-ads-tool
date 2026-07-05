@@ -25,6 +25,8 @@ import {
   CalendarDays,
   Loader2,
   Clock3,
+  Play,
+  Download,
 } from "lucide-react";
 
 interface PanelState {
@@ -81,6 +83,7 @@ const AuditWorkspaceInner = ({ auditId }: { auditId: string }) => {
   const [audit, setAudit] = useState<Audit | null>(null);
   const [loading, setLoading] = useState(true);
   const [sealing, setSealing] = useState(false);
+  const [runningAll, setRunningAll] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -120,6 +123,81 @@ const AuditWorkspaceInner = ({ auditId }: { auditId: string }) => {
     } finally {
       setSealing(false);
     }
+  };
+
+  const runAllAnalyses = async () => {
+    if (!audit) return;
+    setRunningAll(true);
+    try {
+      const { data } = await axios.post(`/api/audit/${auditId}/run-all`);
+      // Reload the full audit so every panel state hydrates cleanly
+      await load();
+      const ok = data.succeeded ?? 0;
+      const failed = data.failed ?? 0;
+      toast({
+        title: failed
+          ? `Ran ${ok} panels, ${failed} failed`
+          : `Ran ${ok} panels`,
+        description: failed
+          ? "Check panel-level errors in the browser console."
+          : "All implemented panels refreshed.",
+        variant: failed ? "destructive" : undefined,
+      });
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } }; message?: string })?.response?.data?.message ?? "Failed to run analyses";
+      toast({ title: "Run all failed", description: msg, variant: "destructive" });
+    } finally {
+      setRunningAll(false);
+    }
+  };
+
+  const downloadEverything = () => {
+    if (!audit) return;
+    const bundle = {
+      exported_at: new Date().toISOString(),
+      audit: {
+        id: audit._id,
+        title: audit.title,
+        customer_id: audit.customer_id,
+        customer_name: audit.customer_name,
+        time_frame: audit.time_frame,
+        start_date: audit.start_date,
+        end_date: audit.end_date,
+        compare_base: audit.compare_base,
+        status: audit.status,
+        sealed_at: audit.sealed_at,
+        createdAt: audit.createdAt,
+        updatedAt: audit.updatedAt,
+      },
+      panels: PANEL_DEFS.map((def) => {
+        const state = audit.panels?.[def.key] || {};
+        return {
+          key: def.key,
+          number: def.number,
+          title: def.title,
+          subtitle: def.subtitle,
+          status: state.status || "not_reviewed",
+          notes: state.notes || "",
+          reviewed_at: state.reviewed_at || null,
+          data_fetched_at: state.data_fetched_at || null,
+          flags: state.flags || [],
+          data_snapshot: state.data_snapshot || null,
+        };
+      }),
+    };
+    const slug = (audit.customer_name || audit.customer_id || "audit").replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+    const date = new Date().toISOString().slice(0, 10);
+    const filename = `${slug}_${date}_audit-bundle.json`;
+    const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({ title: "Audit exported", description: `Saved ${filename}. Drop it into Claude or ChatGPT for analysis.` });
   };
 
   if (loading) {
@@ -174,7 +252,10 @@ const AuditWorkspaceInner = ({ auditId }: { auditId: string }) => {
           <div className="text-xs text-gray-500 mt-1 flex items-center gap-3 flex-wrap">
             <span className="inline-flex items-center gap-1">
               <CalendarDays className="w-3 h-3" />
-              {audit.time_frame.replace(/_/g, " ").toLowerCase()}:{" "}
+              {audit.time_frame === "ALL_THREE_PERIODS"
+                ? "All three periods (30 / 60 / 90 days)"
+                : audit.time_frame.replace(/_/g, " ").toLowerCase()}
+              {": "}
               {new Date(audit.start_date).toLocaleDateString()} → {new Date(audit.end_date).toLocaleDateString()}
             </span>
             <span className="inline-flex items-center gap-1">
@@ -192,6 +273,22 @@ const AuditWorkspaceInner = ({ auditId }: { auditId: string }) => {
               {totalFlags} flag{totalFlags !== 1 ? "s" : ""}
             </Badge>
           )}
+          <Button
+            size="sm"
+            onClick={runAllAnalyses}
+            disabled={runningAll || isSealed}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+          >
+            {runningAll ? (
+              <><Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />Running…</>
+            ) : (
+              <><Play className="w-3.5 h-3.5 mr-1.5" />Run all analyses</>
+            )}
+          </Button>
+          <Button size="sm" variant="outline" onClick={downloadEverything}>
+            <Download className="w-3.5 h-3.5 mr-1.5" />
+            Download all
+          </Button>
           {isSealed ? (
             <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200 gap-1">
               <Lock className="w-3 h-3" />

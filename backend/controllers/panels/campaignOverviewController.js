@@ -309,8 +309,10 @@ const buildFlags = (rows, timeFrameStart, timeFrameEnd) => {
 
 // ---------- main refresh export ----------
 // Called by auditController.refreshPanel.
-// { user, audit } → { snapshot, flags }
-export const refreshCampaignOverview = async ({ user, audit }) => {
+// { user, audit, start?, end? } → { snapshot, flags }
+// If start/end are passed, they override audit.start_date/end_date. Used by
+// the multi-period runner so one panel controller call can serve all 3 windows.
+export const refreshCampaignOverview = async ({ user, audit, start: startOverride, end: endOverride }) => {
   const tokenDoc = await GoogleAdsToken.findOne({ user: user._id });
   if (!tokenDoc) throw new Error("Google Ads is not connected for this user");
 
@@ -323,17 +325,19 @@ export const refreshCampaignOverview = async ({ user, audit }) => {
   }
 
   const customerId = formatCustomerId(audit.customer_id);
-  const start = fmtDate(audit.start_date);
-  const end = fmtDate(audit.end_date);
+  const rangeStart = startOverride ? new Date(startOverride) : new Date(audit.start_date);
+  const rangeEnd = endOverride ? new Date(endOverride) : new Date(audit.end_date);
+  const start = fmtDate(rangeStart);
+  const end = fmtDate(rangeEnd);
 
   // Current period
   const currentRows = await withLoginRetry(tokenDoc, customerId, (login) =>
     fetchCampaigns(tokenDoc, customerId, login, start, end)
   );
 
-  // Prior period (same length, immediately preceding)
-  const windowDays = daysBetween(audit.start_date, audit.end_date);
-  const priorEnd = new Date(audit.start_date);
+  // Prior period (same length, immediately preceding the current window)
+  const windowDays = daysBetween(rangeStart, rangeEnd);
+  const priorEnd = new Date(rangeStart);
   priorEnd.setDate(priorEnd.getDate() - 1);
   const priorStart = new Date(priorEnd);
   priorStart.setDate(priorStart.getDate() - windowDays);
@@ -382,7 +386,7 @@ export const refreshCampaignOverview = async ({ user, audit }) => {
     return b.cost - a.cost;
   });
 
-  const flags = buildFlags(rows, audit.start_date, audit.end_date);
+  const flags = buildFlags(rows, rangeStart, rangeEnd);
 
   // Summary totals for the panel header
   const summary = {
@@ -397,8 +401,8 @@ export const refreshCampaignOverview = async ({ user, audit }) => {
 
   const snapshot = {
     time_frame: audit.time_frame,
-    start_date: audit.start_date,
-    end_date: audit.end_date,
+    start_date: rangeStart,
+    end_date: rangeEnd,
     prior_start_date: priorStart,
     prior_end_date: priorEnd,
     summary,

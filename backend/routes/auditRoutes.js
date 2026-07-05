@@ -16,6 +16,7 @@ import {
   getAudit,
   updatePanelState,
   refreshPanel,
+  runAllPanels,
   sealAudit,
   deleteAudit,
 } from "../controllers/auditController.js";
@@ -27,6 +28,7 @@ router.get("/", protect, listAudits);
 router.get("/:id", protect, getAudit);
 router.patch("/:id/panel/:panelKey", protect, updatePanelState);
 router.post("/:id/panel/:panelKey/refresh", protect, refreshPanel);
+router.post("/:id/run-all", protect, runAllPanels);
 router.post("/:id/seal", protect, sealAudit);
 router.delete("/:id", protect, deleteAudit);
 

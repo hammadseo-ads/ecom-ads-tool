@@ -24,6 +24,9 @@ const PANEL_REFRESH = {
 };
 
 // Time-frame → concrete start/end date. `now` is injectable for tests.
+// For ALL_THREE_PERIODS we anchor the audit's canonical window to 90 days
+// (widest of the three) so any single-window UI reads still make sense.
+// The panel controllers then re-run their fetch for 30/60/90 individually.
 export const resolveTimeFrame = (timeFrame, custom, now = new Date()) => {
   const end = new Date(now);
   end.setHours(23, 59, 59, 999);
@@ -37,12 +40,8 @@ export const resolveTimeFrame = (timeFrame, custom, now = new Date()) => {
       start = new Date(now); start.setDate(now.getDate() - 60);
       break;
     case "LAST_90_DAYS":
+    case "ALL_THREE_PERIODS":
       start = new Date(now); start.setDate(now.getDate() - 90);
-      break;
-    case "ALL_TIME":
-      // Google Ads accounts rarely have data older than ~5 years for reporting.
-      // Use a fixed floor so queries don't fail on "date too far in the past".
-      start = new Date("2020-01-01T00:00:00.000Z");
       break;
     case "CUSTOM":
       if (!custom?.start || !custom?.end) {
@@ -55,6 +54,21 @@ export const resolveTimeFrame = (timeFrame, custom, now = new Date()) => {
   }
   start.setHours(0, 0, 0, 0);
   return { start, end };
+};
+
+// For ALL_THREE_PERIODS: enumerate the three sub-windows relative to now.
+// Returned as ordered array so the frontend can render 30/60/90 tabs
+// consistently.
+export const enumerateSubPeriods = (now = new Date()) => {
+  const build = (days) => {
+    const end = new Date(now);
+    end.setHours(23, 59, 59, 999);
+    const start = new Date(now);
+    start.setDate(now.getDate() - days);
+    start.setHours(0, 0, 0, 0);
+    return { key: `LAST_${days}_DAYS`, days, start, end };
+  };
+  return [build(30), build(60), build(90)];
 };
 
 // POST /api/audit/create
@@ -202,15 +216,70 @@ export const updatePanelState = async (req, res) => {
   }
 };
 
+// Dedup flags by (code + target_id). Keeps the highest-severity variant.
+const dedupeFlags = (flagLists) => {
+  const seenBy = new Map(); // key -> flag
+  const sevRank = { info: 0, warn: 1, critical: 2 };
+  for (const flags of flagLists) {
+    for (const f of flags || []) {
+      const key = `${f.code}|${f.target_id || ""}`;
+      const cur = seenBy.get(key);
+      if (!cur || (sevRank[f.severity] ?? 0) > (sevRank[cur.severity] ?? 0)) {
+        seenBy.set(key, f);
+      }
+    }
+  }
+  return Array.from(seenBy.values());
+};
+
+// Runs a single-period refresh OR a three-period refresh depending on
+// audit.time_frame. Returns { snapshot, flags } consistent with the
+// single-period shape so callers don't branch, but when multi-period the
+// snapshot is { multi_period: true, primary_key, periods: { LAST_30_DAYS: ..., ... } }.
+const runPanelRefresh = async ({ user, audit, panelKey }) => {
+  const refresher = PANEL_REFRESH[panelKey];
+  if (!refresher) throw new Error(`Unknown panel key or not yet implemented: ${panelKey}`);
+
+  if (audit.time_frame === "ALL_THREE_PERIODS") {
+    const subs = enumerateSubPeriods();
+    const results = {};
+    const allFlagLists = [];
+    for (const sub of subs) {
+      // Run sequentially rather than in parallel — Google Ads has aggressive
+      // per-minute quotas per developer token; 3 parallel queries per panel ×
+      // multiple panels quickly hits QUOTA_EXCEEDED.
+      const { snapshot, flags } = await refresher({
+        user,
+        audit,
+        start: sub.start,
+        end: sub.end,
+      });
+      results[sub.key] = { snapshot, flags: flags || [] };
+      allFlagLists.push(flags || []);
+    }
+    return {
+      snapshot: {
+        multi_period: true,
+        primary_key: "LAST_30_DAYS",
+        periods: results,
+      },
+      flags: dedupeFlags(allFlagLists),
+    };
+  }
+
+  // Single-window refresh — audit.start_date / audit.end_date drive it.
+  const { snapshot, flags } = await refresher({ user, audit });
+  return { snapshot, flags: flags || [] };
+};
+
 // POST /api/audit/:id/panel/:panelKey/refresh
 // Refetches panel data from Google Ads for this audit. Delegates to
-// the panel-specific controller.
+// the panel-specific controller. Handles multi-period expansion.
 export const refreshPanel = async (req, res) => {
   try {
     const { id, panelKey } = req.params;
 
-    const refresher = PANEL_REFRESH[panelKey];
-    if (!refresher) {
+    if (!PANEL_REFRESH[panelKey]) {
       return res.status(400).json({ message: `Unknown panel key or not yet implemented: ${panelKey}` });
     }
 
@@ -220,16 +289,17 @@ export const refreshPanel = async (req, res) => {
       return res.status(409).json({ message: "Audit is sealed and cannot be refreshed" });
     }
 
-    const { snapshot, flags } = await refresher({
+    const { snapshot, flags } = await runPanelRefresh({
       user: req.user,
       audit,
+      panelKey,
     });
 
     const panels = audit.panels || {};
     const p = panels[panelKey] || {};
     p.data_snapshot = snapshot;
     p.data_fetched_at = new Date();
-    p.flags = flags || [];
+    p.flags = flags;
     panels[panelKey] = p;
     audit.panels = panels;
     audit.markPanelsModified();
@@ -241,12 +311,76 @@ export const refreshPanel = async (req, res) => {
     return res.json({
       panelKey,
       data_snapshot: snapshot,
-      flags: p.flags,
+      flags,
       data_fetched_at: p.data_fetched_at,
     });
   } catch (err) {
     console.error(`refreshPanel(${req.params.panelKey}) error:`, err);
     return res.status(500).json({ message: err.message || "Failed to refresh panel" });
+  }
+};
+
+// POST /api/audit/:id/run-all
+// Runs every implemented panel's refresh sequentially. Returns per-panel
+// status so the UI can show which succeeded / failed instead of failing
+// the entire batch on one bad panel.
+export const runAllPanels = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const audit = await Audit.findOne({ _id: id, user: req.user._id });
+    if (!audit) return res.status(404).json({ message: "Audit not found" });
+    if (audit.status === "sealed") {
+      return res.status(409).json({ message: "Audit is sealed and cannot be refreshed" });
+    }
+
+    const results = [];
+    const panels = audit.panels || {};
+    for (const panelKey of Object.keys(PANEL_REFRESH)) {
+      const startedAt = new Date();
+      try {
+        const { snapshot, flags } = await runPanelRefresh({
+          user: req.user,
+          audit,
+          panelKey,
+        });
+        const p = panels[panelKey] || {};
+        p.data_snapshot = snapshot;
+        p.data_fetched_at = new Date();
+        p.flags = flags;
+        panels[panelKey] = p;
+        results.push({
+          panelKey,
+          ok: true,
+          flag_count: flags.length,
+          duration_ms: Date.now() - startedAt.getTime(),
+        });
+      } catch (err) {
+        console.error(`runAllPanels(${panelKey}) error:`, err);
+        results.push({
+          panelKey,
+          ok: false,
+          error: err.message || String(err),
+          duration_ms: Date.now() - startedAt.getTime(),
+        });
+      }
+    }
+
+    audit.panels = panels;
+    audit.markPanelsModified();
+    if (audit.status === "draft") audit.status = "in_progress";
+    await audit.save();
+
+    return res.json({
+      audit_id: id,
+      total_panels: Object.keys(PANEL_REFRESH).length,
+      succeeded: results.filter((r) => r.ok).length,
+      failed: results.filter((r) => !r.ok).length,
+      results,
+      panels_state: audit.panels,
+    });
+  } catch (err) {
+    console.error("runAllPanels error:", err);
+    return res.status(500).json({ message: err.message || "Failed to run panels" });
   }
 };
 
