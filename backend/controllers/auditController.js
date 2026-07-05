@@ -17,10 +17,18 @@ import Audit, {
 import { refreshCampaignOverview } from "./panels/campaignOverviewController.js";
 import { refreshPerformanceSnapshot } from "./panels/performanceSnapshotController.js";
 import { refreshChangeHistory } from "./panels/changeHistoryController.js";
+import { refreshStructure } from "./panels/structureController.js";
+import { refreshWhereWhen } from "./panels/whereWhenController.js";
+import { refreshConversionTracking } from "./panels/conversionTrackingController.js";
+import { refreshLandingPage } from "./panels/landingPageController.js";
 
 const PANEL_REFRESH = {
   campaign_overview: refreshCampaignOverview,
   performance_snapshot: refreshPerformanceSnapshot,
+  structure: refreshStructure,
+  where_when: refreshWhereWhen,
+  conversion_tracking: refreshConversionTracking,
+  landing_page: refreshLandingPage,
   change_history: refreshChangeHistory,
   // ... (added as panels ship)
 };
