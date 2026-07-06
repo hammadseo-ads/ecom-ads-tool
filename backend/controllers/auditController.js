@@ -308,12 +308,22 @@ const runPanelRefresh = async ({ user, audit, panelKey }) => {
       allFlagLists.push(flags);
       statuses.add(snapshot?.fetch_status || "unknown");
     }
-    // Multi-period fetch status: 'ok' only when all sub-fetches worked.
-    // If any failed, 'partial'. If all failed, 'failed'.
-    const okCount = Array.from(statuses).filter((s) => s === "ok").length;
+    // Multi-period fetch status: reflect the aggregate.
+    //   all not_applicable  → not_applicable (panel is legitimately N/A)
+    //   all failed          → failed
+    //   all ok              → ok
+    //   any ok + any failed → partial
+    //   ok + not_applicable → ok (N/A does not count as failure)
+    //   failed + not_applicable (no ok) → failed
+    const kinds = Array.from(statuses);
     const anyOk = statuses.has("ok");
     const anyFailed = statuses.has("failed");
-    const wrapperStatus = !anyOk ? "failed" : anyFailed ? "partial" : "ok";
+    const allNA = kinds.length > 0 && kinds.every((s) => s === "not_applicable");
+    const wrapperStatus =
+      allNA ? "not_applicable" :
+      !anyOk ? "failed" :
+      anyFailed ? "partial" :
+      "ok";
     return {
       snapshot: {
         multi_period: true,

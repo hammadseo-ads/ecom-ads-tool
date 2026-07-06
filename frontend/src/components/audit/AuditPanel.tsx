@@ -41,6 +41,8 @@ export interface AuditFlag {
   meta?: Record<string, unknown>;
 }
 
+export type FetchStatus = "ok" | "partial" | "failed" | "not_applicable" | undefined;
+
 interface AuditPanelProps {
   auditId: string;
   panelKey: string;
@@ -53,6 +55,8 @@ interface AuditPanelProps {
   dataFetchedAt?: string | null;
   defaultOpen?: boolean;
   isSealed?: boolean;
+  fetchStatus?: FetchStatus;
+  fetchError?: string;
   children?: ReactNode;
   onRefreshed?: (payload: { data_snapshot: unknown; flags: AuditFlag[]; data_fetched_at: string }) => void;
   onStateChanged?: (patch: { status?: PanelStatus; notes?: string }) => void;
@@ -83,6 +87,8 @@ export function AuditPanel({
   dataFetchedAt,
   defaultOpen = true,
   isSealed = false,
+  fetchStatus,
+  fetchError,
   children,
   onRefreshed,
   onStateChanged,
@@ -158,6 +164,23 @@ export function AuditPanel({
                 {flags.length} flag{flags.length !== 1 ? "s" : ""}
               </Badge>
             )}
+            {fetchStatus === "failed" && (
+              <Badge variant="outline" className="bg-red-50 text-red-800 border-red-200 gap-1">
+                <AlertTriangle className="w-3 h-3" />
+                Fetch failed
+              </Badge>
+            )}
+            {fetchStatus === "partial" && (
+              <Badge variant="outline" className="bg-amber-50 text-amber-900 border-amber-200 gap-1">
+                <AlertTriangle className="w-3 h-3" />
+                Partial
+              </Badge>
+            )}
+            {fetchStatus === "not_applicable" && (
+              <Badge variant="outline" className="bg-gray-100 text-gray-600 border-gray-200">
+                Not applicable
+              </Badge>
+            )}
           </div>
           {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
         </div>
@@ -210,8 +233,46 @@ export function AuditPanel({
             </div>
           )}
 
-          {/* Body content — the panel-specific data */}
-          {children ? (
+          {/* Body content — the panel-specific data.
+              When fetch_status flags failure or "not applicable", we render
+              a graceful state HERE instead of handing the (undefined-field)
+              snapshot to the child component. Prevents the browser from
+              choking on `undefined.length` etc. */}
+          {fetchStatus === "failed" ? (
+            <div className="rounded-lg border border-red-200 bg-red-50/40 p-6">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-red-900 mb-1">Fetch failed</div>
+                  <div className="text-sm text-red-800">
+                    This panel's data couldn't be retrieved from Google Ads.
+                    {dataFetchedAt && <> Last attempt: {new Date(dataFetchedAt).toLocaleString()}.</>}
+                  </div>
+                  {fetchError && (
+                    <div className="mt-2 rounded border border-red-200 bg-white/70 px-3 py-2 font-mono text-xs text-red-900 break-all">
+                      {fetchError}
+                    </div>
+                  )}
+                  <div className="text-xs text-red-700/80 mt-2">
+                    Try clicking Fetch again above. If the error persists, share the message.
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : fetchStatus === "not_applicable" ? (
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-6">
+              <div className="flex items-start gap-3">
+                <MinusCircle className="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <div className="text-sm font-bold text-gray-800 mb-1">Not applicable to this account</div>
+                  <div className="text-sm text-gray-600">
+                    This panel is only meaningful when the underlying data exists on the account
+                    (e.g. Lead Form Extensions for the Lead Generation panel). Nothing to show here.
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : children ? (
             <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
               {children}
             </div>

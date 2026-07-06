@@ -324,6 +324,19 @@ const AuditWorkspaceInner = ({ auditId }: { auditId: string }) => {
           const flags = state.flags || [];
           const status = (state.status || "not_reviewed") as PanelStatus;
 
+          // Pull fetch_status + fetch_error from the snapshot so the
+          // wrapper can render a graceful failed / not-applicable state
+          // instead of handing an undefined-fielded snapshot to the child
+          // component (which would throw and freeze the page).
+          const snap = (state.data_snapshot || {}) as Record<string, unknown>;
+          const fetchStatus = (snap.fetch_status as
+            | "ok"
+            | "partial"
+            | "failed"
+            | "not_applicable"
+            | undefined) || undefined;
+          const fetchError = typeof snap.fetch_error === "string" ? snap.fetch_error : undefined;
+
           return (
             <AuditPanel
               key={def.key}
@@ -338,6 +351,8 @@ const AuditWorkspaceInner = ({ auditId }: { auditId: string }) => {
               dataFetchedAt={state.data_fetched_at || null}
               defaultOpen={def.number === 1}
               isSealed={isSealed}
+              fetchStatus={fetchStatus}
+              fetchError={fetchError}
               onRefreshed={(p) => patchPanel(def.key, {
                 data_snapshot: p.data_snapshot,
                 flags: p.flags,

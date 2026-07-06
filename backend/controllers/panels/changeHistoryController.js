@@ -268,10 +268,13 @@ export const refreshChangeHistory = async ({ user, audit }) => {
 
   const customerId = formatCustomerId(audit.customer_id);
 
-  // change_event only supports 30 days back regardless of audit window.
-  // Ignore audit.start_date and just anchor to 30 days ago.
+  // change_event only supports LESS THAN 30 days back regardless of audit
+  // window. Google's API enforces this strictly — asking for exactly
+  // -30 days rounds outside the window and returns:
+  //   "The requested start date is too old. It cannot be older than 30 days."
+  // So we anchor to -29 days to stay safely inside the cap.
   const now = new Date();
-  const start = new Date(now); start.setDate(start.getDate() - 30); start.setHours(0, 0, 0, 0);
+  const start = new Date(now); start.setDate(start.getDate() - 29); start.setHours(0, 0, 0, 0);
   const end = new Date(now);
 
   const events = await withLoginRetry(tokenDoc, customerId, (login) =>
@@ -296,8 +299,10 @@ export const refreshChangeHistory = async ({ user, audit }) => {
   }
 
   const snapshot = {
-    // Advertise the Google cap explicitly so the UI can show the boundary
-    api_cap_days: 30,
+    // Advertise the Google cap explicitly so the UI can show the boundary.
+    // Note: we window at 29 days locally to stay just inside Google's
+    // strict "less than 30" enforcement.
+    api_cap_days: 29,
     fetched_at: new Date(),
     start_date: start,
     end_date: end,
