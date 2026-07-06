@@ -303,6 +303,15 @@ export const refreshChangeHistory = async ({ user, audit }) => {
     // Note: we window at 29 days locally to stay just inside Google's
     // strict "less than 30" enforcement.
     api_cap_days: 29,
+    // This panel always fetches a fixed 29-day window regardless of the
+    // audit's time_frame — Google's API doesn't allow looking further
+    // back on change_event, so requesting 60/90 days would fail with
+    // "start date too old". Multi-period audits therefore skip the
+    // per-sub-period expansion for this panel (see SINGLE_PERIOD_PANELS
+    // in auditController.js). Operator can cross-reference this window
+    // against Panel 2's daily performance timeline for the same window
+    // to correlate specific changes with metric shifts.
+    fixed_window_note: `This panel always covers the last ${29} days. For older change history, use the Google Ads UI → Change History (Google keeps up to 2 years there).`,
     fetched_at: new Date(),
     start_date: start,
     end_date: end,

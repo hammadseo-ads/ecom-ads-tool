@@ -42,6 +42,18 @@ const PANEL_REFRESH = {
   change_history: refreshChangeHistory,
 };
 
+// Panels whose data source has a hard time-window cap on the API side and
+// therefore cannot honour the audit's time_frame. For these we skip the
+// multi-period expansion entirely and always run a single-period fetch,
+// regardless of whether the audit is LAST_30_DAYS or ALL_THREE_PERIODS.
+//
+// change_history · Google Ads API's `change_event` resource is capped at
+// LESS THAN 30 days. Asking for exactly -30 days returns "start date too
+// old". Requesting the same window for LAST_60_DAYS or LAST_90_DAYS is
+// wasted API quota — the API refuses anything older than 30 days no
+// matter what we ask.
+const SINGLE_PERIOD_PANELS = new Set(["change_history"]);
+
 // Time-frame → concrete start/end date. `now` is injectable for tests.
 // For ALL_THREE_PERIODS we anchor the audit's canonical window to 90 days
 // (widest of the three) so any single-window UI reads still make sense.
@@ -284,11 +296,15 @@ const runOneRefresh = async ({ refresher, user, audit, start, end }) => {
 // audit.time_frame. Returns { snapshot, flags } consistent with the
 // single-period shape so callers don't branch, but when multi-period the
 // snapshot is { multi_period: true, primary_key, periods: { LAST_30_DAYS: ..., ... } }.
+// Panels in SINGLE_PERIOD_PANELS always take the single-period path
+// because their data source doesn't honour the audit's time_frame anyway.
 const runPanelRefresh = async ({ user, audit, panelKey }) => {
   const refresher = PANEL_REFRESH[panelKey];
   if (!refresher) throw new Error(`Unknown panel key or not yet implemented: ${panelKey}`);
 
-  if (audit.time_frame === "ALL_THREE_PERIODS") {
+  const forceSinglePeriod = SINGLE_PERIOD_PANELS.has(panelKey);
+
+  if (audit.time_frame === "ALL_THREE_PERIODS" && !forceSinglePeriod) {
     const subs = enumerateSubPeriods();
     const results = {};
     const allFlagLists = [];
