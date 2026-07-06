@@ -11,6 +11,7 @@
 
 import GoogleAdsToken from "../../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../../utils/googleAdsClient.js";
+import { enumName, CAMPAIGN_STATUS, CHANNEL_TYPE, BIDDING_STRATEGY_TYPE } from "../../utils/googleAdsEnums.js";
 
 // ---------- helpers (duplicated from campaignOverviewController; kept
 // local for now, extract to shared/ if a 3rd panel needs them) ----------
@@ -94,9 +95,9 @@ const fetchCampaigns = async (tokenDoc, customerId, loginCustomerId, start, end)
     const existing = byId.get(id) || {
       id,
       name: c.name || `Campaign ${id}`,
-      status: String(c.status ?? ""),
-      channel_type: String(c.advertising_channel_type ?? c.advertisingChannelType ?? ""),
-      bidding_strategy_type: String(c.bidding_strategy_type ?? c.biddingStrategyType ?? ""),
+      status: enumName(CAMPAIGN_STATUS, c.status),
+      channel_type: enumName(CHANNEL_TYPE, c.advertising_channel_type ?? c.advertisingChannelType),
+      bidding_strategy_type: enumName(BIDDING_STRATEGY_TYPE, c.bidding_strategy_type ?? c.biddingStrategyType),
       target_roas: num(c.target_roas?.target_roas ?? c.targetRoas?.targetRoas ?? c.maximize_conversion_value?.target_roas ?? c.maximizeConversionValue?.targetRoas),
       target_cpa: num(c.target_cpa?.target_cpa_micros ?? c.targetCpa?.targetCpaMicros) / 1e6,
       impressions: 0, clicks: 0, cost: 0, conversions: 0, conversions_value: 0,

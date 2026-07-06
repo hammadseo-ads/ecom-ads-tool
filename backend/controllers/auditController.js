@@ -251,6 +251,35 @@ const dedupeFlags = (flagLists) => {
   return Array.from(seenBy.values());
 };
 
+// Wrap one refresher call so any failure lands in the snapshot as
+// { fetch_status: 'failed', fetch_error } instead of throwing away the
+// whole panel. Callers get a consistent { snapshot, flags } shape.
+const runOneRefresh = async ({ refresher, user, audit, start, end }) => {
+  try {
+    const { snapshot, flags } = await refresher({ user, audit, start, end });
+    const isNA = snapshot && typeof snapshot === "object" && snapshot.not_applicable === true;
+    return {
+      snapshot: {
+        ...(snapshot || {}),
+        fetch_status: isNA ? "not_applicable" : "ok",
+        fetched_at: new Date(),
+      },
+      flags: flags || [],
+    };
+  } catch (err) {
+    const msg = err?.errors?.[0]?.message || err?.message || String(err);
+    console.error(`[audit] refresh failed:`, msg?.slice(0, 400));
+    return {
+      snapshot: {
+        fetch_status: "failed",
+        fetch_error: msg,
+        fetched_at: new Date(),
+      },
+      flags: [],
+    };
+  }
+};
+
 // Runs a single-period refresh OR a three-period refresh depending on
 // audit.time_frame. Returns { snapshot, flags } consistent with the
 // single-period shape so callers don't branch, but when multi-period the
@@ -263,32 +292,42 @@ const runPanelRefresh = async ({ user, audit, panelKey }) => {
     const subs = enumerateSubPeriods();
     const results = {};
     const allFlagLists = [];
+    const statuses = new Set();
     for (const sub of subs) {
       // Run sequentially rather than in parallel — Google Ads has aggressive
       // per-minute quotas per developer token; 3 parallel queries per panel ×
       // multiple panels quickly hits QUOTA_EXCEEDED.
-      const { snapshot, flags } = await refresher({
+      const { snapshot, flags } = await runOneRefresh({
+        refresher,
         user,
         audit,
         start: sub.start,
         end: sub.end,
       });
-      results[sub.key] = { snapshot, flags: flags || [] };
-      allFlagLists.push(flags || []);
+      results[sub.key] = { snapshot, flags };
+      allFlagLists.push(flags);
+      statuses.add(snapshot?.fetch_status || "unknown");
     }
+    // Multi-period fetch status: 'ok' only when all sub-fetches worked.
+    // If any failed, 'partial'. If all failed, 'failed'.
+    const okCount = Array.from(statuses).filter((s) => s === "ok").length;
+    const anyOk = statuses.has("ok");
+    const anyFailed = statuses.has("failed");
+    const wrapperStatus = !anyOk ? "failed" : anyFailed ? "partial" : "ok";
     return {
       snapshot: {
         multi_period: true,
         primary_key: "LAST_30_DAYS",
         periods: results,
+        fetch_status: wrapperStatus,
+        fetched_at: new Date(),
       },
       flags: dedupeFlags(allFlagLists),
     };
   }
 
   // Single-window refresh — audit.start_date / audit.end_date drive it.
-  const { snapshot, flags } = await refresher({ user, audit });
-  return { snapshot, flags: flags || [] };
+  return runOneRefresh({ refresher, user, audit });
 };
 
 // POST /api/audit/:id/panel/:panelKey/refresh

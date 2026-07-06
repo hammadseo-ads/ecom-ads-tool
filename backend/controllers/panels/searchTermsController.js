@@ -13,6 +13,11 @@
 
 import GoogleAdsToken from "../../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../../utils/googleAdsClient.js";
+import { enumName, CHANNEL_TYPE } from "../../utils/googleAdsEnums.js";
+
+// SearchTermViewStatus is a small enum we handle inline here rather than
+// adding to googleAdsEnums.js — it's specific to this one panel.
+const SEARCH_TERM_STATUS = { 2: "ADDED", 3: "EXCLUDED", 4: "ADDED_EXCLUDED", 5: "UNKNOWN" };
 
 const formatCustomerId = (id) =>
   id ? String(id).replace(/customers\//g, "").replace(/-/g, "").trim() : "";
@@ -47,7 +52,12 @@ const withLoginRetry = async (tokenDoc, customerId, fn) => {
 const fmtDate = (d) => new Date(d).toISOString().split("T")[0];
 
 // ---------- 6a. Search campaign search terms ----------
-const buildSearchTermsQuery = (start, end) => `
+// Three separate paged queries then dedupe. A single ORDER BY cost DESC
+// LIMIT 5000 cuts the long tail — the pockets where negative-keyword
+// candidates hide (moderate-cost, zero-conv) or where new-keyword
+// candidates hide (small-cost, few-conv). We fetch three angles and
+// union them.
+const buildSearchTermsQuery = (start, end, sortField, extraFilter = "") => `
   SELECT
     search_term_view.search_term,
     search_term_view.status,
@@ -65,34 +75,61 @@ const buildSearchTermsQuery = (start, end) => `
   WHERE segments.date BETWEEN '${start}' AND '${end}'
     AND campaign.advertising_channel_type IN ('SEARCH', 'SHOPPING')
     AND metrics.impressions > 0
-  ORDER BY metrics.cost_micros DESC
+    ${extraFilter}
+  ORDER BY ${sortField} DESC
   LIMIT 5000
 `;
 
+const parseSearchTermRow = (row) => {
+  const stv = row.search_term_view || row.searchTermView || {};
+  const c = row.campaign || {};
+  const ag = row.ad_group || row.adGroup || {};
+  const m = row.metrics || {};
+  return {
+    search_term: stv.search_term ?? stv.searchTerm ?? "",
+    status: enumName(SEARCH_TERM_STATUS, stv.status),
+    campaign_id: String(c.id || ""),
+    campaign_name: c.name || "",
+    channel_type: enumName(CHANNEL_TYPE, c.advertising_channel_type ?? c.advertisingChannelType),
+    ad_group_id: String(ag.id || ""),
+    ad_group_name: ag.name || "",
+    impressions: num(m.impressions),
+    clicks: num(m.clicks),
+    cost: num(m.cost_micros ?? m.costMicros) / 1e6,
+    conversions: num(m.conversions),
+    conversions_value: num(m.conversions_value ?? m.conversionsValue),
+  };
+};
+
 const fetchSearchTerms = async (tokenDoc, customerId, loginCustomerId, start, end) => {
   const client = getGoogleAdsClient(tokenDoc.refreshToken, customerId, loginCustomerId);
-  const resp = await client.query(buildSearchTermsQuery(start, end));
-  const rows = toArray(resp).map((row) => {
-    const stv = row.search_term_view || row.searchTermView || {};
-    const c = row.campaign || {};
-    const ag = row.ad_group || row.adGroup || {};
-    const m = row.metrics || {};
-    return {
-      search_term: stv.search_term ?? stv.searchTerm ?? "",
-      status: String(stv.status || ""),
-      campaign_id: String(c.id || ""),
-      campaign_name: c.name || "",
-      channel_type: String(c.advertising_channel_type ?? c.advertisingChannelType ?? ""),
-      ad_group_id: String(ag.id || ""),
-      ad_group_name: ag.name || "",
-      impressions: num(m.impressions),
-      clicks: num(m.clicks),
-      cost: num(m.cost_micros ?? m.costMicros) / 1e6,
-      conversions: num(m.conversions),
-      conversions_value: num(m.conversions_value ?? m.conversionsValue),
-    };
-  });
-  return rows.map((r) => ({
+
+  // Three angles: top by cost, top by zero-conv-cost (negatives candidates),
+  // top by conversions (keyword candidates). Union + dedupe.
+  const queries = [
+    buildSearchTermsQuery(start, end, "metrics.cost_micros"),
+    buildSearchTermsQuery(start, end, "metrics.cost_micros", "AND metrics.conversions = 0"),
+    buildSearchTermsQuery(start, end, "metrics.conversions_value", "AND metrics.conversions > 0"),
+  ];
+
+  const all = new Map();
+  for (const q of queries) {
+    try {
+      const resp = await client.query(q);
+      for (const row of toArray(resp)) {
+        const parsed = parseSearchTermRow(row);
+        if (!parsed.search_term) continue;
+        // Dedup by (campaign, ad_group, search_term) triple — the same term
+        // in different ad groups is meaningfully different.
+        const key = `${parsed.campaign_id}|${parsed.ad_group_id}|${parsed.search_term}`;
+        if (!all.has(key)) all.set(key, parsed);
+      }
+    } catch (err) {
+      console.warn("[search_terms] one paged query failed:", err?.message?.slice(0, 200));
+    }
+  }
+
+  return Array.from(all.values()).map((r) => ({
     ...r,
     ctr: r.impressions > 0 ? (r.clicks / r.impressions) * 100 : 0,
     cost_per_conversion: r.conversions > 0 ? r.cost / r.conversions : 0,

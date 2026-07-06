@@ -9,6 +9,14 @@
 
 import GoogleAdsToken from "../../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../../utils/googleAdsClient.js";
+import {
+  enumName,
+  KEYWORD_MATCH_TYPE,
+  AD_GROUP_CRITERION_STATUS,
+  AGE_RANGE_TYPE,
+  GENDER_TYPE,
+  INCOME_RANGE_TYPE,
+} from "../../utils/googleAdsEnums.js";
 
 const formatCustomerId = (id) =>
   id ? String(id).replace(/customers\//g, "").replace(/-/g, "").trim() : "";
@@ -83,9 +91,9 @@ const fetchKeywords = async (tokenDoc, customerId, loginCustomerId, start, end) 
     const cur = byId.get(id) || {
       id,
       text: kw.text || "",
-      match_type: String(kw.match_type ?? kw.matchType ?? ""),
+      match_type: enumName(KEYWORD_MATCH_TYPE, kw.match_type ?? kw.matchType),
       quality_score: num(agc.quality_info?.quality_score ?? agc.qualityInfo?.qualityScore) || null,
-      status: String(agc.status || ""),
+      status: enumName(AD_GROUP_CRITERION_STATUS, agc.status),
       ad_group_id: String(ag.id || ""),
       ad_group_name: ag.name || "",
       campaign_id: String(c.id || ""),
@@ -123,17 +131,25 @@ const buildDemoQuery = (view, dimField, start, end) => `
     AND campaign.status = 'ENABLED'
 `;
 
+const DEMO_ENUM_MAP = {
+  AGE: AGE_RANGE_TYPE,
+  GENDER: GENDER_TYPE,
+  INCOME: INCOME_RANGE_TYPE,
+};
+
 const fetchDemo = async (tokenDoc, customerId, loginCustomerId, view, dimField, dimKey, start, end) => {
   const client = getGoogleAdsClient(tokenDoc.refreshToken, customerId, loginCustomerId);
   const resp = await client.query(buildDemoQuery(view, dimField, start, end));
   const byCampaign = new Map();
+  const enumMap = DEMO_ENUM_MAP[dimKey];
   for (const row of toArray(resp)) {
     const c = row.campaign || {};
     const m = row.metrics || {};
     const cid = String(c.id || "");
     if (!cid) continue;
     // Extract dimension value using dot-path resolution
-    const dimVal = String(dimField.split(".").reduce((o, k) => o?.[k], row) || "");
+    const rawDim = dimField.split(".").reduce((o, k) => o?.[k], row);
+    const dimVal = enumMap ? enumName(enumMap, rawDim) : String(rawDim || "");
     const cur = byCampaign.get(cid) || {
       campaign_id: cid,
       campaign_name: c.name || "",
@@ -161,12 +177,19 @@ const fetchDemo = async (tokenDoc, customerId, loginCustomerId, view, dimField, 
 };
 
 // ---------- locations ----------
+// Filtering `campaign.status = 'ENABLED'` inside GAQL was empirically
+// over-restrictive against `geographic_view` — the query returned zero
+// rows for accounts that had geographic activity but the join couldn't
+// be resolved with that filter. We drop the filter server-side and
+// aggregate at the row level; enabled-vs-paused rollups happen after
+// fetch if the operator needs them.
 const buildLocationsQuery = (start, end) => `
   SELECT
     geographic_view.country_criterion_id,
     geographic_view.location_type,
     campaign.id,
     campaign.name,
+    campaign.status,
     metrics.impressions,
     metrics.clicks,
     metrics.cost_micros,
@@ -174,7 +197,6 @@ const buildLocationsQuery = (start, end) => `
     metrics.conversions_value
   FROM geographic_view
   WHERE segments.date BETWEEN '${start}' AND '${end}'
-    AND campaign.status = 'ENABLED'
     AND metrics.impressions > 0
   LIMIT 2000
 `;
@@ -234,7 +256,10 @@ const fetchNegatives = async (tokenDoc, customerId, loginCustomerId) => {
       campaign_id: String(c.id || ""),
       campaign_name: c.name || "",
     };
-  }).filter((n) => n.text);
+  }).map((n) => ({
+    ...n,
+    match_type: enumName(KEYWORD_MATCH_TYPE, n.match_type),
+  })).filter((n) => n.text);
 };
 
 // ---------- flag engine ----------

@@ -10,6 +10,16 @@
 
 import GoogleAdsToken from "../../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../../utils/googleAdsClient.js";
+import {
+  enumName,
+  CHANNEL_TYPE,
+  AD_GROUP_STATUS,
+  AD_GROUP_TYPE,
+  ASSET_GROUP_STATUS,
+  AD_STRENGTH,
+  CAMPAIGN_STATUS,
+  CONVERSION_ACTION_CATEGORY,
+} from "../../utils/googleAdsEnums.js";
 
 const formatCustomerId = (id) =>
   id ? String(id).replace(/customers\//g, "").replace(/-/g, "").trim() : "";
@@ -78,12 +88,12 @@ const fetchAdGroups = async (tokenDoc, customerId, loginCustomerId, start, end) 
     const cur = byId.get(id) || {
       id,
       name: ag.name || `Ad group ${id}`,
-      status: String(ag.status || ""),
-      type: String(ag.type || ""),
+      status: enumName(AD_GROUP_STATUS, ag.status),
+      type: enumName(AD_GROUP_TYPE, ag.type),
       cpc_bid: num(ag.cpc_bid_micros ?? ag.cpcBidMicros) / 1e6,
       campaign_id: String(c.id || ""),
       campaign_name: c.name || "",
-      channel_type: String(c.advertising_channel_type ?? c.advertisingChannelType ?? ""),
+      channel_type: enumName(CHANNEL_TYPE, c.advertising_channel_type ?? c.advertisingChannelType),
       impressions: 0, clicks: 0, cost: 0, conversions: 0, conversions_value: 0,
     };
     cur.impressions += num(m.impressions);
@@ -134,8 +144,8 @@ const fetchAssetGroups = async (tokenDoc, customerId, loginCustomerId, start, en
     const cur = byId.get(id) || {
       id,
       name: ag.name || `Asset group ${id}`,
-      status: String(ag.status || ""),
-      ad_strength: String(ag.ad_strength ?? ag.adStrength ?? ""),
+      status: enumName(ASSET_GROUP_STATUS, ag.status),
+      ad_strength: enumName(AD_STRENGTH, ag.ad_strength ?? ag.adStrength),
       campaign_id: String(c.id || ""),
       campaign_name: c.name || "",
       impressions: 0, clicks: 0, cost: 0, conversions: 0, conversions_value: 0,
@@ -189,7 +199,7 @@ const fetchConversionGoalsConfig = async (tokenDoc, customerId, loginCustomerId)
     if (!rn) continue;
     primaryMap.set(rn, {
       primary_for_goal: Boolean(ca.primary_for_goal ?? ca.primaryForGoal),
-      category: String(ca.category ?? ""),
+      category: enumName(CONVERSION_ACTION_CATEGORY, ca.category),
       name: ca.name || "",
     });
   }
@@ -216,7 +226,7 @@ const fetchConversionGoalsConfig = async (tokenDoc, customerId, loginCustomerId)
     rows.push({
       campaign_id: String(c.id || ""),
       campaign_name: c.name || "",
-      status: String(c.status || ""),
+      status: enumName(CAMPAIGN_STATUS, c.status),
       goals: effective,
       primary_count,
       uses_selective_optimization: detail.length > 0,

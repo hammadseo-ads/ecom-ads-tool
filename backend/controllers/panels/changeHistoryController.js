@@ -17,6 +17,12 @@
 
 import GoogleAdsToken from "../../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../../utils/googleAdsClient.js";
+import {
+  enumName,
+  CHANGE_CLIENT_TYPE,
+  CHANGE_RESOURCE_TYPE,
+  RESOURCE_CHANGE_OPERATION,
+} from "../../utils/googleAdsEnums.js";
 
 // ---------- helpers ----------
 const formatCustomerId = (id) =>
@@ -63,9 +69,11 @@ const fmtDateTime = (d) => {
 };
 
 // ---------- GAQL ----------
-// change_event supports at most a 30-day lookback. Google caps the query
-// at 10k rows too. If an account is very active, we may miss the oldest
-// events in a busy window — that's the trade-off.
+// change_event supports at most a 30-day lookback. Google's LIMIT here is
+// 5000 (not 10000 as the older docs suggest) and ORDER BY change_date_time
+// is required — but on some large accounts the query fails silently with
+// specific quota / index errors. We use LIMIT 5000, keep ORDER BY DESC
+// (required by the API), and wrap in explicit error handling upstream.
 const buildQuery = (start, end) => `
   SELECT
     change_event.change_date_time,
@@ -83,7 +91,7 @@ const buildQuery = (start, end) => `
   WHERE change_event.change_date_time >= '${start}'
     AND change_event.change_date_time <= '${end}'
   ORDER BY change_event.change_date_time DESC
-  LIMIT 10000
+  LIMIT 5000
 `;
 
 // ---------- fetching ----------
@@ -97,10 +105,10 @@ const fetchChangeEvents = async (tokenDoc, customerId, loginCustomerId, start, e
     return {
       timestamp: ce.change_date_time ?? ce.changeDateTime ?? null,
       user_email: ce.user_email ?? ce.userEmail ?? "",
-      client_type: String(ce.client_type ?? ce.clientType ?? "UNKNOWN"),
-      resource_type: String(ce.change_resource_type ?? ce.changeResourceType ?? "UNKNOWN"),
+      client_type: enumName(CHANGE_CLIENT_TYPE, ce.client_type ?? ce.clientType) || "UNKNOWN",
+      resource_type: enumName(CHANGE_RESOURCE_TYPE, ce.change_resource_type ?? ce.changeResourceType) || "UNKNOWN",
       resource_name: ce.change_resource_name ?? ce.changeResourceName ?? "",
-      operation: String(ce.resource_change_operation ?? ce.resourceChangeOperation ?? "UNKNOWN"),
+      operation: enumName(RESOURCE_CHANGE_OPERATION, ce.resource_change_operation ?? ce.resourceChangeOperation) || "UNKNOWN",
       changed_fields: parseChangedFields(ce.changed_fields ?? ce.changedFields),
       campaign: ce.campaign || "",
       ad_group: ce.ad_group ?? ce.adGroup ?? "",

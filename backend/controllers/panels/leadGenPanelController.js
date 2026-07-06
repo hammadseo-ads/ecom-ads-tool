@@ -9,6 +9,7 @@
 
 import GoogleAdsToken from "../../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../../utils/googleAdsClient.js";
+import { enumName, LEAD_FORM_CALL_TO_ACTION_TYPE } from "../../utils/googleAdsEnums.js";
 
 const formatCustomerId = (id) =>
   id ? String(id).replace(/customers\//g, "").replace(/-/g, "").trim() : "";
@@ -67,7 +68,7 @@ const fetchLeadForms = async (tokenDoc, customerId, loginCustomerId) => {
       resource_name: `customers/${customerId}/assets/${a.id}`,
       name: a.name || lf.business_name || lf.businessName || "",
       business_name: lf.business_name ?? lf.businessName ?? "",
-      call_to_action: String(lf.call_to_action_type ?? lf.callToActionType ?? ""),
+      call_to_action: enumName(LEAD_FORM_CALL_TO_ACTION_TYPE, lf.call_to_action_type ?? lf.callToActionType),
       headline: lf.headline || "",
       description: lf.description || "",
       fields: (lf.fields || []).map((f) => String(f.input_type ?? f.inputType ?? "")),

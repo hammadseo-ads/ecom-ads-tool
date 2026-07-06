@@ -16,6 +16,14 @@
 
 import GoogleAdsToken from "../../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../../utils/googleAdsClient.js";
+import {
+  enumName,
+  CONVERSION_ACTION_STATUS,
+  CONVERSION_ACTION_TYPE,
+  CONVERSION_ACTION_CATEGORY,
+  CONVERSION_ACTION_COUNTING_TYPE,
+  ATTRIBUTION_MODEL,
+} from "../../utils/googleAdsEnums.js";
 
 const formatCustomerId = (id) =>
   id ? String(id).replace(/customers\//g, "").replace(/-/g, "").trim() : "";
@@ -89,17 +97,18 @@ const fetchConfig = async (tokenDoc, customerId, loginCustomerId) => {
       id: String(ca.id || ""),
       resource_name: `customers/${customerId}/conversionActions/${ca.id}`,
       name: ca.name || "",
-      type: String(ca.type || ""),
-      status: String(ca.status || ""),
-      category: String(ca.category || ""),
-      counting_type: String(ca.counting_type ?? ca.countingType ?? ""),
+      type: enumName(CONVERSION_ACTION_TYPE, ca.type),
+      status: enumName(CONVERSION_ACTION_STATUS, ca.status),
+      category: enumName(CONVERSION_ACTION_CATEGORY, ca.category),
+      counting_type: enumName(CONVERSION_ACTION_COUNTING_TYPE, ca.counting_type ?? ca.countingType),
       click_through_lookback_days: num(ca.click_through_lookback_window_days ?? ca.clickThroughLookbackWindowDays),
       view_through_lookback_days: num(ca.view_through_lookback_window_days ?? ca.viewThroughLookbackWindowDays),
       include_in_conversions_metric: Boolean(ca.include_in_conversions_metric ?? ca.includeInConversionsMetric),
       primary_for_goal: Boolean(ca.primary_for_goal ?? ca.primaryForGoal),
-      attribution_model: String(
+      attribution_model: enumName(
+        ATTRIBUTION_MODEL,
         ca.attribution_model_settings?.attribution_model ??
-        ca.attributionModelSettings?.attributionModel ?? ""
+        ca.attributionModelSettings?.attributionModel
       ),
       default_value: num(ca.value_settings?.default_value ?? ca.valueSettings?.defaultValue),
     };

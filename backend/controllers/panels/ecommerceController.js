@@ -19,6 +19,12 @@
 
 import GoogleAdsToken from "../../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../../utils/googleAdsClient.js";
+import {
+  enumName,
+  SHOPPING_PRODUCT_STATUS,
+  SHOPPING_PRODUCT_AVAILABILITY,
+  SHOPPING_PRODUCT_CHANNEL,
+} from "../../utils/googleAdsEnums.js";
 
 const formatCustomerId = (id) =>
   id ? String(id).replace(/customers\//g, "").replace(/-/g, "").trim() : "";
@@ -112,11 +118,11 @@ const fetchEligibility = async (tokenDoc, customerId, loginCustomerId) => {
       item_id: String(p.item_id ?? p.itemId ?? ""),
       title: p.title || "",
       brand: p.brand || "",
-      status: String(p.status || ""),
+      status: enumName(SHOPPING_PRODUCT_STATUS, p.status),
       currency: String(p.currency_code ?? p.currencyCode ?? ""),
       price: num(p.price_micros ?? p.priceMicros) / 1e6,
-      availability: String(p.availability || ""),
-      channel: String(p.channel || ""),
+      availability: enumName(SHOPPING_PRODUCT_AVAILABILITY, p.availability),
+      channel: enumName(SHOPPING_PRODUCT_CHANNEL, p.channel),
       issues: (p.issues || []).map((i) => ({
         code: i.code ?? "",
         description: i.description ?? "",

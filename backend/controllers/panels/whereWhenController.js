@@ -15,6 +15,7 @@
 
 import GoogleAdsToken from "../../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../../utils/googleAdsClient.js";
+import { enumName, CHANNEL_TYPE, DEVICE, AD_NETWORK_TYPE } from "../../utils/googleAdsEnums.js";
 
 const formatCustomerId = (id) =>
   id ? String(id).replace(/customers\//g, "").replace(/-/g, "").trim() : "";
@@ -75,11 +76,11 @@ const fetchDevices = async (tokenDoc, customerId, loginCustomerId, start, end) =
     const m = row.metrics || {};
     const cid = String(c.id || "");
     if (!cid) continue;
-    const device = String(s.device || "UNKNOWN");
+    const device = enumName(DEVICE, s.device) || "UNKNOWN";
     const entry = byCampaign.get(cid) || {
       campaign_id: cid,
       campaign_name: c.name || `Campaign ${cid}`,
-      channel_type: String(c.advertising_channel_type ?? c.advertisingChannelType ?? ""),
+      channel_type: enumName(CHANNEL_TYPE, c.advertising_channel_type ?? c.advertisingChannelType),
       by_device: {},
     };
     const d = entry.by_device[device] || { impressions: 0, clicks: 0, cost: 0, conversions: 0, conversions_value: 0 };
@@ -148,7 +149,7 @@ const fetchPMaxNetworks = async (tokenDoc, customerId, loginCustomerId, start, e
     const m = row.metrics || {};
     const cid = String(c.id || "");
     if (!cid) continue;
-    const network = String(s.ad_network_type ?? s.adNetworkType ?? "UNKNOWN");
+    const network = enumName(AD_NETWORK_TYPE, s.ad_network_type ?? s.adNetworkType) || "UNKNOWN";
     const entry = byCampaign.get(cid) || {
       campaign_id: cid,
       campaign_name: c.name || `Campaign ${cid}`,

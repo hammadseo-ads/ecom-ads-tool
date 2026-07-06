@@ -9,6 +9,15 @@
 
 import GoogleAdsToken from "../../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../../utils/googleAdsClient.js";
+import {
+  enumName,
+  CAMPAIGN_STATUS,
+  CAMPAIGN_SERVING_STATUS,
+  CHANNEL_TYPE,
+  BIDDING_STRATEGY_TYPE,
+  BIDDING_STRATEGY_SYSTEM_STATUS,
+  BUDGET_STATUS,
+} from "../../utils/googleAdsEnums.js";
 
 // ---------- helpers ----------
 const formatCustomerId = (id) =>
@@ -110,18 +119,18 @@ const fetchCampaigns = async (tokenDoc, customerId, loginCustomerId, start, end)
     const existing = byId.get(id) || {
       id,
       name: c.name || `Campaign ${id}`,
-      status: String(c.status ?? ""),
-      serving_status: String(c.serving_status ?? c.servingStatus ?? ""),
-      channel_type: String(c.advertising_channel_type ?? c.advertisingChannelType ?? ""),
+      status: enumName(CAMPAIGN_STATUS, c.status),
+      serving_status: enumName(CAMPAIGN_SERVING_STATUS, c.serving_status ?? c.servingStatus),
+      channel_type: enumName(CHANNEL_TYPE, c.advertising_channel_type ?? c.advertisingChannelType),
       channel_sub_type: String(c.advertising_channel_sub_type ?? c.advertisingChannelSubType ?? ""),
-      bidding_strategy_type: String(c.bidding_strategy_type ?? c.biddingStrategyType ?? ""),
-      bidding_strategy_system_status: String(c.bidding_strategy_system_status ?? c.biddingStrategySystemStatus ?? ""),
+      bidding_strategy_type: enumName(BIDDING_STRATEGY_TYPE, c.bidding_strategy_type ?? c.biddingStrategyType),
+      bidding_strategy_system_status: enumName(BIDDING_STRATEGY_SYSTEM_STATUS, c.bidding_strategy_system_status ?? c.biddingStrategySystemStatus),
       target_roas: num(c.target_roas?.target_roas ?? c.targetRoas?.targetRoas ?? c.maximize_conversion_value?.target_roas ?? c.maximizeConversionValue?.targetRoas),
       target_cpa: num(c.target_cpa?.target_cpa_micros ?? c.targetCpa?.targetCpaMicros) / 1e6,
       start_date: c.start_date ?? c.startDate ?? null,
       end_date: c.end_date ?? c.endDate ?? null,
       daily_budget: num(b.amount_micros ?? b.amountMicros) / 1e6,
-      budget_status: String(b.status ?? ""),
+      budget_status: enumName(BUDGET_STATUS, b.status),
       budget_shared: Boolean(b.explicitly_shared ?? b.explicitlyShared),
       impressions: 0,
       clicks: 0,

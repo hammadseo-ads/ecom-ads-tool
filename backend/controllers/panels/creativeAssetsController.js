@@ -13,6 +13,17 @@
 
 import GoogleAdsToken from "../../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../../utils/googleAdsClient.js";
+import {
+  enumName,
+  ASSET_FIELD_TYPE,
+  ASSET_PERFORMANCE_LABEL,
+  SERVED_ASSET_FIELD_TYPE,
+  CHANNEL_TYPE,
+  AD_GROUP_AD_STATUS,
+  AD_STRENGTH,
+  POLICY_APPROVAL_STATUS,
+  POLICY_REVIEW_STATUS,
+} from "../../utils/googleAdsEnums.js";
 
 const formatCustomerId = (id) =>
   id ? String(id).replace(/customers\//g, "").replace(/-/g, "").trim() : "";
@@ -75,26 +86,32 @@ const fetchTextAssets = async (tokenDoc, customerId, loginCustomerId) => {
     return {
       asset_id: String(a.id || ""),
       text: a.text_asset?.text ?? a.textAsset?.text ?? "",
-      field_type: String(av.field_type ?? av.fieldType ?? ""),
-      performance_label: String(av.performance_label ?? av.performanceLabel ?? "PENDING"),
+      field_type: enumName(ASSET_FIELD_TYPE, av.field_type ?? av.fieldType),
+      performance_label: enumName(ASSET_PERFORMANCE_LABEL, av.performance_label ?? av.performanceLabel ?? "PENDING"),
       enabled: Boolean(av.enabled),
-      pinned_field: String(av.pinned_field ?? av.pinnedField ?? ""),
+      pinned_field: enumName(SERVED_ASSET_FIELD_TYPE, av.pinned_field ?? av.pinnedField),
       ad_group_id: String(ag.id || ""),
       ad_group_name: ag.name || "",
       campaign_id: String(c.id || ""),
       campaign_name: c.name || "",
-      channel_type: String(c.advertising_channel_type ?? c.advertisingChannelType ?? ""),
+      channel_type: enumName(CHANNEL_TYPE, c.advertising_channel_type ?? c.advertisingChannelType),
     };
   }).map((a) => ({
     ...a,
     char_count: (a.text || "").length,
-    char_limit: a.field_type === "DESCRIPTION" ? 90 : 30,
-    is_pinned: Boolean(a.pinned_field && a.pinned_field !== "UNSPECIFIED" && a.pinned_field !== "UNKNOWN"),
+    char_limit: a.field_type === "DESCRIPTION" ? 90 : a.field_type === "LONG_HEADLINE" ? 90 : 30,
+    is_pinned: Boolean(a.pinned_field && a.pinned_field !== "" && !/UNSPECIFIED|UNKNOWN/i.test(a.pinned_field)),
   }));
 };
 
 // ---------- 5b. Images ----------
-const buildImagesQuery = () => `
+// Two-query approach: the `asset` resource reliably gives us metadata
+// (dimensions, url, file size) but policy_summary is often unpopulated
+// for image assets there. The `ad_group_ad_asset_view` reliably has
+// policy_summary per (ad, asset) — we aggregate up to the asset level
+// and take the worst approval status across usages (a single
+// disapproval anywhere matters).
+const buildImageMetadataQuery = () => `
   SELECT
     asset.id,
     asset.name,
@@ -102,32 +119,74 @@ const buildImagesQuery = () => `
     asset.image_asset.file_size,
     asset.image_asset.full_size.width_pixels,
     asset.image_asset.full_size.height_pixels,
-    asset.image_asset.full_size.url,
-    asset.policy_summary.approval_status,
-    asset.policy_summary.review_status
+    asset.image_asset.full_size.url
   FROM asset
   WHERE asset.type = 'IMAGE'
 `;
 
+const buildImagePolicyQuery = () => `
+  SELECT
+    asset.id,
+    ad_group_ad_asset_view.policy_summary.approval_status,
+    ad_group_ad_asset_view.policy_summary.review_status
+  FROM ad_group_ad_asset_view
+  WHERE ad_group_ad_asset_view.field_type IN (
+    MARKETING_IMAGE, SQUARE_MARKETING_IMAGE, PORTRAIT_MARKETING_IMAGE,
+    LOGO, LANDSCAPE_LOGO, AD_IMAGE, BUSINESS_LOGO
+  )
+`;
+
+// Rank policy statuses so we can pick the worst across usages of the
+// same asset — a single DISAPPROVED anywhere is more informative than
+// APPROVED elsewhere.
+const APPROVAL_RANK = { DISAPPROVED: 4, AREA_OF_INTEREST_ONLY: 3, APPROVED_LIMITED: 2, APPROVED: 1, "": 0 };
+
 const fetchImages = async (tokenDoc, customerId, loginCustomerId) => {
   const client = getGoogleAdsClient(tokenDoc.refreshToken, customerId, loginCustomerId);
-  const resp = await client.query(buildImagesQuery());
-  return toArray(resp).map((row) => {
+
+  // Query 1: metadata
+  const metaResp = await client.query(buildImageMetadataQuery());
+  const byId = new Map();
+  for (const row of toArray(metaResp)) {
     const a = row.asset || {};
     const ia = a.image_asset || a.imageAsset || {};
     const fs = ia.full_size || ia.fullSize || {};
-    const ps = a.policy_summary || a.policySummary || {};
-    return {
-      id: String(a.id || ""),
+    const id = String(a.id || "");
+    if (!id) continue;
+    byId.set(id, {
+      id,
       name: a.name || "",
       file_size_bytes: Number(ia.file_size ?? ia.fileSize ?? 0),
       width: Number(fs.width_pixels ?? fs.widthPixels ?? 0),
       height: Number(fs.height_pixels ?? fs.heightPixels ?? 0),
       url: fs.url || "",
-      approval_status: String(ps.approval_status ?? ps.approvalStatus ?? ""),
-      review_status: String(ps.review_status ?? ps.reviewStatus ?? ""),
-    };
-  });
+      approval_status: "",
+      review_status: "",
+    });
+  }
+
+  // Query 2: policy per usage, aggregate worst approval up
+  try {
+    const polResp = await client.query(buildImagePolicyQuery());
+    for (const row of toArray(polResp)) {
+      const a = row.asset || {};
+      const id = String(a.id || "");
+      if (!id || !byId.has(id)) continue;
+      const view = row.ad_group_ad_asset_view || row.adGroupAdAssetView || {};
+      const ps = view.policy_summary || view.policySummary || {};
+      const status = enumName(POLICY_APPROVAL_STATUS, ps.approval_status ?? ps.approvalStatus);
+      const review = enumName(POLICY_REVIEW_STATUS, ps.review_status ?? ps.reviewStatus);
+      const img = byId.get(id);
+      if ((APPROVAL_RANK[status] ?? 0) > (APPROVAL_RANK[img.approval_status] ?? 0)) {
+        img.approval_status = status;
+      }
+      if (!img.review_status && review) img.review_status = review;
+    }
+  } catch (err) {
+    console.warn("[creative_assets] policy fetch failed:", err?.message?.slice(0, 200));
+  }
+
+  return Array.from(byId.values());
 };
 
 // ---------- 5c. Ad strength per RSA ----------
@@ -157,13 +216,13 @@ const fetchAdStrength = async (tokenDoc, customerId, loginCustomerId) => {
     const ag = row.ad_group || row.adGroup || {};
     return {
       ad_id: String(aga.ad?.id || ""),
-      ad_strength: String(aga.ad_strength ?? aga.adStrength ?? "UNSPECIFIED"),
-      status: String(aga.status || ""),
+      ad_strength: enumName(AD_STRENGTH, aga.ad_strength ?? aga.adStrength),
+      status: enumName(AD_GROUP_AD_STATUS, aga.status),
       ad_group_id: String(ag.id || ""),
       ad_group_name: ag.name || "",
       campaign_id: String(c.id || ""),
       campaign_name: c.name || "",
-      channel_type: String(c.advertising_channel_type ?? c.advertisingChannelType ?? ""),
+      channel_type: enumName(CHANNEL_TYPE, c.advertising_channel_type ?? c.advertisingChannelType),
     };
   });
 };
