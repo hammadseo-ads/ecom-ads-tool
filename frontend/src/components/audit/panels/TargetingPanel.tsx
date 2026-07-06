@@ -9,8 +9,38 @@ interface Keyword { id: string; text: string; match_type: string; quality_score:
 interface DemoSegment { value: string; impressions: number; clicks: number; cost: number; conversions: number; conversions_value: number; roas: number; }
 interface DemoRow { dimension: string; campaign_id: string; campaign_name: string; segments: DemoSegment[]; }
 interface Location { country_criterion_id: string; location_type: string; campaign_id: string; campaign_name: string; impressions: number; clicks: number; cost: number; conversions: number; conversions_value: number; roas: number; }
+interface UserLocation {
+  criterion_id: string;
+  location_name: string;
+  location_canonical: string;
+  country_code: string;
+  target_type: string;
+  granularity: string;
+  is_targeted: boolean;
+  impressions: number; clicks: number; cost: number;
+  conversions: number; conversions_value: number;
+  roas: number;
+}
 interface Negative { id: string; text: string; match_type: string; campaign_name: string; }
-interface Snapshot { time_frame: string; start_date: string; end_date: string; keywords: Keyword[]; demographics: { age: DemoRow[]; gender: DemoRow[] }; locations: Location[]; negatives: Negative[]; summary: { total_keywords: number; broad_match_count: number; phrase_match_count: number; exact_match_count: number; total_negatives: number; total_locations_active: number; }; }
+interface Snapshot {
+  time_frame: string; start_date: string; end_date: string;
+  keywords: Keyword[];
+  demographics: { age: DemoRow[]; gender: DemoRow[] };
+  locations: Location[]; // account targeting via geographic_view (country level)
+  user_locations?: UserLocation[]; // actual delivery via user_location_view
+  user_locations_by_granularity?: Record<string, UserLocation[]>;
+  negatives: Negative[];
+  summary: {
+    total_keywords: number; broad_match_count: number; phrase_match_count: number; exact_match_count: number;
+    total_negatives: number; total_locations_active: number;
+    total_user_locations?: number;
+    user_locations_zip?: number;
+    user_locations_city?: number;
+    user_locations_metro?: number;
+    wasted_user_locations?: number;
+  };
+  user_location_note?: string;
+}
 interface MultiPeriodSnapshot { multi_period: true; primary_key: string; periods: Record<string, { snapshot: Snapshot; flags: unknown[] }>; }
 type AnySnapshot = Snapshot | MultiPeriodSnapshot | null;
 interface Props { snapshot: AnySnapshot; clientName?: string; }
@@ -34,7 +64,8 @@ export function TargetingPanel({ snapshot, clientName }: Props) {
   const multi = isMulti(snapshot);
   const availableKeys = multi ? Object.keys((snapshot as MultiPeriodSnapshot).periods) : [];
   const [periodKey, setPeriodKey] = useState<string | null>(multi ? (snapshot as MultiPeriodSnapshot).primary_key : null);
-  const [tab, setTab] = useState<"keywords" | "demographics" | "locations" | "negatives">("keywords");
+  const [tab, setTab] = useState<"keywords" | "demographics" | "locations" | "user_locations" | "negatives">("keywords");
+  const [geoGranularity, setGeoGranularity] = useState<string>("all");
   const [search, setSearch] = useState("");
   const active: Snapshot | null = useMemo(() => {
     if (!snapshot) return null;
@@ -68,10 +99,12 @@ export function TargetingPanel({ snapshot, clientName }: Props) {
       </div>
 
       <div className="flex items-center gap-2 flex-wrap">
-        <div className="inline-flex rounded-md border border-gray-200 p-0.5">
-          {(["keywords", "demographics", "locations", "negatives"] as const).map((t) => (
+        <div className="inline-flex rounded-md border border-gray-200 p-0.5 flex-wrap">
+          {(["keywords", "demographics", "locations", "user_locations", "negatives"] as const).map((t) => (
             <button key={t} type="button" onClick={() => setTab(t)}
-              className={`text-xs font-semibold px-3 py-1.5 rounded capitalize ${tab === t ? "bg-emerald-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}>{t}</button>
+              className={`text-xs font-semibold px-3 py-1.5 rounded ${tab === t ? "bg-emerald-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}>
+              {t === "user_locations" ? `Cities / ZIP (${active.summary.total_user_locations ?? 0})` : t.replace(/_/g, " ")}
+            </button>
           ))}
         </div>
         {(tab === "keywords" || tab === "negatives") && (
@@ -177,6 +210,72 @@ export function TargetingPanel({ snapshot, clientName }: Props) {
             </tbody>
           </table>
           {active.locations.length > 200 && (<div className="text-xs text-gray-500 text-center py-2">Showing 200 of {active.locations.length}.</div>)}
+        </div>
+      )}
+
+      {tab === "user_locations" && (
+        <div>
+          {active.user_location_note && (
+            <div className="rounded-lg border border-blue-200 bg-blue-50/50 px-3 py-2 text-xs text-blue-900 mb-3 flex items-start gap-2">
+              <span>ℹ️</span><div>{active.user_location_note}</div>
+            </div>
+          )}
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mr-1">Granularity:</span>
+            {(["all", "postal_code", "city", "metro", "region", "country"] as const).map((g) => {
+              const count = g === "all"
+                ? (active.user_locations?.length ?? 0)
+                : (active.user_locations_by_granularity?.[g]?.length ?? 0);
+              return (
+                <button key={g} type="button" onClick={() => setGeoGranularity(g)}
+                  className={`text-[11px] font-semibold px-2 py-1 rounded border transition-colors ${geoGranularity === g ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-gray-700 border-gray-200 hover:border-emerald-300"}`}>
+                  {g === "postal_code" ? "ZIP" : g === "all" ? "All" : g.replace(/_/g, " ")} ({count})
+                </button>
+              );
+            })}
+          </div>
+          <div className="overflow-x-auto -mx-5">
+            <table className="w-full text-sm min-w-[800px]">
+              <thead className="bg-gray-50 border-y border-gray-200"><tr className="text-[10px] font-bold uppercase tracking-widest text-gray-600">
+                <th className="text-left py-2 px-3">Location</th>
+                <th className="text-left py-2 px-3">Granularity</th>
+                <th className="text-right py-2 px-3">Impr</th>
+                <th className="text-right py-2 px-3">Clicks</th>
+                <th className="text-right py-2 px-3">Cost</th>
+                <th className="text-right py-2 px-3">Conv</th>
+                <th className="text-right py-2 px-3">ROAS</th>
+                <th className="text-left py-2 px-3">In targeting?</th>
+              </tr></thead>
+              <tbody>
+                {(geoGranularity === "all"
+                  ? (active.user_locations ?? [])
+                  : (active.user_locations_by_granularity?.[geoGranularity] ?? [])
+                ).slice(0, 200).map((l, i) => (
+                  <tr key={`${l.criterion_id}-${i}`} className={`${i % 2 === 1 ? "bg-gray-50/50" : ""} border-b border-gray-100`}>
+                    <td className="py-2 px-3 max-w-[280px]">
+                      <div className="text-gray-900 truncate" title={l.location_canonical}>{l.location_name}</div>
+                      {l.country_code && <div className="text-[10px] text-gray-500">{l.country_code}</div>}
+                    </td>
+                    <td className="py-2 px-3 text-xs">
+                      <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">
+                        {l.granularity === "postal_code" ? "ZIP" : l.granularity.replace(/_/g, " ")}
+                      </Badge>
+                    </td>
+                    <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(l.impressions)}</td>
+                    <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(l.clicks)}</td>
+                    <td className={`py-2 px-3 text-right tabular-nums font-medium ${l.cost > 50 && l.conversions === 0 ? "text-amber-800" : ""}`}>{fmtCurrency(l.cost)}</td>
+                    <td className="py-2 px-3 text-right tabular-nums text-xs">{l.conversions.toFixed(1)}</td>
+                    <td className="py-2 px-3 text-right tabular-nums font-medium text-emerald-700">{l.cost > 0 ? l.roas.toFixed(2) : "—"}</td>
+                    <td className="py-2 px-3 text-xs">
+                      {l.is_targeted
+                        ? <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200">Targeted</Badge>
+                        : <Badge variant="outline" className="bg-gray-50 text-gray-500 border-gray-200">Off-target</Badge>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

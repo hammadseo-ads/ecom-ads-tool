@@ -38,7 +38,10 @@ import {
   Clock3,
   Play,
   Download,
+  Percent,
+  Save,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface PanelState {
   status?: PanelStatus;
@@ -61,6 +64,7 @@ interface Audit {
   sealed_at?: string;
   title?: string;
   panels: Record<string, PanelState>;
+  economics?: { blended_margin_pct?: number | null };
   createdAt: string;
   updatedAt: string;
 }
@@ -95,12 +99,20 @@ const AuditWorkspaceInner = ({ auditId }: { auditId: string }) => {
   const [loading, setLoading] = useState(true);
   const [sealing, setSealing] = useState(false);
   const [runningAll, setRunningAll] = useState(false);
+  const [marginInput, setMarginInput] = useState("");
+  const [savingMargin, setSavingMargin] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const { data } = await axios.get(`/api/audit/${auditId}`);
       setAudit(data.audit);
+      const m = data.audit?.economics?.blended_margin_pct;
+      if (typeof m === "number" && m > 0 && m < 1) {
+        setMarginInput(String(Math.round(m * 10000) / 100)); // 0.35 → "35"
+      } else {
+        setMarginInput("");
+      }
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } }; message?: string })?.response?.data?.message ?? "Failed to load audit";
       toast({ title: "Load failed", description: msg, variant: "destructive" });
@@ -108,6 +120,30 @@ const AuditWorkspaceInner = ({ auditId }: { auditId: string }) => {
       setLoading(false);
     }
   }, [auditId, toast]);
+
+  const saveMargin = async () => {
+    if (!audit) return;
+    setSavingMargin(true);
+    try {
+      const parsed = marginInput.trim() === "" ? null : parseFloat(marginInput);
+      const asFraction = parsed === null ? null : parsed / 100;
+      const { data } = await axios.patch(`/api/audit/${auditId}/economics`, {
+        blended_margin_pct: asFraction,
+      });
+      setAudit(data.audit);
+      toast({
+        title: asFraction ? "Margin saved" : "Margin cleared",
+        description: asFraction
+          ? `Breakeven ROAS ${(1 / asFraction).toFixed(2)}× — panels will show profit / loss vs this benchmark on next refresh.`
+          : "Breakeven ROAS won't be shown until you set a margin again.",
+      });
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } }; message?: string })?.response?.data?.message ?? "Failed to save";
+      toast({ title: "Save failed", description: msg, variant: "destructive" });
+    } finally {
+      setSavingMargin(false);
+    }
+  };
 
   useEffect(() => { load(); }, [load]);
 
@@ -314,6 +350,41 @@ const AuditWorkspaceInner = ({ auditId }: { auditId: string }) => {
               )}
             </Button>
           )}
+        </div>
+      </div>
+
+      {/* Economics · optional margin input — enables breakeven-ROAS in downstream panels */}
+      <div className="rounded-lg border border-emerald-100 bg-emerald-50/40 px-4 py-3 flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2 text-sm text-emerald-900">
+          <Percent className="w-4 h-4" />
+          <span className="font-semibold">Gross margin</span>
+          <span className="text-xs text-emerald-800/70">(optional — enables breakeven-ROAS on account and ecom panels)</span>
+        </div>
+        <div className="flex items-center gap-2 flex-1 min-w-[240px] justify-end">
+          <Input
+            type="number"
+            step="0.1"
+            min="1"
+            max="99"
+            value={marginInput}
+            onChange={(e) => setMarginInput(e.target.value)}
+            placeholder="e.g. 35"
+            disabled={isSealed || savingMargin}
+            className="w-24 h-8 text-sm"
+          />
+          <span className="text-sm text-emerald-900">%</span>
+          {audit.economics?.blended_margin_pct && (
+            <span className="text-xs text-emerald-800 tabular-nums ml-2 whitespace-nowrap">
+              Breakeven ROAS {(1 / audit.economics.blended_margin_pct).toFixed(2)}×
+            </span>
+          )}
+          <Button size="sm" variant="outline" onClick={saveMargin} disabled={isSealed || savingMargin}>
+            {savingMargin ? (
+              <><Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />Saving…</>
+            ) : (
+              <><Save className="w-3.5 h-3.5 mr-1.5" />Save</>
+            )}
+          </Button>
         </div>
       </div>
 

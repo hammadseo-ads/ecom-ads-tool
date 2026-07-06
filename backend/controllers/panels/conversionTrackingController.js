@@ -78,12 +78,19 @@ const CONFIG_QUERY = `
   WHERE conversion_action.status IN ('ENABLED', 'HIDDEN', 'REMOVED')
 `;
 
+// Fetch both `all_conversions` (broadest — includes cross-device +
+// view-through) and `conversions` (only primary-counted, cross-device
+// attributed to click). The delta between them is the "attribution lift"
+// — how much of the account's conversion volume comes from cross-device,
+// view-through, or non-primary sources.
 const buildFiringQuery = (start, end) => `
   SELECT
     segments.conversion_action,
     segments.conversion_action_name,
     metrics.all_conversions,
-    metrics.all_conversions_value
+    metrics.all_conversions_value,
+    metrics.conversions,
+    metrics.conversions_value
   FROM customer
   WHERE segments.date BETWEEN '${start}' AND '${end}'
 `;
@@ -125,10 +132,15 @@ const fetchFiring = async (tokenDoc, customerId, loginCustomerId, start, end) =>
     const seg = row.segments || {};
     const key = String(seg.conversion_action || seg.conversionAction || "");
     if (!key) continue;
-    const cur = byAction.get(key) || { all_conversions: 0, all_conversions_value: 0 };
+    const cur = byAction.get(key) || {
+      all_conversions: 0, all_conversions_value: 0,
+      primary_conversions: 0, primary_conversions_value: 0,
+    };
     const m = row.metrics || {};
     cur.all_conversions += num(m.all_conversions ?? m.allConversions);
     cur.all_conversions_value += num(m.all_conversions_value ?? m.allConversionsValue);
+    cur.primary_conversions += num(m.conversions);
+    cur.primary_conversions_value += num(m.conversions_value ?? m.conversionsValue);
     byAction.set(key, cur);
   }
   return byAction;
@@ -191,16 +203,31 @@ const buildFlags = (actions) => {
       });
     }
 
-    // Zero-firing streak
+    // Zero-firing streak — severity depends on whether it's a Primary.
+    // Primary + zero firings = Smart Bidding is optimising toward
+    // nothing, which is nearly always the root cause of a "conversions
+    // down but revenue up" pattern (Smart Bidding chases the primary
+    // action; if that action never fires, it can't learn).
     if (a.recent_conversions === 0 && a.status === "ENABLED") {
-      flags.push({
-        code: "zero_firing",
-        severity: "warn",
-        target_type: "conversion_action",
-        target_id: a.id,
-        target_name: a.name,
-        message: `No firings in the window. If this action fires on a real event on the site, the tag may be broken.`,
-      });
+      if (a.primary_for_goal) {
+        flags.push({
+          code: "primary_zero_firing",
+          severity: "critical",
+          target_type: "conversion_action",
+          target_id: a.id,
+          target_name: a.name,
+          message: `PRIMARY goal with 0 firings in the window. Smart Bidding is optimising toward nothing — very likely the cause of any drop in the Conversions column. Fix the tag or repick the primary.`,
+        });
+      } else {
+        flags.push({
+          code: "zero_firing",
+          severity: "warn",
+          target_type: "conversion_action",
+          target_id: a.id,
+          target_name: a.name,
+          message: `No firings in the window. If this action fires on a real event on the site, the tag may be broken.`,
+        });
+      }
     }
   }
 
@@ -259,12 +286,27 @@ export const refreshConversionTracking = async ({ user, audit, start: startOverr
     console.warn("[conversion_tracking] firing fetch failed:", err?.message?.slice(0, 200));
   }
 
-  // Merge firing counts into actions
-  const enriched = actions.map((a) => ({
-    ...a,
-    recent_conversions: firing.get(a.resource_name)?.all_conversions ?? 0,
-    recent_conversions_value: firing.get(a.resource_name)?.all_conversions_value ?? 0,
-  }));
+  // Merge firing counts into actions. Also compute cross-device /
+  // view-through / non-primary contribution as the delta between
+  // all_conversions (broad) and primary conversions (bidding column).
+  const enriched = actions.map((a) => {
+    const f = firing.get(a.resource_name) || {};
+    const allConv = f.all_conversions ?? 0;
+    const priConv = f.primary_conversions ?? 0;
+    return {
+      ...a,
+      recent_conversions: allConv,
+      recent_conversions_value: f.all_conversions_value ?? 0,
+      // Cross-device / view-through attribution lift for this action.
+      // Positive lift = attribution model is catching more than direct
+      // click-through. Zero lift on an enabled Primary can indicate a
+      // narrow attribution model or under-tracked event.
+      primary_conversions: priConv,
+      primary_conversions_value: f.primary_conversions_value ?? 0,
+      attribution_lift: Math.max(0, allConv - priConv),
+      attribution_lift_pct: allConv > 0 ? ((allConv - priConv) / allConv) * 100 : 0,
+    };
+  });
 
   // Rank: Enabled + Primary first, then Enabled, then others
   enriched.sort((a, b) => {

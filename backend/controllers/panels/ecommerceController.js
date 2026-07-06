@@ -58,10 +58,17 @@ const withLoginRetry = async (tokenDoc, customerId, fn) => {
 };
 const fmtDate = (d) => new Date(d).toISOString().split("T")[0];
 
-// ---------- shopping performance (summary numbers) ----------
+// ---------- shopping performance ----------
+// Now fetches product identity fields too (title, brand, product_type_l1)
+// so we can embed heroes / costly / zombies with human-readable context
+// directly in the audit snapshot — no need for the operator to bounce
+// out to /dashboard/product-roas to read a product title.
 const buildShoppingSummaryQuery = (start, end) => `
   SELECT
     segments.product_item_id,
+    segments.product_title,
+    segments.product_brand,
+    segments.product_type_l1,
     metrics.impressions,
     metrics.clicks,
     metrics.cost_micros,
@@ -81,7 +88,13 @@ const fetchShoppingSummary = async (tokenDoc, customerId, loginCustomerId, start
     const m = row.metrics || {};
     const id = String(s.product_item_id ?? s.productItemId ?? "");
     if (!id) continue;
-    const cur = byProduct.get(id) || { impressions: 0, clicks: 0, cost: 0, conversions: 0, conversions_value: 0 };
+    const cur = byProduct.get(id) || {
+      item_id: id,
+      title: String(s.product_title ?? s.productTitle ?? ""),
+      brand: String(s.product_brand ?? s.productBrand ?? ""),
+      product_type_l1: String(s.product_type_l1 ?? s.productTypeL1 ?? ""),
+      impressions: 0, clicks: 0, cost: 0, conversions: 0, conversions_value: 0,
+    };
     cur.impressions += num(m.impressions);
     cur.clicks += num(m.clicks);
     cur.cost += num(m.cost_micros ?? m.costMicros) / 1e6;
@@ -90,6 +103,28 @@ const fetchShoppingSummary = async (tokenDoc, customerId, loginCustomerId, start
     byProduct.set(id, cur);
   }
   return byProduct;
+};
+
+// Product bucketing thresholds — match the existing /dashboard/product-roas
+// defaults. When operator-configurable thresholds ship (roadmap Part 5.1),
+// these move to per-client settings.
+const BUCKETS = {
+  hero_min_roas: 4,
+  hero_min_spend: 50,
+  costly_max_roas: 2,
+  costly_min_spend: 50,
+  low_volume_max_spend: 50,
+  sleeper_min_clicks: 5,
+};
+
+const bucketProduct = (p) => {
+  const roas = p.cost > 0 ? p.conversions_value / p.cost : 0;
+  if (p.cost < BUCKETS.low_volume_max_spend) return "low_volume";
+  if (p.impressions > 0 && p.clicks === 0) return "zombie";
+  if (roas >= BUCKETS.hero_min_roas && p.cost >= BUCKETS.hero_min_spend) return "hero";
+  if (roas < BUCKETS.costly_max_roas && p.cost >= BUCKETS.costly_min_spend) return "costly";
+  if (p.clicks >= BUCKETS.sleeper_min_clicks && p.conversions === 0) return "sleeper";
+  return "average";
 };
 
 // ---------- product eligibility (shopping_product resource v17+) ----------
@@ -286,13 +321,57 @@ export const refreshEcommerce = async ({ user, audit, start: startOverride, end:
   const totalCost = products.reduce((s, p) => s + p.cost, 0);
   const totalConv = products.reduce((s, p) => s + p.conversions, 0);
   const totalConvValue = products.reduce((s, p) => s + p.conversions_value, 0);
-  const productsWithClicks = products.filter((p) => p.clicks > 0);
-  const zombies = products.filter((p) => p.impressions > 0 && p.clicks === 0);
-  const sleepers = productsWithClicks.filter((p) => p.conversions === 0);
-  const heroes = productsWithClicks.filter((p) => p.cost > 0 && p.conversions > 0 && (p.conversions_value / p.cost) >= 4);
-  const costly = productsWithClicks.filter((p) => p.cost > 50 && (p.cost > 0 ? (p.conversions_value / p.cost) : 0) < 2);
+
+  // Bucket every product then embed top-N of each into the snapshot so
+  // the audit JSON carries actionable per-SKU data without the operator
+  // needing to bounce out to /dashboard/product-roas.
+  const withRoas = products.map((p) => ({
+    ...p,
+    roas: p.cost > 0 ? p.conversions_value / p.cost : 0,
+    bucket: bucketProduct(p),
+  }));
+  const heroes = withRoas.filter((p) => p.bucket === "hero").sort((a, b) => b.conversions_value - a.conversions_value);
+  const costly = withRoas.filter((p) => p.bucket === "costly").sort((a, b) => b.cost - a.cost);
+  const zombies = withRoas.filter((p) => p.bucket === "zombie").sort((a, b) => b.impressions - a.impressions);
+  const sleepers = withRoas.filter((p) => p.bucket === "sleeper").sort((a, b) => b.cost - a.cost);
+  const TOP_N = 20;
+
+  // Group eligibility issues by their code so the operator sees "37
+  // products have the same issue" instead of scrolling 130 rows.
+  const issueCodeCounts = {};
+  const issueCodeExamples = {};
+  for (const p of eligibility) {
+    for (const issue of (p.issues || [])) {
+      const code = issue.code || "UNSPECIFIED";
+      issueCodeCounts[code] = (issueCodeCounts[code] || 0) + 1;
+      if (!issueCodeExamples[code]) {
+        issueCodeExamples[code] = {
+          code,
+          description: issue.description || "",
+          severity: issue.severity || "",
+          example_products: [],
+        };
+      }
+      if (issueCodeExamples[code].example_products.length < 3) {
+        issueCodeExamples[code].example_products.push({
+          item_id: p.item_id,
+          title: p.title,
+        });
+      }
+    }
+  }
+  const issue_codes_summary = Object.values(issueCodeExamples).map((e) => ({
+    ...e,
+    count: issueCodeCounts[e.code],
+  })).sort((a, b) => b.count - a.count);
 
   const flags = buildFlags({ eligibility, overlaps });
+
+  // Apply operator-supplied margin (from audit.economics) to add profit /
+  // loss context to bucket definitions and account-level ROAS. Breakeven
+  // ROAS = 1 / margin; anything below that is losing money on ad spend.
+  const marginPct = audit?.economics?.blended_margin_pct ?? null;
+  const breakevenRoas = (marginPct && marginPct > 0 && marginPct < 1) ? 1 / marginPct : null;
 
   const snapshot = {
     time_frame: audit.time_frame,
@@ -314,8 +393,28 @@ export const refreshEcommerce = async ({ user, audit, start: startOverride, end:
       eligibility_not_eligible: eligibility.filter((p) => p.status === "NOT_ELIGIBLE").length,
       eligibility_with_issues: eligibility.filter((p) => p.issues && p.issues.length > 0).length,
       overlap_count: overlaps.length,
+      // Economics context — surfaced when operator has provided a margin
+      // on the audit. Nulls when they haven't.
+      blended_margin_pct: marginPct,
+      breakeven_roas: breakevenRoas,
+      account_roas_vs_breakeven_pct: (breakevenRoas && totalCost > 0)
+        ? ((totalConvValue / totalCost) / breakevenRoas - 1) * 100
+        : null,
     },
+    // NEW: top-N actionable product lists embedded directly in the JSON.
+    // For the full sortable / filterable views, deep-link to
+    // /dashboard/product-roas remains available.
+    top_products: {
+      heroes: heroes.slice(0, TOP_N),
+      costly: costly.slice(0, TOP_N),
+      zombies: zombies.slice(0, TOP_N),
+      sleepers: sleepers.slice(0, TOP_N),
+    },
+    bucket_thresholds: BUCKETS,
     eligibility,
+    // NEW: aggregated eligibility issue codes so the operator sees what's
+    // driving the 409-blocked count without paging through every product.
+    issue_codes_summary,
     overlaps,
     deep_link: "/dashboard/product-roas",
     deep_link_label: "Open full Product ROAS report",

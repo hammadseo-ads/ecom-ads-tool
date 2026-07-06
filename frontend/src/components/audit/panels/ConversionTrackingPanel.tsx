@@ -20,6 +20,10 @@ interface Action {
   default_value: number;
   recent_conversions: number;
   recent_conversions_value: number;
+  primary_conversions?: number;
+  primary_conversions_value?: number;
+  attribution_lift?: number;
+  attribution_lift_pct?: number;
 }
 
 interface Snapshot {
@@ -138,6 +142,7 @@ export function ConversionTrackingPanel({ snapshot, clientName }: Props) {
               <th className="text-center py-2 px-3">Primary</th>
               <th className="text-center py-2 px-3">In "Conv" metric</th>
               <th className="text-right py-2 px-3">Recent conv</th>
+              <th className="text-right py-2 px-3">Attribution lift</th>
               <th className="text-right py-2 px-3">Recent value</th>
             </tr>
           </thead>
@@ -173,6 +178,17 @@ export function ConversionTrackingPanel({ snapshot, clientName }: Props) {
                 </td>
                 <td className={`py-2 px-3 text-right tabular-nums text-xs ${a.recent_conversions === 0 && a.status === "ENABLED" ? "text-amber-800 font-semibold" : ""}`}>
                   {a.recent_conversions.toFixed(1)}
+                  {a.primary_conversions !== undefined && a.primary_conversions !== a.recent_conversions && (
+                    <div className="text-[10px] text-gray-500">primary {a.primary_conversions.toFixed(1)}</div>
+                  )}
+                </td>
+                <td className="py-2 px-3 text-right tabular-nums text-xs">
+                  {a.attribution_lift !== undefined && a.attribution_lift > 0 ? (
+                    <span title="Cross-device + view-through + non-primary attribution — the gap between all_conversions and primary conversions">
+                      +{a.attribution_lift.toFixed(1)}
+                      <span className="text-[10px] text-gray-500 ml-1">({(a.attribution_lift_pct ?? 0).toFixed(0)}%)</span>
+                    </span>
+                  ) : "—"}
                 </td>
                 <td className="py-2 px-3 text-right tabular-nums text-xs">
                   {a.recent_conversions_value > 0 ? fmtCurrency(a.recent_conversions_value) : "—"}

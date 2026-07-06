@@ -201,6 +201,126 @@ const buildLocationsQuery = (start, end) => `
   LIMIT 2000
 `;
 
+// ---------- user location detail: city / postal code / metro ----------
+// user_location_view returns actual delivery locations (where the user
+// is), not the account's own targeting configuration. Segmented by
+// city / metro / most-specific location (which includes postal code
+// when Google can attribute it). This is where "which ZIP codes / cities
+// convert" is answered — geographic_view only covers whatever the
+// campaign targets, which is often the whole country for many accounts.
+const buildUserLocationQuery = (start, end) => `
+  SELECT
+    user_location_view.country_criterion_id,
+    user_location_view.targeting_location,
+    segments.geo_target_city,
+    segments.geo_target_metro,
+    segments.geo_target_region,
+    segments.geo_target_most_specific_location,
+    metrics.impressions,
+    metrics.clicks,
+    metrics.cost_micros,
+    metrics.conversions,
+    metrics.conversions_value
+  FROM user_location_view
+  WHERE segments.date BETWEEN '${start}' AND '${end}'
+    AND metrics.impressions > 0
+  LIMIT 5000
+`;
+
+const fetchUserLocations = async (tokenDoc, customerId, loginCustomerId, start, end) => {
+  const client = getGoogleAdsClient(tokenDoc.refreshToken, customerId, loginCustomerId);
+  const resp = await client.query(buildUserLocationQuery(start, end));
+  const rows = toArray(resp);
+  // Aggregate by (most_specific_location or city, or metro, or region)
+  // Each row already has a granular geo-target segment; the most-specific
+  // ID is what we want to name the location by.
+  const byLoc = new Map();
+  const criterionIds = new Set();
+  for (const row of rows) {
+    const seg = row.segments || {};
+    const ulv = row.user_location_view || row.userLocationView || {};
+    const m = row.metrics || {};
+    const mostSpecific = String(
+      seg.geo_target_most_specific_location ??
+      seg.geoTargetMostSpecificLocation ??
+      seg.geo_target_city ??
+      seg.geoTargetCity ??
+      seg.geo_target_metro ??
+      seg.geoTargetMetro ??
+      seg.geo_target_region ??
+      seg.geoTargetRegion ??
+      ulv.country_criterion_id ??
+      ulv.countryCriterionId ??
+      ""
+    );
+    if (!mostSpecific) continue;
+    // Extract just the criterion id from a resource_name if returned.
+    // e.g. "geoTargetConstants/2840" → "2840"
+    const criterionId = mostSpecific.includes("/") ? mostSpecific.split("/").pop() : mostSpecific;
+    criterionIds.add(criterionId);
+    const key = criterionId;
+    const cur = byLoc.get(key) || {
+      criterion_id: criterionId,
+      city_criterion_id: String(seg.geo_target_city ?? seg.geoTargetCity ?? "").split("/").pop() || null,
+      metro_criterion_id: String(seg.geo_target_metro ?? seg.geoTargetMetro ?? "").split("/").pop() || null,
+      region_criterion_id: String(seg.geo_target_region ?? seg.geoTargetRegion ?? "").split("/").pop() || null,
+      country_criterion_id: String(ulv.country_criterion_id ?? ulv.countryCriterionId ?? "").split("/").pop() || null,
+      is_targeted: Boolean(ulv.targeting_location ?? ulv.targetingLocation),
+      impressions: 0, clicks: 0, cost: 0, conversions: 0, conversions_value: 0,
+    };
+    cur.impressions += num(m.impressions);
+    cur.clicks += num(m.clicks);
+    cur.cost += num(m.cost_micros ?? m.costMicros) / 1e6;
+    cur.conversions += num(m.conversions);
+    cur.conversions_value += num(m.conversions_value ?? m.conversionsValue);
+    byLoc.set(key, cur);
+  }
+  return { rows: Array.from(byLoc.values()), criterionIds: Array.from(criterionIds) };
+};
+
+// Resolve criterion IDs to human names via geo_target_constant.
+// Batches into one query with WHERE id IN (…) to avoid one-per-id fetches.
+const resolveGeoTargets = async (tokenDoc, customerId, loginCustomerId, criterionIds) => {
+  if (!criterionIds || criterionIds.length === 0) return new Map();
+  const client = getGoogleAdsClient(tokenDoc.refreshToken, customerId, loginCustomerId);
+  // Google Ads API limits IN-list length; cap to 5000 (matches our upstream cap).
+  const idList = criterionIds
+    .filter((id) => /^\d+$/.test(String(id)))
+    .slice(0, 5000)
+    .map((id) => `${id}`)
+    .join(", ");
+  if (!idList) return new Map();
+  const query = `
+    SELECT
+      geo_target_constant.id,
+      geo_target_constant.name,
+      geo_target_constant.canonical_name,
+      geo_target_constant.country_code,
+      geo_target_constant.target_type,
+      geo_target_constant.status
+    FROM geo_target_constant
+    WHERE geo_target_constant.id IN (${idList})
+  `;
+  const map = new Map();
+  try {
+    const resp = await client.query(query);
+    for (const row of toArray(resp)) {
+      const g = row.geo_target_constant || row.geoTargetConstant || {};
+      const id = String(g.id || "");
+      if (!id) continue;
+      map.set(id, {
+        name: g.name || "",
+        canonical_name: g.canonical_name ?? g.canonicalName ?? "",
+        country_code: g.country_code ?? g.countryCode ?? "",
+        target_type: String(g.target_type ?? g.targetType ?? ""),
+      });
+    }
+  } catch (err) {
+    console.warn("[targeting] geo_target_constant resolve failed:", err?.message?.slice(0, 200));
+  }
+  return map;
+};
+
 const fetchLocations = async (tokenDoc, customerId, loginCustomerId, start, end) => {
   const client = getGoogleAdsClient(tokenDoc.refreshToken, customerId, loginCustomerId);
   const resp = await client.query(buildLocationsQuery(start, end));
@@ -342,15 +462,80 @@ export const refreshTargeting = async ({ user, audit, start: startOverride, end:
   const start = fmtDate(rangeStart);
   const end = fmtDate(rangeEnd);
 
-  const [keywords, age, gender, locations, negatives] = await Promise.all([
+  const [keywords, age, gender, locations, negatives, userLocData] = await Promise.all([
     withLoginRetry(tokenDoc, customerId, (login) => fetchKeywords(tokenDoc, customerId, login, start, end)).catch(() => []),
     withLoginRetry(tokenDoc, customerId, (login) => fetchDemo(tokenDoc, customerId, login, "age_range_view", "ad_group_criterion.age_range.type", "AGE", start, end)).catch(() => []),
     withLoginRetry(tokenDoc, customerId, (login) => fetchDemo(tokenDoc, customerId, login, "gender_view", "ad_group_criterion.gender.type", "GENDER", start, end)).catch(() => []),
     withLoginRetry(tokenDoc, customerId, (login) => fetchLocations(tokenDoc, customerId, login, start, end)).catch(() => []),
     withLoginRetry(tokenDoc, customerId, (login) => fetchNegatives(tokenDoc, customerId, login)).catch(() => []),
+    withLoginRetry(tokenDoc, customerId, (login) => fetchUserLocations(tokenDoc, customerId, login, start, end)).catch(() => ({ rows: [], criterionIds: [] })),
   ]);
 
+  // Resolve criterion IDs to human names for the user-location rows.
+  // Non-blocking — if the resolve fails we still return the raw IDs.
+  let geoNames = new Map();
+  if (userLocData.criterionIds && userLocData.criterionIds.length > 0) {
+    try {
+      geoNames = await withLoginRetry(tokenDoc, customerId, (login) =>
+        resolveGeoTargets(tokenDoc, customerId, login, userLocData.criterionIds)
+      );
+    } catch (err) {
+      console.warn("[targeting] geo resolve failed:", err?.message?.slice(0, 200));
+    }
+  }
+
+  const userLocations = (userLocData.rows || [])
+    .map((r) => {
+      const g = geoNames.get(r.criterion_id) || {};
+      const isPostal = /POSTAL|ZIP/i.test(g.target_type || "");
+      const isCity = /CITY/i.test(g.target_type || "");
+      const isMetro = /METRO|DMA/i.test(g.target_type || "");
+      return {
+        ...r,
+        location_name: g.name || `#${r.criterion_id}`,
+        location_canonical: g.canonical_name || "",
+        country_code: g.country_code || "",
+        target_type: g.target_type || "UNKNOWN",
+        granularity: isPostal ? "postal_code" : isCity ? "city" : isMetro ? "metro" : (g.target_type || "").toLowerCase() || "unknown",
+        roas: r.cost > 0 ? r.conversions_value / r.cost : 0,
+      };
+    })
+    .sort((a, b) => b.cost - a.cost);
+
+  // Bucket by granularity so the operator can jump straight to
+  // "ZIP-code performance" or "city performance" instead of one flat table.
+  const byGranularity = { postal_code: [], city: [], metro: [], region: [], country: [], unknown: [] };
+  for (const l of userLocations) {
+    const b = byGranularity[l.granularity] || byGranularity.unknown;
+    b.push(l);
+  }
+
   const flags = buildFlags({ keywords, negatives });
+
+  // Location-waste flag on user locations — cost > $50, 0 conversions
+  const wastedGeos = userLocations.filter((l) => l.cost > 50 && l.conversions === 0);
+  for (const l of wastedGeos.slice(0, 10)) {
+    flags.push({
+      code: "location_wasted_spend",
+      severity: "warn",
+      target_type: "location",
+      target_id: l.criterion_id,
+      target_name: l.location_name,
+      message: `${l.location_name} (${l.granularity}) spent $${l.cost.toFixed(2)} with 0 conversions in the window. Candidate for location exclusion or negative bid adjustment.`,
+      meta: { cost: l.cost, granularity: l.granularity, canonical: l.location_canonical },
+    });
+  }
+  if (wastedGeos.length > 10) {
+    flags.push({
+      code: "many_wasted_locations",
+      severity: "info",
+      target_type: "account",
+      target_id: "account",
+      target_name: "Account-wide",
+      message: `${wastedGeos.length} distinct user locations spent >$50 with 0 conversions.`,
+      meta: { count: wastedGeos.length },
+    });
+  }
 
   const snapshot = {
     time_frame: audit.time_frame,
@@ -361,7 +546,9 @@ export const refreshTargeting = async ({ user, audit, start: startOverride, end:
       age,
       gender,
     },
-    locations,
+    locations, // account's OWN targeting via geographic_view (country level)
+    user_locations: userLocations, // where users ACTUALLY were, incl. ZIP/city
+    user_locations_by_granularity: byGranularity,
     negatives,
     summary: {
       total_keywords: keywords.length,
@@ -370,7 +557,13 @@ export const refreshTargeting = async ({ user, audit, start: startOverride, end:
       exact_match_count: keywords.filter((k) => k.match_type === "EXACT").length,
       total_negatives: negatives.length,
       total_locations_active: locations.length,
+      total_user_locations: userLocations.length,
+      user_locations_zip: byGranularity.postal_code.length,
+      user_locations_city: byGranularity.city.length,
+      user_locations_metro: byGranularity.metro.length,
+      wasted_user_locations: wastedGeos.length,
     },
+    user_location_note: "user_locations shows where visitors actually were (ZIP / city / metro / region), independent of the account's targeting. This is the correct data source for 'which ZIPs converted best' — geographic_view only covers what the campaign explicitly targets.",
   };
 
   return { snapshot, flags };

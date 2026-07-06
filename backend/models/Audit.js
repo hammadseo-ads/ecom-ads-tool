@@ -99,6 +99,16 @@ const auditSchema = new mongoose.Schema({
 
   // Operator-facing name (defaults to `${customer_name} — ${start_date}`).
   title: String,
+
+  // Economics — operator-supplied since Google Ads doesn't know the
+  // client's margins. Optional. When present, the tool computes
+  // breakeven ROAS = 1 / blended_margin_pct and surfaces the profit /
+  // loss delta on every ROAS the audit shows.
+  economics: {
+    blended_margin_pct: { type: Number, default: null }, // 0.35 = 35% gross margin
+    // Reserved for future per-product-type margin override map.
+    // margin_by_product_type_l1: { type: Map, of: Number, default: null },
+  },
 }, { timestamps: true });
 
 auditSchema.index({ user: 1, customer_id: 1, createdAt: -1 });

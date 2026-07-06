@@ -103,7 +103,7 @@ export const enumerateSubPeriods = (now = new Date()) => {
 };
 
 // POST /api/audit/create
-// body: { customer_id, customer_name?, login_customer_id?, time_frame, custom?: {start, end}, compare_base? }
+// body: { customer_id, customer_name?, login_customer_id?, time_frame, custom?: {start, end}, compare_base?, blended_margin_pct? }
 export const createAudit = async (req, res) => {
   try {
     const {
@@ -114,6 +114,7 @@ export const createAudit = async (req, res) => {
       custom,
       compare_base = "PRIOR_PERIOD",
       title,
+      blended_margin_pct,
     } = req.body || {};
 
     if (!customer_id) return res.status(400).json({ message: "customer_id required" });
@@ -135,6 +136,11 @@ export const createAudit = async (req, res) => {
       status: "draft",
       panels: {},
       title: title || null,
+      economics: {
+        blended_margin_pct: (typeof blended_margin_pct === "number" && blended_margin_pct > 0 && blended_margin_pct < 1)
+          ? blended_margin_pct
+          : null,
+      },
     });
 
     return res.status(201).json({ audit });
@@ -465,6 +471,31 @@ export const runAllPanels = async (req, res) => {
   } catch (err) {
     console.error("runAllPanels error:", err);
     return res.status(500).json({ message: err.message || "Failed to run panels" });
+  }
+};
+
+// PATCH /api/audit/:id/economics
+// body: { blended_margin_pct }
+export const updateEconomics = async (req, res) => {
+  try {
+    const { blended_margin_pct } = req.body || {};
+    const audit = await Audit.findOne({ _id: req.params.id, user: req.user._id });
+    if (!audit) return res.status(404).json({ message: "Audit not found" });
+    if (audit.status === "sealed") return res.status(409).json({ message: "Sealed audits cannot be modified" });
+
+    const clean =
+      blended_margin_pct === null || blended_margin_pct === undefined || blended_margin_pct === ""
+        ? null
+        : (typeof blended_margin_pct === "number" && blended_margin_pct > 0 && blended_margin_pct < 1)
+          ? blended_margin_pct
+          : null;
+
+    audit.economics = { ...(audit.economics || {}), blended_margin_pct: clean };
+    await audit.save();
+    return res.json({ audit });
+  } catch (err) {
+    console.error("updateEconomics error:", err);
+    return res.status(500).json({ message: err.message || "Failed to update economics" });
   }
 };
 

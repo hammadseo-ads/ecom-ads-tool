@@ -9,7 +9,32 @@ import { Link } from "react-router-dom";
 
 interface Product { merchant_center_id: string; item_id: string; title: string; brand: string; status: string; currency: string; price: number; availability: string; channel: string; issues: Array<{ code: string; description: string; severity: string }>; }
 interface Overlap { product_item_id: string; campaign_id: string; campaign_name: string; asset_groups: Array<{ asset_group_id: string; asset_group_name: string; impressions: number; cost: number }>; }
-interface Snapshot { time_frame: string; start_date: string; end_date: string; not_applicable?: boolean; note?: string; summary?: { total_products_with_activity: number; total_cost: number; total_conversions: number; total_conversions_value: number; account_roas: number; heroes: number; costly: number; zombies: number; sleepers: number; eligibility_total: number; eligibility_not_eligible: number; eligibility_with_issues: number; overlap_count: number; }; eligibility?: Product[]; overlaps?: Overlap[]; deep_link: string; deep_link_label: string; per_asset_group_note: string; }
+interface PerfProduct { item_id: string; title: string; brand: string; product_type_l1: string; impressions: number; clicks: number; cost: number; conversions: number; conversions_value: number; roas: number; bucket: string; }
+interface IssueCode { code: string; description: string; severity: string; count: number; example_products: Array<{ item_id: string; title: string }>; }
+interface Snapshot {
+  time_frame: string; start_date: string; end_date: string;
+  not_applicable?: boolean; note?: string;
+  summary?: {
+    total_products_with_activity: number; total_cost: number;
+    total_conversions: number; total_conversions_value: number;
+    account_roas: number;
+    heroes: number; costly: number; zombies: number; sleepers: number;
+    eligibility_total: number; eligibility_not_eligible: number; eligibility_with_issues: number;
+    overlap_count: number;
+    blended_margin_pct?: number | null;
+    breakeven_roas?: number | null;
+    account_roas_vs_breakeven_pct?: number | null;
+  };
+  top_products?: {
+    heroes: PerfProduct[];
+    costly: PerfProduct[];
+    zombies: PerfProduct[];
+    sleepers: PerfProduct[];
+  };
+  issue_codes_summary?: IssueCode[];
+  eligibility?: Product[]; overlaps?: Overlap[];
+  deep_link: string; deep_link_label: string; per_asset_group_note: string;
+}
 interface MultiPeriodSnapshot { multi_period: true; primary_key: string; periods: Record<string, { snapshot: Snapshot; flags: unknown[] }>; }
 type AnySnapshot = Snapshot | MultiPeriodSnapshot | null;
 interface Props { snapshot: AnySnapshot; clientName?: string; }
@@ -22,7 +47,8 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
   const multi = isMulti(snapshot);
   const availableKeys = multi ? Object.keys((snapshot as MultiPeriodSnapshot).periods) : [];
   const [periodKey, setPeriodKey] = useState<string | null>(multi ? (snapshot as MultiPeriodSnapshot).primary_key : null);
-  const [tab, setTab] = useState<"summary" | "eligibility" | "overlap">("summary");
+  const [tab, setTab] = useState<"summary" | "products" | "eligibility" | "overlap">("summary");
+  const [productSubTab, setProductSubTab] = useState<"heroes" | "costly" | "zombies" | "sleepers">("heroes");
   const active: Snapshot | null = useMemo(() => {
     if (!snapshot) return null;
     if (multi) return (snapshot as MultiPeriodSnapshot).periods[periodKey || (snapshot as MultiPeriodSnapshot).primary_key]?.snapshot || null;
@@ -83,10 +109,13 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
 
       <div className="flex items-center gap-2 flex-wrap">
         <div className="inline-flex rounded-md border border-gray-200 p-0.5">
-          {(["summary", "eligibility", "overlap"] as const).map((t) => (
+          {(["summary", "products", "eligibility", "overlap"] as const).map((t) => (
             <button key={t} type="button" onClick={() => setTab(t)}
               className={`text-xs font-semibold px-3 py-1.5 rounded capitalize ${tab === t ? "bg-emerald-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}>
-              {t === "summary" ? "Account roll-up" : t === "eligibility" ? `Eligibility (${s.eligibility_total})` : `Overlap (${s.overlap_count})`}
+              {t === "summary" ? "Account roll-up"
+                : t === "products" ? `Top products (${(active.top_products?.heroes?.length ?? 0) + (active.top_products?.costly?.length ?? 0) + (active.top_products?.zombies?.length ?? 0) + (active.top_products?.sleepers?.length ?? 0)})`
+                : t === "eligibility" ? `Eligibility (${s.eligibility_total})`
+                : `Overlap (${s.overlap_count})`}
             </button>
           ))}
         </div>
@@ -98,11 +127,73 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
             <div className="border border-gray-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Products with activity</div><div className="text-2xl font-bold text-gray-900 mt-1">{fmtInt(s.total_products_with_activity)}</div></div>
             <div className="border border-gray-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Total spend</div><div className="text-2xl font-bold text-gray-900 mt-1">{fmtCurrency(s.total_cost)}</div></div>
             <div className="border border-gray-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Conv value</div><div className="text-2xl font-bold text-gray-900 mt-1">{fmtCurrency(s.total_conversions_value)}</div></div>
-            <div className="border border-gray-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Account ROAS</div><div className="text-2xl font-bold text-emerald-700 mt-1">{s.total_cost > 0 ? s.account_roas.toFixed(2) : "—"}</div></div>
+            <div className="border border-gray-200 rounded-lg p-3">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Account ROAS</div>
+              <div className="text-2xl font-bold text-emerald-700 mt-1">{s.total_cost > 0 ? s.account_roas.toFixed(2) : "—"}</div>
+              {s.breakeven_roas != null && (
+                <div className={`text-[11px] mt-0.5 ${(s.account_roas_vs_breakeven_pct ?? 0) < 0 ? "text-red-700 font-semibold" : "text-emerald-700"}`}>
+                  breakeven {s.breakeven_roas.toFixed(2)}× · {(s.account_roas_vs_breakeven_pct ?? 0) >= 0 ? "+" : ""}{(s.account_roas_vs_breakeven_pct ?? 0).toFixed(1)}% vs breakeven
+                </div>
+              )}
+            </div>
           </div>
+          {s.breakeven_roas != null && (
+            <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50/50 px-3 py-2 text-xs text-emerald-900">
+              Margin <strong>{((s.blended_margin_pct ?? 0) * 100).toFixed(0)}%</strong> → Breakeven ROAS <strong>{s.breakeven_roas.toFixed(2)}×</strong>. Account ROAS <strong>{s.account_roas.toFixed(2)}×</strong> means the ad account is currently <strong>{(s.account_roas_vs_breakeven_pct ?? 0) >= 0 ? "profitable" : "losing money"}</strong> on paid clicks.
+            </div>
+          )}
           <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50/50 px-4 py-3 text-xs text-blue-900 flex items-start gap-2">
             <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
             <div>{active.per_asset_group_note}</div>
+          </div>
+        </div>
+      )}
+
+      {tab === "products" && active.top_products && (
+        <div>
+          <div className="inline-flex rounded-md border border-gray-200 p-0.5 mb-3">
+            {(["heroes", "costly", "zombies", "sleepers"] as const).map((t) => {
+              const count = active.top_products?.[t]?.length ?? 0;
+              return (
+                <button key={t} type="button" onClick={() => setProductSubTab(t)}
+                  className={`text-xs font-semibold px-3 py-1.5 rounded capitalize ${productSubTab === t ? "bg-emerald-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}>
+                  {t} ({count})
+                </button>
+              );
+            })}
+          </div>
+          <div className="overflow-x-auto -mx-5">
+            <table className="w-full text-sm min-w-[900px]">
+              <thead className="bg-gray-50 border-y border-gray-200"><tr className="text-[10px] font-bold uppercase tracking-widest text-gray-600">
+                <th className="text-left py-2 px-3">Item ID</th>
+                <th className="text-left py-2 px-3">Title</th>
+                <th className="text-left py-2 px-3">Brand / Type</th>
+                <th className="text-right py-2 px-3">Impr</th>
+                <th className="text-right py-2 px-3">Clicks</th>
+                <th className="text-right py-2 px-3">Cost</th>
+                <th className="text-right py-2 px-3">Conv</th>
+                <th className="text-right py-2 px-3">Value</th>
+                <th className="text-right py-2 px-3">ROAS</th>
+              </tr></thead>
+              <tbody>
+                {(active.top_products?.[productSubTab] ?? []).map((p, i) => (
+                  <tr key={`${p.item_id}-${i}`} className={`${i % 2 === 1 ? "bg-gray-50/50" : ""} border-b border-gray-100`}>
+                    <td className="py-2 px-3 text-xs tabular-nums text-gray-600">{p.item_id}</td>
+                    <td className="py-2 px-3 max-w-[280px]"><div className="text-gray-900 truncate" title={p.title}>{p.title || "—"}</div></td>
+                    <td className="py-2 px-3 text-xs text-gray-600 max-w-[180px] truncate">{[p.brand, p.product_type_l1].filter(Boolean).join(" · ") || "—"}</td>
+                    <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(p.impressions)}</td>
+                    <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(p.clicks)}</td>
+                    <td className="py-2 px-3 text-right tabular-nums font-medium">{fmtCurrency(p.cost)}</td>
+                    <td className="py-2 px-3 text-right tabular-nums text-xs">{p.conversions.toFixed(1)}</td>
+                    <td className="py-2 px-3 text-right tabular-nums text-xs">{p.conversions_value > 0 ? fmtCurrency(p.conversions_value) : "—"}</td>
+                    <td className="py-2 px-3 text-right tabular-nums font-medium text-emerald-700">{p.cost > 0 ? p.roas.toFixed(2) : "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {(active.top_products?.[productSubTab]?.length ?? 0) === 0 && (
+              <div className="p-4 text-center text-xs text-gray-500">No products in this bucket for the current window.</div>
+            )}
           </div>
         </div>
       )}
@@ -115,6 +206,32 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
             </div>
             <Button size="sm" variant="outline" onClick={downloadEligibility}><Download className="w-3.5 h-3.5 mr-1.5" /> CSV</Button>
           </div>
+          {active.issue_codes_summary && active.issue_codes_summary.length > 0 && (
+            <div className="mb-3 border border-amber-200 rounded-lg bg-amber-50/40 p-3">
+              <div className="text-xs font-bold uppercase tracking-widest text-amber-900 mb-2">Issue codes breakdown</div>
+              <div className="space-y-1 text-xs">
+                {active.issue_codes_summary.slice(0, 15).map((ic) => (
+                  <div key={ic.code} className="flex items-start gap-2">
+                    <Badge variant="outline" className="bg-white text-amber-900 border-amber-300 tabular-nums font-mono text-[10px] flex-shrink-0">
+                      {ic.count}×
+                    </Badge>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-900 truncate" title={ic.code}>{ic.code}</div>
+                      {ic.description && <div className="text-gray-600 text-[11px]">{ic.description}</div>}
+                    </div>
+                    <Badge variant="outline" className={ic.severity === "error" ? "bg-red-50 text-red-800 border-red-200" : ic.severity === "warning" ? "bg-amber-50 text-amber-900 border-amber-200" : "bg-gray-50 text-gray-600 border-gray-200"}>
+                      {ic.severity || "—"}
+                    </Badge>
+                  </div>
+                ))}
+                {active.issue_codes_summary.length > 15 && (
+                  <div className="text-[11px] text-amber-700 pt-1">
+                    +{active.issue_codes_summary.length - 15} more issue types. Full data in CSV.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
           <div className="overflow-x-auto -mx-5">
             <table className="w-full text-sm min-w-[800px]">
               <thead className="bg-gray-50 border-y border-gray-200"><tr className="text-[10px] font-bold uppercase tracking-widest text-gray-600">
