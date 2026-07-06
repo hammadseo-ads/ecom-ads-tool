@@ -167,6 +167,138 @@ const fetchEligibility = async (tokenDoc, customerId, loginCustomerId) => {
   });
 };
 
+// ---------- Per-asset-group product performance ----------
+// The checklist item: "Products view → filter by asset group → download data"
+// from the Google Ads UI, but as API-fetched data embedded in the audit.
+//
+// Uses `asset_group_product_group_view` with `segments.product_item_id` —
+// gives per-(campaign, asset_group, product_item_id) rows with full
+// metrics INCLUDING cost. Unlike campaign_search_term_insight (which is
+// per-campaign only), this view supports account-wide queries.
+//
+// Data source constraints:
+//   * PMax campaigns only (campaign.advertising_channel_type filter)
+//   * Google may sample rows on very high-volume PMax campaigns
+//   * A product can appear in only one asset group per campaign (Google
+//     enforces this in PMax) — so no double-counting across asset groups
+//     within one campaign
+const buildPerAssetGroupProductsQuery = (start, end) => `
+  SELECT
+    campaign.id,
+    campaign.name,
+    asset_group.id,
+    asset_group.name,
+    asset_group.status,
+    segments.product_item_id,
+    segments.product_title,
+    segments.product_brand,
+    segments.product_type_l1,
+    metrics.impressions,
+    metrics.clicks,
+    metrics.cost_micros,
+    metrics.conversions,
+    metrics.conversions_value
+  FROM asset_group_product_group_view
+  WHERE campaign.advertising_channel_type = 'PERFORMANCE_MAX'
+    AND segments.date BETWEEN '${start}' AND '${end}'
+    AND metrics.impressions > 0
+`;
+
+const fetchPerAssetGroupProducts = async (tokenDoc, customerId, loginCustomerId, start, end) => {
+  const client = getGoogleAdsClient(tokenDoc.refreshToken, customerId, loginCustomerId);
+  const resp = await client.query(buildPerAssetGroupProductsQuery(start, end));
+  const rows = toArray(resp);
+
+  // Aggregate by (campaign_id, asset_group_id) → { meta, products[] }.
+  // Within each asset group, aggregate per product_item_id.
+  const byGroup = new Map();
+  for (const row of rows) {
+    const c = row.campaign || {};
+    const ag = row.asset_group || row.assetGroup || {};
+    const seg = row.segments || {};
+    const m = row.metrics || {};
+    const campaignId = String(c.id || "");
+    const assetGroupId = String(ag.id || "");
+    const productId = String(seg.product_item_id ?? seg.productItemId ?? "");
+    if (!campaignId || !assetGroupId) continue;
+
+    const groupKey = `${campaignId}::${assetGroupId}`;
+    let group = byGroup.get(groupKey);
+    if (!group) {
+      group = {
+        campaign_id: campaignId,
+        campaign_name: c.name || `Campaign ${campaignId}`,
+        asset_group_id: assetGroupId,
+        asset_group_name: ag.name || `Asset group ${assetGroupId}`,
+        asset_group_status: String(ag.status ?? ""), // enum-decoded downstream by caller if needed
+        products_by_id: new Map(),
+        totals: {
+          impressions: 0, clicks: 0, cost: 0, conversions: 0, conversions_value: 0,
+        },
+      };
+      byGroup.set(groupKey, group);
+    }
+
+    const impressions = num(m.impressions);
+    const clicks = num(m.clicks);
+    const cost = num(m.cost_micros ?? m.costMicros) / 1e6;
+    const conversions = num(m.conversions);
+    const conversions_value = num(m.conversions_value ?? m.conversionsValue);
+
+    group.totals.impressions += impressions;
+    group.totals.clicks += clicks;
+    group.totals.cost += cost;
+    group.totals.conversions += conversions;
+    group.totals.conversions_value += conversions_value;
+
+    // Products without an item_id (broad-match listing group nodes without
+    // per-SKU segmentation) still contribute to the asset group's totals
+    // but we skip storing them as individual products.
+    if (!productId) continue;
+
+    let product = group.products_by_id.get(productId);
+    if (!product) {
+      product = {
+        item_id: productId,
+        title: String(seg.product_title ?? seg.productTitle ?? ""),
+        brand: String(seg.product_brand ?? seg.productBrand ?? ""),
+        product_type_l1: String(seg.product_type_l1 ?? seg.productTypeL1 ?? ""),
+        impressions: 0, clicks: 0, cost: 0, conversions: 0, conversions_value: 0,
+      };
+      group.products_by_id.set(productId, product);
+    }
+    product.impressions += impressions;
+    product.clicks += clicks;
+    product.cost += cost;
+    product.conversions += conversions;
+    product.conversions_value += conversions_value;
+  }
+
+  // Convert to the final serialisable shape: array of groups, products
+  // sorted by cost desc so heavy-spenders bubble up.
+  return Array.from(byGroup.values()).map((g) => {
+    const products = Array.from(g.products_by_id.values()).map((p) => ({
+      ...p,
+      roas: p.cost > 0 ? p.conversions_value / p.cost : 0,
+      cost_per_conversion: p.conversions > 0 ? p.cost / p.conversions : 0,
+    }));
+    products.sort((a, b) => b.cost - a.cost);
+    return {
+      campaign_id: g.campaign_id,
+      campaign_name: g.campaign_name,
+      asset_group_id: g.asset_group_id,
+      asset_group_name: g.asset_group_name,
+      asset_group_status: g.asset_group_status,
+      totals: {
+        ...g.totals,
+        roas: g.totals.cost > 0 ? g.totals.conversions_value / g.totals.cost : 0,
+        product_count: products.length,
+      },
+      products,
+    };
+  }).sort((a, b) => b.totals.cost - a.totals.cost);
+};
+
 // ---------- PMax product overlap ----------
 // Fetch which asset group each product is served through in PMax and flag
 // duplicates. Uses `asset_group_product_group_view` — one row per (asset
@@ -297,10 +429,14 @@ export const refreshEcommerce = async ({ user, audit, start: startOverride, end:
   const start = fmtDate(rangeStart);
   const end = fmtDate(rangeEnd);
 
-  const [shoppingMap, eligibility, overlaps] = await Promise.all([
+  const [shoppingMap, eligibility, overlaps, perAssetGroupProducts] = await Promise.all([
     withLoginRetry(tokenDoc, customerId, (login) => fetchShoppingSummary(tokenDoc, customerId, login, start, end)).catch(() => new Map()),
     withLoginRetry(tokenDoc, customerId, (login) => fetchEligibility(tokenDoc, customerId, login)).catch(() => []),
     withLoginRetry(tokenDoc, customerId, (login) => fetchOverlap(tokenDoc, customerId, login, start, end)).catch(() => []),
+    withLoginRetry(tokenDoc, customerId, (login) => fetchPerAssetGroupProducts(tokenDoc, customerId, login, start, end)).catch((err) => {
+      console.warn("[ecommerce] per-asset-group products fetch failed:", err?.message?.slice(0, 200));
+      return [];
+    }),
   ]);
 
   // Not applicable if no shopping-related activity at all
@@ -416,9 +552,23 @@ export const refreshEcommerce = async ({ user, audit, start: startOverride, end:
     // driving the 409-blocked count without paging through every product.
     issue_codes_summary,
     overlaps,
+    // NEW: per-(campaign, asset group, product) performance breakdown
+    // for every PMax campaign. Each entry has totals + a sorted-by-cost
+    // products[] list. Same data the operator would get via
+    // Google Ads UI → Products → filter by asset group → Download.
+    per_asset_group_products: perAssetGroupProducts,
+    per_asset_group_products_summary: {
+      total_groups: perAssetGroupProducts.length,
+      total_products_across_groups: perAssetGroupProducts.reduce(
+        (s, g) => s + (g.products?.length ?? 0), 0
+      ),
+      total_cost: perAssetGroupProducts.reduce(
+        (s, g) => s + (g.totals?.cost ?? 0), 0
+      ),
+    },
     deep_link: "/dashboard/product-roas",
     deep_link_label: "Open full Product ROAS report",
-    per_asset_group_note: "Per-product × per-asset-group breakdown is deferred to a dedicated release with proper QA against the Google Ads UI CSV export. For now, use the Google Ads UI (Products → filter by Asset Group → Download) for that view.",
+    per_asset_group_note: "Per-asset-group product performance is now embedded in this panel (Per asset group tab). Bucketing (Heroes / Costly / Zombies) still lives on /dashboard/product-roas for the full sortable / filterable view.",
   };
 
   return { snapshot, flags };

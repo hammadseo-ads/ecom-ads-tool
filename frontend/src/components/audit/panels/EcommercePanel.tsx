@@ -11,6 +11,36 @@ interface Product { merchant_center_id: string; item_id: string; title: string; 
 interface Overlap { product_item_id: string; campaign_id: string; campaign_name: string; asset_groups: Array<{ asset_group_id: string; asset_group_name: string; impressions: number; cost: number }>; }
 interface PerfProduct { item_id: string; title: string; brand: string; product_type_l1: string; impressions: number; clicks: number; cost: number; conversions: number; conversions_value: number; roas: number; bucket: string; }
 interface IssueCode { code: string; description: string; severity: string; count: number; example_products: Array<{ item_id: string; title: string }>; }
+interface AssetGroupProduct {
+  item_id: string;
+  title: string;
+  brand: string;
+  product_type_l1: string;
+  impressions: number;
+  clicks: number;
+  cost: number;
+  conversions: number;
+  conversions_value: number;
+  roas: number;
+  cost_per_conversion: number;
+}
+interface AssetGroupBreakdown {
+  campaign_id: string;
+  campaign_name: string;
+  asset_group_id: string;
+  asset_group_name: string;
+  asset_group_status: string;
+  totals: {
+    impressions: number;
+    clicks: number;
+    cost: number;
+    conversions: number;
+    conversions_value: number;
+    roas: number;
+    product_count: number;
+  };
+  products: AssetGroupProduct[];
+}
 interface Snapshot {
   time_frame: string; start_date: string; end_date: string;
   not_applicable?: boolean; note?: string;
@@ -33,6 +63,12 @@ interface Snapshot {
   };
   issue_codes_summary?: IssueCode[];
   eligibility?: Product[]; overlaps?: Overlap[];
+  per_asset_group_products?: AssetGroupBreakdown[];
+  per_asset_group_products_summary?: {
+    total_groups: number;
+    total_products_across_groups: number;
+    total_cost: number;
+  };
   deep_link: string; deep_link_label: string; per_asset_group_note: string;
 }
 interface MultiPeriodSnapshot { multi_period: true; primary_key: string; periods: Record<string, { snapshot: Snapshot; flags: unknown[] }>; }
@@ -47,8 +83,9 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
   const multi = isMulti(snapshot);
   const availableKeys = multi ? Object.keys((snapshot as MultiPeriodSnapshot).periods) : [];
   const [periodKey, setPeriodKey] = useState<string | null>(multi ? (snapshot as MultiPeriodSnapshot).primary_key : null);
-  const [tab, setTab] = useState<"summary" | "products" | "eligibility" | "overlap">("summary");
+  const [tab, setTab] = useState<"summary" | "products" | "per_asset_group" | "eligibility" | "overlap">("summary");
   const [productSubTab, setProductSubTab] = useState<"heroes" | "costly" | "zombies" | "sleepers">("heroes");
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const active: Snapshot | null = useMemo(() => {
     if (!snapshot) return null;
     if (multi) return (snapshot as MultiPeriodSnapshot).periods[periodKey || (snapshot as MultiPeriodSnapshot).primary_key]?.snapshot || null;
@@ -108,12 +145,13 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
       </div>
 
       <div className="flex items-center gap-2 flex-wrap">
-        <div className="inline-flex rounded-md border border-gray-200 p-0.5">
-          {(["summary", "products", "eligibility", "overlap"] as const).map((t) => (
+        <div className="inline-flex rounded-md border border-gray-200 p-0.5 flex-wrap">
+          {(["summary", "products", "per_asset_group", "eligibility", "overlap"] as const).map((t) => (
             <button key={t} type="button" onClick={() => setTab(t)}
-              className={`text-xs font-semibold px-3 py-1.5 rounded capitalize ${tab === t ? "bg-emerald-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}>
+              className={`text-xs font-semibold px-3 py-1.5 rounded ${tab === t ? "bg-emerald-600 text-white" : "text-gray-700 hover:bg-gray-50"}`}>
               {t === "summary" ? "Account roll-up"
                 : t === "products" ? `Top products (${(active.top_products?.heroes?.length ?? 0) + (active.top_products?.costly?.length ?? 0) + (active.top_products?.zombies?.length ?? 0) + (active.top_products?.sleepers?.length ?? 0)})`
+                : t === "per_asset_group" ? `Per asset group (${active.per_asset_group_products?.length ?? 0})`
                 : t === "eligibility" ? `Eligibility (${s.eligibility_total})`
                 : `Overlap (${s.overlap_count})`}
             </button>
@@ -196,6 +234,136 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
             )}
           </div>
         </div>
+      )}
+
+      {tab === "per_asset_group" && (
+        (() => {
+          const groups = active.per_asset_group_products || [];
+          if (groups.length === 0) {
+            return (
+              <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-center text-sm text-gray-500">
+                No per-asset-group product data returned by Google Ads for this window. Possible reasons: no active PMax campaigns, no delivery in the window, or Google sampling excluded per-SKU segmentation.
+              </div>
+            );
+          }
+          const selected = groups.find((g) => g.asset_group_id === selectedGroupId) || groups[0];
+          const filename = `${slug}_${date}_asset-group_${selected.asset_group_name.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}_products.csv`;
+          const downloadGroupCSV = () => {
+            const headers = ["item_id", "title", "brand", "product_type_l1", "impressions", "clicks", "cost", "conversions", "conversions_value", "roas", "cost_per_conversion"];
+            const escape = (v: unknown) => { if (v == null) return ""; const s = String(v); return s.includes(",") || s.includes('"') ? `"${s.replace(/"/g, '""')}"` : s; };
+            const rows = selected.products.map((p) => headers.map((h) => escape((p as unknown as Record<string, unknown>)[h])).join(","));
+            const csv = [headers.join(","), ...rows].join("\r\n");
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a"); a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+          };
+          return (
+            <div>
+              <div className="rounded-lg border border-blue-200 bg-blue-50/50 px-3 py-2 text-xs text-blue-900 mb-3 flex items-start gap-2">
+                <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+                <div>
+                  Per-product performance broken down by PMax asset group. Same view as Google Ads UI → Products → filter by asset group → Download. Google enforces one product per asset group per campaign, so no double-counting.
+                </div>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                {/* LEFT · asset group selector */}
+                <div className="lg:col-span-4">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">
+                    Asset groups ({groups.length})
+                  </div>
+                  <div className="space-y-1 max-h-[600px] overflow-y-auto pr-1">
+                    {groups.map((g) => {
+                      const isSel = (selectedGroupId || groups[0].asset_group_id) === g.asset_group_id;
+                      return (
+                        <button
+                          key={`${g.campaign_id}-${g.asset_group_id}`}
+                          type="button"
+                          onClick={() => setSelectedGroupId(g.asset_group_id)}
+                          className={`w-full text-left border rounded-md px-3 py-2 transition-colors ${
+                            isSel
+                              ? "bg-emerald-50 border-emerald-300"
+                              : "bg-white border-gray-200 hover:border-emerald-200"
+                          }`}
+                        >
+                          <div className="text-sm font-medium text-gray-900 truncate" title={g.asset_group_name}>
+                            {g.asset_group_name}
+                          </div>
+                          <div className="text-[10px] text-gray-500 truncate" title={g.campaign_name}>
+                            {g.campaign_name}
+                          </div>
+                          <div className="flex items-center gap-2 mt-1 text-[11px] tabular-nums">
+                            <span className="text-gray-700">{fmtCurrency(g.totals.cost)}</span>
+                            <span className={g.totals.roas >= 2 ? "text-emerald-700 font-semibold" : "text-gray-500"}>
+                              ROAS {g.totals.cost > 0 ? g.totals.roas.toFixed(2) : "—"}
+                            </span>
+                            <span className="text-gray-400">{g.totals.product_count} SKUs</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* RIGHT · products table */}
+                <div className="lg:col-span-8">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <div className="text-sm font-bold text-gray-900 truncate max-w-[400px]" title={selected.asset_group_name}>
+                        {selected.asset_group_name}
+                      </div>
+                      <div className="text-[11px] text-gray-500 truncate max-w-[400px]" title={selected.campaign_name}>
+                        {selected.campaign_name} · {selected.totals.product_count} products · {fmtCurrency(selected.totals.cost)} spend · ROAS {selected.totals.cost > 0 ? selected.totals.roas.toFixed(2) : "—"}
+                      </div>
+                    </div>
+                    <Button size="sm" variant="outline" onClick={downloadGroupCSV}>
+                      <Download className="w-3.5 h-3.5 mr-1.5" /> CSV
+                    </Button>
+                  </div>
+                  <div className="overflow-x-auto -mx-5">
+                    <table className="w-full text-sm min-w-[700px]">
+                      <thead className="bg-gray-50 border-y border-gray-200"><tr className="text-[10px] font-bold uppercase tracking-widest text-gray-600">
+                        <th className="text-left py-2 px-3">Item ID</th>
+                        <th className="text-left py-2 px-3">Title</th>
+                        <th className="text-right py-2 px-3">Impr</th>
+                        <th className="text-right py-2 px-3">Clicks</th>
+                        <th className="text-right py-2 px-3">Cost</th>
+                        <th className="text-right py-2 px-3">Conv</th>
+                        <th className="text-right py-2 px-3">Value</th>
+                        <th className="text-right py-2 px-3">ROAS</th>
+                      </tr></thead>
+                      <tbody>
+                        {selected.products.slice(0, 200).map((p, i) => (
+                          <tr key={`${p.item_id}-${i}`} className={`${i % 2 === 1 ? "bg-gray-50/50" : ""} border-b border-gray-100`}>
+                            <td className="py-2 px-3 text-xs tabular-nums text-gray-600">{p.item_id}</td>
+                            <td className="py-2 px-3 max-w-[240px]">
+                              <div className="text-gray-900 truncate" title={p.title}>{p.title || "—"}</div>
+                              <div className="text-[10px] text-gray-500 truncate">{[p.brand, p.product_type_l1].filter(Boolean).join(" · ")}</div>
+                            </td>
+                            <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(p.impressions)}</td>
+                            <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(p.clicks)}</td>
+                            <td className={`py-2 px-3 text-right tabular-nums font-medium ${p.cost > 50 && p.conversions === 0 ? "text-amber-800" : ""}`}>{fmtCurrency(p.cost)}</td>
+                            <td className="py-2 px-3 text-right tabular-nums text-xs">{p.conversions.toFixed(1)}</td>
+                            <td className="py-2 px-3 text-right tabular-nums text-xs">{p.conversions_value > 0 ? fmtCurrency(p.conversions_value) : "—"}</td>
+                            <td className="py-2 px-3 text-right tabular-nums font-medium text-emerald-700">{p.cost > 0 ? p.roas.toFixed(2) : "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {selected.products.length > 200 && (
+                      <div className="text-xs text-gray-500 text-center py-2">Showing 200 of {selected.products.length}. Full data in CSV.</div>
+                    )}
+                    {selected.products.length === 0 && (
+                      <div className="p-4 text-center text-xs text-gray-500">
+                        This asset group has activity ({fmtCurrency(selected.totals.cost)} spend) but no per-SKU segmentation returned — likely a broad listing-group filter node without per-product breakdown, or Google sampling.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()
       )}
 
       {tab === "eligibility" && (
