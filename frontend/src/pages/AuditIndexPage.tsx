@@ -12,6 +12,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   ClipboardList,
   Play,
   FileSearch,
@@ -20,6 +31,7 @@ import {
   CheckCircle2,
   Lock,
   Loader2,
+  Trash2,
 } from "lucide-react";
 
 interface AuditSummary {
@@ -59,6 +71,9 @@ const AuditIndexInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
   const [timeFrame, setTimeFrame] = useState("LAST_30_DAYS");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const loadAudits = async () => {
     if (!selectedAccountId) return;
@@ -78,6 +93,37 @@ const AuditIndexInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
     loadAudits();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAccountId]);
+
+  const deleteOne = async (id: string) => {
+    setDeletingId(id);
+    try {
+      await axios.delete(`/api/audit/${id}`);
+      setAudits((prev) => prev.filter((x) => x._id !== id));
+      toast({ title: "Audit deleted" });
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } }; message?: string })?.response?.data?.message ?? "Failed to delete audit";
+      toast({ title: "Delete failed", description: msg, variant: "destructive" });
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const deleteAllForAccount = async () => {
+    if (audits.length === 0) return;
+    setBulkDeleting(true);
+    const ids = audits.map((a) => a._id);
+    const results = await Promise.allSettled(ids.map((id) => axios.delete(`/api/audit/${id}`)));
+    const failed = results.filter((r) => r.status === "rejected").length;
+    const ok = results.length - failed;
+    setBulkDeleting(false);
+    setBulkOpen(false);
+    if (failed === 0) {
+      toast({ title: `Deleted ${ok} audit${ok !== 1 ? "s" : ""}` });
+    } else {
+      toast({ title: `Deleted ${ok}, ${failed} failed`, variant: "destructive" });
+    }
+    await loadAudits();
+  };
 
   const startAudit = async () => {
     if (!selectedAccountId) {
@@ -170,9 +216,22 @@ const AuditIndexInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-semibold text-gray-900">Past audits</h2>
-          <span className="text-xs text-gray-500">
-            {loading ? "Loading…" : `${audits.length} audit${audits.length !== 1 ? "s" : ""}`}
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-gray-500">
+              {loading ? "Loading…" : `${audits.length} audit${audits.length !== 1 ? "s" : ""}`}
+            </span>
+            {audits.length > 0 && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-red-700 border-red-200 hover:bg-red-50 hover:text-red-800"
+                onClick={() => setBulkOpen(true)}
+              >
+                <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                Delete all
+              </Button>
+            )}
+          </div>
         </div>
         {audits.length === 0 && !loading ? (
           <Card>
@@ -183,13 +242,17 @@ const AuditIndexInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
         ) : (
           <div className="space-y-2">
             {audits.map((a) => (
-              <button
+              <div
                 key={a._id}
-                type="button"
-                onClick={() => navigate(`/dashboard/audit/${a._id}`)}
                 className="w-full text-left border border-gray-200 rounded-lg bg-white hover:border-emerald-300 hover:shadow-md transition-all p-4 flex items-center gap-4"
               >
-                <div className="flex-1 min-w-0">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => navigate(`/dashboard/audit/${a._id}`)}
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") navigate(`/dashboard/audit/${a._id}`); }}
+                  className="flex-1 min-w-0 cursor-pointer"
+                >
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold text-gray-900">
                       {a.title || `Audit — ${new Date(a.createdAt).toLocaleDateString()}`}
@@ -228,12 +291,84 @@ const AuditIndexInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
                       {a.panels_reviewed} reviewed
                     </Badge>
                   )}
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={deletingId === a._id}
+                        className="text-red-700 border-red-200 hover:bg-red-50 hover:text-red-800 h-8 w-8 p-0"
+                        aria-label="Delete audit"
+                      >
+                        {deletingId === a._id ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-3.5 h-3.5" />
+                        )}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete this audit?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          <strong>{a.title || `Audit — ${new Date(a.createdAt).toLocaleDateString()}`}</strong> for {selectedAccountName || selectedAccountId}.
+                          <br />
+                          Time frame: {TIME_FRAME_LABELS[a.time_frame] || a.time_frame}. All panel snapshots and notes will be permanently removed. This cannot be undone.
+                          {a.status === "sealed" && (
+                            <span className="block mt-2 text-amber-800 font-medium">
+                              This audit is <strong>sealed</strong>. Deleting removes the finalised deliverable.
+                            </span>
+                          )}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => deleteOne(a._id)}
+                          className="bg-red-600 hover:bg-red-700"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Bulk-delete confirmation */}
+      <AlertDialog open={bulkOpen} onOpenChange={setBulkOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete all audits for this account?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes <strong>{audits.length}</strong> audit{audits.length !== 1 ? "s" : ""} for <strong>{selectedAccountName || selectedAccountId}</strong>, including all panel snapshots and notes. Audits for other Google Ads accounts are not affected. This cannot be undone.
+              {audits.some((a) => a.status === "sealed") && (
+                <span className="block mt-2 text-amber-800 font-medium">
+                  {audits.filter((a) => a.status === "sealed").length} sealed audit{audits.filter((a) => a.status === "sealed").length !== 1 ? "s" : ""} will also be deleted.
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={bulkDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => { e.preventDefault(); deleteAllForAccount(); }}
+              disabled={bulkDeleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {bulkDeleting ? (
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Deleting…</>
+              ) : (
+                <>Delete all {audits.length}</>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
