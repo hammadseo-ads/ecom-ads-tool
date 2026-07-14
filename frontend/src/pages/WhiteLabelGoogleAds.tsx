@@ -418,21 +418,26 @@ const WhiteLabelGoogleAds = () => {
                 </h2>
                 <div className="space-y-4 text-gray-700 leading-relaxed text-[15px] md:text-base">
                   <p>
-                    I've spent years running{" "}
-                    <strong>Google Ads and SEO for eCommerce brands</strong>{" "}
-                    across apparel, home goods, fitness, automotive, and DTC.
-                    The frustration that built ManagingSEO? Most agencies run
-                    paid traffic on autopilot, bids on instinct, no real
-                    product-level analysis, every account a slightly different
-                    version of the last.
+                    I'm an engineer, a <strong>NUST graduate</strong>, so I've
+                    always thought in numbers. When I moved into marketing,
+                    people expected it to be a big switch. It wasn't. Good
+                    marketing runs on the same thing engineering does: data. I
+                    was already comfortable digging into the numbers, breaking
+                    problems apart, and working out why competitors were
+                    winning, so it just clicked.
                   </p>
                   <p>
-                    I built a documented system instead.{" "}
-                    <strong>Every store gets a real CRO redesign first</strong>
-                    , every ad account gets a Claude-powered product and
-                    search-term analysis, and every dollar of spend gets
-                    bucketed: profitable, costly, zero-conv, zombie. Fewer
-                    brands, full attention, results that compound.
+                    I learned the work myself before I built a team around it,
+                    and we still run <strong>Google Ads</strong> the way I
+                    think, on logic, not gut feeling. Every account starts with
+                    the data: we look at what's happening down to the product
+                    and search-term level, cut the spend that's going nowhere,
+                    and put more behind what's actually working. No autopilot,
+                    no cookie-cutter setups. And we're honest about what we
+                    promise, we only commit to a goal once the numbers say it's
+                    realistic, so <strong>when we commit, we deliver</strong>.
+                    Fewer clients, full attention, results that add up over
+                    time.
                   </p>
                 </div>
 
