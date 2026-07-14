@@ -250,7 +250,7 @@ const WhiteLabelGoogleAds = () => {
                       className="absolute -inset-x-4 -inset-y-1 md:-inset-y-2 bg-emerald-400 -rotate-[1.5deg] -z-10 rounded-md"
                     />
                     <span className="relative text-emerald-950">
-                      Google Ads
+                      Google Ads &amp; CRO
                     </span>
                   </span>{" "}
                   to your eCommerce clients,{" "}
