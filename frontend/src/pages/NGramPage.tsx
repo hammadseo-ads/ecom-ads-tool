@@ -136,9 +136,13 @@ const NGramInner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
     setReportData((prev) => {
       const next = { ...prev };
       for (const { value, data } of results) {
-        if (data?.ngrams?.length) {
+        // Keep the returned report even when the CURRENT source/size filter
+        // has no matches — otherwise a saved report looks like it vanished
+        // (source_term_count_total resets to 0). Auto-select the first tab that
+        // actually has n-grams for the current filter.
+        if (data) {
           next[value] = data;
-          if (!firstAvailable) firstAvailable = value;
+          if (data.ngrams?.length && !firstAvailable) firstAvailable = value;
         }
       }
       return next;
@@ -391,14 +395,26 @@ const NGramInner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
                   <Card>
                     <CardContent className="py-12 text-center text-gray-500">
                       <Type className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                      <p>No n-grams for {t.label.toLowerCase()} ({sourceType}, {ngramSize}-gram).</p>
-                      <p className="text-sm mt-1">
-                        Either no source data yet, run{" "}
-                        <button className="text-emerald-700 underline" onClick={() => navigate("/dashboard/keywords")}>
-                          Keyword Reports
-                        </button>{" "}
-                        first, or click <strong>Generate N-Grams</strong> above.
-                      </p>
+                      {periodData.source_term_count_total > 0 ? (
+                        <>
+                          <p>This report has {periodData.source_term_count_total.toLocaleString()} search terms, but no <strong>{sourceType === "SEARCH" ? "Search" : "Performance Max"}</strong> {ngramSize}-grams.</p>
+                          <p className="text-sm mt-1">
+                            Your data is saved — try switching <strong>Source</strong>{" "}
+                            ({sourceType === "SEARCH" ? "Performance Max" : "Search"}) or the <strong>n-gram size</strong> above. No need to regenerate.
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p>No n-grams for {t.label.toLowerCase()} ({sourceType}, {ngramSize}-gram).</p>
+                          <p className="text-sm mt-1">
+                            Either no source data yet, run{" "}
+                            <button className="text-emerald-700 underline" onClick={() => navigate("/dashboard/keywords")}>
+                              Keyword Reports
+                            </button>{" "}
+                            first, or click <strong>Generate N-Grams</strong> above.
+                          </p>
+                        </>
+                      )}
                     </CardContent>
                   </Card>
                 ) : (
