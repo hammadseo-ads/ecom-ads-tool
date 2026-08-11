@@ -34,7 +34,7 @@ const heatMapReportSchema = new mongoose.Schema({
   customer_id: { type: String, required: true },
   report_type: {
     type: String,
-    enum: ["LAST_30_DAYS", "LAST_60_DAYS", "LAST_90_DAYS"],
+    enum: ["LAST_30_DAYS", "LAST_60_DAYS", "LAST_90_DAYS", "LAST_365_DAYS"],
     required: true,
   },
   report_start_date: Date,

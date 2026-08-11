@@ -90,6 +90,7 @@ const REPORT_TABS = [
   { value: "LAST_30_DAYS", label: "Last 30 Days" },
   { value: "LAST_60_DAYS", label: "Last 60 Days" },
   { value: "LAST_90_DAYS", label: "Last 90 Days" },
+  { value: "LAST_365_DAYS", label: "Last 1 Year" }, // opt-in — generated only on demand
 ];
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -147,8 +148,10 @@ const HeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerProps) =>
     LAST_30_DAYS: empty(),
     LAST_60_DAYS: empty(),
     LAST_90_DAYS: empty(),
+    LAST_365_DAYS: empty(),
   });
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isGeneratingYear, setIsGeneratingYear] = useState(false);
   const [progress, setProgress] = useState("");
   const [isClearing, setIsClearing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -165,10 +168,10 @@ const HeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerProps) =>
     statusFilterVal = "all",
   ) => {
     if (!userId || !accountId) {
-      setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty() });
+      setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty(), LAST_365_DAYS: empty() });
       return;
     }
-    setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty() });
+    setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty(), LAST_365_DAYS: empty() });
 
     const results = await Promise.all(
       REPORT_TABS.map(async ({ value }) => {
@@ -270,22 +273,25 @@ const HeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerProps) =>
     throw new Error("Generation took longer than 10 minutes, check backend logs.");
   };
 
-  const handleGenerate = async () => {
+  const runGeneration = async (scope: "standard" | "year") => {
     if (!selectedAccountId) {
       toast({ title: "Pick an account", description: "Select an account first.", variant: "destructive" });
       return;
     }
-    setIsGenerating(true);
+    const isYear = scope === "year";
+    (isYear ? setIsGeneratingYear : setIsGenerating)(true);
     setProgress("Starting...");
     toast({
-      title: "Generating",
-      description: "Pulling hourly performance for 30/60/90 days. Can take 30s–2min.",
+      title: isYear ? "Generating 1-Year report" : "Generating",
+      description: isYear
+        ? "Pulling a full year of hourly data. This is heavier and can take several minutes."
+        : "Pulling hourly performance for 30/60/90 days. Can take 30s–2min.",
       duration: 8000,
     });
     try {
       const { data: kicked } = await withAuthRetry(() =>
         axios.post(`${API_BASE}/generate`,
-          { user_id: userId, customer_id: selectedAccountId },
+          { user_id: userId, customer_id: selectedAccountId, ...(isYear ? { scope: "year" } : {}) },
           getAuthHeaders())
       );
       if (kicked?.status === "ALREADY_RUNNING") {
@@ -296,7 +302,8 @@ const HeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerProps) =>
         title: "Done",
         description: `Heat map ready for ${final?.result?.total_campaigns ?? 0} campaigns.`,
       });
-      await loadCachedData(selectedAccountId, selectedCampaign);
+      await loadCachedData(selectedAccountId, selectedCampaign, selectedChannel, statusFilter);
+      if (isYear) { userPickedTabRef.current = true; setActiveTab("LAST_365_DAYS"); }
     } catch (e: any) {
       toast({
         title: "Generation failed",
@@ -304,10 +311,13 @@ const HeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerProps) =>
         variant: "destructive",
       });
     } finally {
-      setIsGenerating(false);
+      (isYear ? setIsGeneratingYear : setIsGenerating)(false);
       setProgress("");
     }
   };
+
+  const handleGenerate = () => runGeneration("standard");
+  const handleGenerateYear = () => runGeneration("year");
 
   const handleClear = async () => {
     if (!selectedAccountId) return;
@@ -319,7 +329,7 @@ const HeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerProps) =>
           ...getAuthHeaders(),
         })
       );
-      setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty() });
+      setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty(), LAST_365_DAYS: empty() });
       toast({ title: "Cleared", description: "Heat map data removed for this account." });
     } catch (e: any) {
       toast({ title: "Clear failed", description: e.message, variant: "destructive" });
@@ -421,9 +431,13 @@ const HeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerProps) =>
           {selectedAccountId ? (
             <div className="space-y-3">
               <div className="flex flex-wrap gap-3">
-                <Button onClick={handleGenerate} disabled={isGenerating} className="bg-emerald-600 hover:bg-emerald-700">
+                <Button onClick={handleGenerate} disabled={isGenerating || isGeneratingYear} className="bg-emerald-600 hover:bg-emerald-700">
                   {isGenerating ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
                   {isGenerating ? "Generating..." : "Generate Reports"}
+                </Button>
+                <Button onClick={handleGenerateYear} disabled={isGenerating || isGeneratingYear} variant="outline" className="text-emerald-700 border-emerald-400 hover:bg-emerald-50" title="Fetches a full year of data — only when you click this">
+                  {isGeneratingYear ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Calendar className="w-4 h-4 mr-2" />}
+                  {isGeneratingYear ? "Generating 1-Year..." : "Generate 1-Year"}
                 </Button>
                 <Button onClick={handleExport} disabled={isExporting || isGenerating} variant="outline" className="text-emerald-700 border-emerald-300 hover:bg-emerald-50">
                   {isExporting ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
@@ -448,7 +462,7 @@ const HeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerProps) =>
 
       {selectedAccountId && (
         <Tabs value={activeTab} onValueChange={(v) => { userPickedTabRef.current = true; setActiveTab(v); }}>
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             {REPORT_TABS.map((t) => (
               <TabsTrigger key={t.value} value={t.value}>{t.label}</TabsTrigger>
             ))}
@@ -461,7 +475,9 @@ const HeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerProps) =>
                   <CardContent className="py-12 text-center text-gray-500">
                     <Clock className="w-12 h-12 mx-auto mb-3 text-gray-300" />
                     <p>No data for {t.label.toLowerCase()}.</p>
-                    <p className="text-sm mt-1">Click <strong>Generate Reports</strong> above to fetch from Google Ads.</p>
+                    <p className="text-sm mt-1">
+                      Click <strong>{t.value === "LAST_365_DAYS" ? "Generate 1-Year" : "Generate Reports"}</strong> above to fetch from Google Ads.
+                    </p>
                   </CardContent>
                 </Card>
               ) : (

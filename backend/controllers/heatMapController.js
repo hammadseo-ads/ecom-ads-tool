@@ -29,6 +29,10 @@ const REPORT_TYPES = [
   { type: "LAST_90_DAYS", days: 90 },
 ];
 
+// The 1-year report is opt-in only (heavier fetch), generated separately when
+// the user explicitly asks for it — never as part of the default 30/60/90 run.
+const YEAR_REPORT_TYPE = { type: "LAST_365_DAYS", days: 365 };
+
 // Bidding strategies where time-of-day bid adjustments are actually applied
 // by Google. Anything else → only -100% pauses are honored.
 const MANUAL_BIDDING_TYPES = new Set([
@@ -233,7 +237,7 @@ const sumCampaignCells = (cellArrays) => {
 const isActiveStatus = (status) => !status || status === "ENABLED";
 
 // ============= MAIN GENERATION =============
-async function runHeatMapGeneration(userId, cid) {
+async function runHeatMapGeneration(userId, cid, reportTypes = REPORT_TYPES) {
   const tokenDoc = await GoogleAdsToken.findOne({ user: userId });
   if (!tokenDoc) throw new Error("Google Ads not connected");
 
@@ -262,7 +266,7 @@ async function runHeatMapGeneration(userId, cid) {
 
   const allReports = [];
 
-  for (const rpt of REPORT_TYPES) {
+  for (const rpt of reportTypes) {
     setJob(userId, cid, { progress: `Fetching hourly data: ${rpt.type}...` });
 
     const endDate = new Date();
@@ -413,9 +417,12 @@ const buildSmoothedGrid = (cells, supportsBidMultiplier) => {
 
 export const generateHeatMapReports = async (req, res) => {
   const userId = req.user._id;
-  const { customer_id } = req.body;
+  const { customer_id, scope } = req.body;
   if (!customer_id) return res.status(400).json({ error: "Missing customer_id" });
   const cid = formatCustomerId(customer_id);
+
+  // scope="year" → only the 1-year report (opt-in). Anything else → 30/60/90.
+  const reportTypes = scope === "year" ? [YEAR_REPORT_TYPE] : REPORT_TYPES;
 
   const existing = getJob(userId, cid);
   if (existing?.status === "RUNNING") {
@@ -434,9 +441,9 @@ export const generateHeatMapReports = async (req, res) => {
   });
   res.status(202).json({ status: "STARTED" });
 
-  runHeatMapGeneration(userId, cid)
+  runHeatMapGeneration(userId, cid, reportTypes)
     .then((result) => {
-      console.log(`✅ [heatmap] ${cid}: complete — ${result.total_campaigns} campaigns`);
+      console.log(`✅ [heatmap] ${cid}: complete — ${result.total_campaigns} campaigns (scope=${scope || "standard"})`);
       setJob(userId, cid, { status: "COMPLETED", completedAt: Date.now(), result });
     })
     .catch((err) => {
