@@ -230,7 +230,9 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
 
   const periodData = reportData[activeTab] || empty();
 
-  // Top-performing: ROAS desc, requires conversions and (for SEARCH) cost
+  // Top-performing (lead gen): most LEADS first, then cheapest cost-per-lead.
+  // ROAS is meaningless for lead gen (usually no conversion value), so we rank
+  // by conversions, not ROAS.
   // Wasted-spend: cost desc among zero-conv (or for PMAX, clicks desc among zero-conv)
   const { topPerforming, wastedSpend } = useMemo(() => {
     const minTermsThreshold = 2; // n-gram must appear in at least N source terms
@@ -239,9 +241,11 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
     const topPerf = [...list]
       .filter((n) => n.total_conversions >= 1)
       .sort((a, b) => {
-        // SEARCH: ROAS preferred; PMAX: conversions preferred
-        if (sourceType === "SEARCH") return b.roas - a.roas || b.total_conversions - a.total_conversions;
-        return b.total_conversions - a.total_conversions;
+        // Most conversions (leads) first; tie-break by lower cost-per-lead.
+        if (b.total_conversions !== a.total_conversions) return b.total_conversions - a.total_conversions;
+        const acpl = a.cpa > 0 ? a.cpa : Infinity;
+        const bcpl = b.cpa > 0 ? b.cpa : Infinity;
+        return acpl - bcpl;
       })
       .slice(0, 50);
 
@@ -414,7 +418,7 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
                           Top Performing N-Grams
                         </CardTitle>
                         <CardDescription>
-                          Sorted by {sourceType === "SEARCH" ? "ROAS" : "conversions"} desc.
+                          Sorted by conversions (leads) desc, then lowest cost-per-lead.
                           Min 2 source terms.
                         </CardDescription>
                       </CardHeader>
@@ -432,8 +436,8 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
                                 <th className="text-right px-3 py-2">Terms</th>
                                 <th className="text-right px-3 py-2">Clicks</th>
                                 {sourceType === "SEARCH" && <th className="text-right px-3 py-2">Cost</th>}
-                                <th className="text-right px-3 py-2">Conv</th>
-                                {sourceType === "SEARCH" && <th className="text-right px-3 py-2">ROAS</th>}
+                                <th className="text-right px-3 py-2">Leads</th>
+                                {sourceType === "SEARCH" && <th className="text-right px-3 py-2">CPL</th>}
                               </tr>
                             </thead>
                             <tbody>
@@ -452,7 +456,7 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
                                   <td className="text-right px-3 py-2 tabular-nums">{r.total_conversions.toFixed(1)}</td>
                                   {sourceType === "SEARCH" && (
                                     <td className="text-right px-3 py-2 tabular-nums font-semibold text-emerald-700">
-                                      {r.has_cost_data && r.total_cost > 0 ? r.roas.toFixed(2) : <span className="text-gray-300">-</span>}
+                                      {r.has_cost_data && r.total_conversions > 0 ? fmtMoney(r.cpa) : <span className="text-gray-300">-</span>}
                                     </td>
                                   )}
                                 </tr>
