@@ -19,7 +19,8 @@ const cellSchema = new mongoose.Schema({
 const campaignDataSchema = new mongoose.Schema({
   campaign_id: String,
   campaign_name: String,
-  channel_type: String,        // SEARCH / SHOPPING / PERFORMANCE_MAX / DISPLAY / VIDEO / etc.
+  channel_type: String,        // SEARCH / SHOPPING / PERFORMANCE_MAX / DEMAND_GEN / DISPLAY / VIDEO / etc.
+  status: String,              // ENABLED / PAUSED — used for the active-only vs all toggle
   bidding_strategy_type: String, // MANUAL_CPC / MAXIMIZE_CLICKS / TARGET_ROAS / TARGET_CPA / ...
   // Whether time-of-day bid adjustments are actionable for this campaign.
   // True only for MANUAL_CPC + MAXIMIZE_CLICKS on Search/Shopping. PMax and

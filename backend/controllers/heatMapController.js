@@ -121,12 +121,18 @@ const listCampaignsWithBidding = async (tokenDoc, customerId, loginCustomerId) =
     const c = row.campaign || row;
     const channelType = c?.advertising_channel_type ?? c?.advertisingChannelType;
     const biddingType = c?.bidding_strategy_type ?? c?.biddingStrategyType;
+    const statusRaw = c?.status;
     const channel = typeof channelType === "string" ? channelType : String(channelType);
     const bidding = typeof biddingType === "string" ? biddingType : String(biddingType);
+    // Google Ads returns status as enum string ("ENABLED"/"PAUSED") or numeric
+    // (2=ENABLED, 3=PAUSED, 4=REMOVED). Normalize to the string form.
+    const STATUS_MAP = { 2: "ENABLED", 3: "PAUSED", 4: "REMOVED" };
+    const status = typeof statusRaw === "string" ? statusRaw : (STATUS_MAP[statusRaw] || String(statusRaw ?? ""));
     return {
       id: String(c?.id || ""),
       name: c?.name || `Campaign ${c?.id || ""}`,
       channel_type: channel,
+      status,
       bidding_strategy_type: bidding,
       supports_bid_multiplier: MANUAL_BIDDING_TYPES.has(bidding),
     };
@@ -197,6 +203,37 @@ const aggregateToCells = (rows) => {
   return Array.from(grid.values());
 };
 
+// Sum several campaigns' already-aggregated cell arrays into one 7×24 grid.
+// Used to build a filtered aggregate (e.g. only Search + only active campaigns)
+// on the fly from the stored per-campaign cells.
+const sumCampaignCells = (cellArrays) => {
+  const grid = new Map(); // key = `${day}_${hour}` → cell
+  for (const cells of cellArrays) {
+    for (const c of cells || []) {
+      const k = `${c.day_of_week}_${c.hour}`;
+      if (!grid.has(k)) {
+        grid.set(k, {
+          day_of_week: c.day_of_week,
+          hour: c.hour,
+          impressions: 0, clicks: 0, cost: 0, conversions: 0, conversion_value: 0,
+        });
+      }
+      const g = grid.get(k);
+      g.impressions += num(c.impressions);
+      g.clicks += num(c.clicks);
+      g.cost += num(c.cost);
+      g.conversions += num(c.conversions);
+      g.conversion_value += num(c.conversion_value);
+    }
+  }
+  return Array.from(grid.values());
+};
+
+// A campaign counts as "active" for the toggle when ENABLED. Older cached
+// reports predate the stored status field — treat missing status as active so
+// nothing silently disappears until the user regenerates.
+const isActiveStatus = (status) => !status || status === "ENABLED";
+
 // ============= MAIN GENERATION =============
 async function runHeatMapGeneration(userId, cid) {
   const tokenDoc = await GoogleAdsToken.findOne({ user: userId });
@@ -257,6 +294,7 @@ async function runHeatMapGeneration(userId, cid) {
       campaign_id: camp.id,
       campaign_name: camp.name,
       channel_type: camp.channel_type,
+      status: camp.status,
       bidding_strategy_type: camp.bidding_strategy_type,
       supports_bid_multiplier: camp.supports_bid_multiplier,
       cells: aggregateToCells(byCampaign.get(camp.id) || []),
@@ -433,7 +471,11 @@ export const getHeatMapStatus = async (req, res) => {
 export const getCachedHeatMap = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { customer_id, report_type, campaign_id } = req.body;
+    const {
+      customer_id, report_type, campaign_id,
+      channel_type,   // e.g. "SEARCH" | "PERFORMANCE_MAX" | "DEMAND_GEN" | "all"
+      status_filter,  // "active" (ENABLED only) | "all" (ENABLED + PAUSED)
+    } = req.body;
     if (!customer_id || !report_type) {
       return res.status(400).json({ error: "Missing customer_id or report_type" });
     }
@@ -446,32 +488,60 @@ export const getCachedHeatMap = async (req, res) => {
       return res.json({
         cells: [], mean_conv_rate: 0,
         per_campaign: [], total_campaigns: 0,
+        available_channels: [], filtered_campaign_count: 0,
         supports_bid_multiplier: false,
         selected_campaign: null,
       });
     }
 
-    // Pick which cells to smooth: a specific campaign or the aggregated view
+    const allCampaigns = doc.per_campaign || [];
+    const channelWanted = channel_type && channel_type !== "all" ? channel_type : null;
+    const activeOnly = status_filter === "active";
+
+    // Distinct channel types present (for the frontend's channel dropdown).
+    const available_channels = Array.from(
+      new Set(allCampaigns.map((c) => c.channel_type).filter(Boolean))
+    ).sort();
+
+    // Pick which cells to smooth: a specific campaign, or a filtered aggregate.
     let cells, supports;
     let selectedCampaign = null;
+    let filteredCount = 0;
+
     if (campaign_id && campaign_id !== "all") {
-      const camp = doc.per_campaign?.find((c) => c.campaign_id === String(campaign_id));
+      const camp = allCampaigns.find((c) => c.campaign_id === String(campaign_id));
       if (camp) {
         cells = camp.cells;
         supports = camp.supports_bid_multiplier;
+        filteredCount = 1;
         selectedCampaign = {
           id: camp.campaign_id, name: camp.campaign_name,
-          channel_type: camp.channel_type, bidding_strategy_type: camp.bidding_strategy_type,
+          channel_type: camp.channel_type, status: camp.status,
+          bidding_strategy_type: camp.bidding_strategy_type,
           supports_bid_multiplier: camp.supports_bid_multiplier,
         };
       } else {
         cells = []; supports = false;
       }
     } else {
-      cells = doc.aggregated_cells || [];
-      // For "all" view, multipliers only meaningful if EVERY campaign supports them.
+      // Filtered aggregate: sum cells across the campaigns matching the
+      // channel + status filters. Fall back to the precomputed aggregate only
+      // when no filters are applied (cheaper + identical result).
+      const subset = allCampaigns.filter(
+        (c) =>
+          (!channelWanted || c.channel_type === channelWanted) &&
+          (!activeOnly || isActiveStatus(c.status))
+      );
+      filteredCount = subset.length;
+
+      if (!channelWanted && !activeOnly) {
+        cells = doc.aggregated_cells || [];
+      } else {
+        cells = sumCampaignCells(subset.map((c) => c.cells));
+      }
+      // Multipliers only meaningful if EVERY campaign in the view supports them.
       // Mixed = disable multiplier suggestions to avoid misleading the user.
-      supports = doc.per_campaign?.every((c) => c.supports_bid_multiplier) || false;
+      supports = subset.length > 0 && subset.every((c) => c.supports_bid_multiplier);
     }
 
     const { cells: smoothed, mean_conv_rate } = buildSmoothedGrid(cells, supports);
@@ -479,19 +549,107 @@ export const getCachedHeatMap = async (req, res) => {
     res.json({
       cells: smoothed,
       mean_conv_rate,
-      per_campaign: (doc.per_campaign || []).map((c) => ({
+      per_campaign: allCampaigns.map((c) => ({
         id: c.campaign_id, name: c.campaign_name,
         channel_type: c.channel_type,
+        status: c.status,
         bidding_strategy_type: c.bidding_strategy_type,
         supports_bid_multiplier: c.supports_bid_multiplier,
       })),
       total_campaigns: doc.total_campaigns,
       manual_bidding_campaigns: doc.manual_bidding_campaigns,
+      available_channels,
+      filtered_campaign_count: filteredCount,
       supports_bid_multiplier: supports,
       selected_campaign: selectedCampaign,
       report_start_date: doc.report_start_date,
       report_end_date: doc.report_end_date,
     });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ============= EXPORT (download all data for AI analysis) =============
+// Dumps EVERY stored cell across all report periods and all campaigns as a
+// flat CSV — one row per (period × campaign × day × hour) with raw metrics
+// plus derived CTR / conv-rate / ROAS. Ignores the on-screen filters on
+// purpose: the whole point is to hand an AI the complete dataset.
+const DOW_NAMES = { 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday" };
+
+const csvCell = (v) => {
+  const s = v == null ? "" : String(v);
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+};
+
+const REPORT_LABELS = {
+  LAST_30_DAYS: "Last 30 Days",
+  LAST_60_DAYS: "Last 60 Days",
+  LAST_90_DAYS: "Last 90 Days",
+};
+
+export const exportHeatMap = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { customer_id } = req.body;
+    if (!customer_id) return res.status(400).json({ error: "Missing customer_id" });
+    const cid = formatCustomerId(customer_id);
+
+    const docs = await HeatMapReport.find({ user: userId, customer_id: cid }).lean();
+    if (!docs || docs.length === 0) {
+      return res.status(404).json({ error: "No heat map data to export. Generate reports first." });
+    }
+
+    const header = [
+      "report_period", "report_start_date", "report_end_date", "customer_id",
+      "campaign_id", "campaign_name", "channel_type", "status",
+      "bidding_strategy_type", "supports_bid_multiplier",
+      "day_of_week", "day_name", "hour",
+      "impressions", "clicks", "cost", "conversions", "conversion_value",
+      "ctr_pct", "conv_rate_pct", "roas",
+    ];
+    const lines = [header.join(",")];
+
+    // Deterministic period order (30 → 60 → 90) regardless of storage order.
+    const periodOrder = { LAST_30_DAYS: 0, LAST_60_DAYS: 1, LAST_90_DAYS: 2 };
+    docs.sort((a, b) => (periodOrder[a.report_type] ?? 9) - (periodOrder[b.report_type] ?? 9));
+
+    const fmtDate = (d) => (d ? new Date(d).toISOString().split("T")[0] : "");
+
+    for (const doc of docs) {
+      const period = REPORT_LABELS[doc.report_type] || doc.report_type;
+      const startD = fmtDate(doc.report_start_date);
+      const endD = fmtDate(doc.report_end_date);
+      for (const camp of doc.per_campaign || []) {
+        for (const c of camp.cells || []) {
+          const impressions = num(c.impressions);
+          const clicks = num(c.clicks);
+          const cost = num(c.cost);
+          const conversions = num(c.conversions);
+          const convValue = num(c.conversion_value);
+          const ctr = impressions > 0 ? (clicks / impressions) * 100 : 0;
+          const convRate = clicks > 0 ? (conversions / clicks) * 100 : 0;
+          const roas = cost > 0 ? convValue / cost : 0;
+          lines.push([
+            csvCell(period), csvCell(startD), csvCell(endD), csvCell(cid),
+            csvCell(camp.campaign_id), csvCell(camp.campaign_name),
+            csvCell(camp.channel_type), csvCell(camp.status || ""),
+            csvCell(camp.bidding_strategy_type), csvCell(camp.supports_bid_multiplier),
+            csvCell(c.day_of_week), csvCell(DOW_NAMES[c.day_of_week] || ""), csvCell(c.hour),
+            csvCell(impressions), csvCell(clicks), csvCell(cost.toFixed(2)),
+            csvCell(conversions), csvCell(convValue.toFixed(2)),
+            csvCell(ctr.toFixed(4)), csvCell(convRate.toFixed(4)), csvCell(roas.toFixed(4)),
+          ].join(","));
+        }
+      }
+    }
+
+    const csv = lines.join("\n");
+    const filename = `heatmap_${cid}_${new Date().toISOString().split("T")[0]}.csv`;
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    // Prepend a UTF-8 BOM so Excel opens it with correct encoding.
+    res.send("﻿" + csv);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

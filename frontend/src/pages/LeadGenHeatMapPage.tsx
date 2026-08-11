@@ -25,7 +25,7 @@ import { useUser } from "@/hooks/useUser";
 import {
   ArrowLeft, RefreshCw, Trash2, Calendar, Clock,
   AlertTriangle, ChevronDown, ChevronUp, MousePointerClick, Eye,
-  Target, DollarSign, TrendingUp, Sparkles,
+  Target, DollarSign, TrendingUp, Sparkles, Download, Filter,
 } from "lucide-react";
 import SEO from "@/components/SEO";
 import DashboardShell from "@/components/DashboardShell";
@@ -50,6 +50,7 @@ interface CampaignMeta {
   id: string;
   name: string;
   channel_type: string;
+  status?: string;
   bidding_strategy_type: string;
   supports_bid_multiplier: boolean;
 }
@@ -60,11 +61,31 @@ interface PeriodData {
   per_campaign: CampaignMeta[];
   total_campaigns: number;
   manual_bidding_campaigns: number;
+  available_channels?: string[];
+  filtered_campaign_count?: number;
   supports_bid_multiplier: boolean;
   selected_campaign: CampaignMeta | null;
   report_start_date?: string;
   report_end_date?: string;
 }
+
+// Friendly labels for Google Ads advertising_channel_type enum values.
+const CHANNEL_LABELS: Record<string, string> = {
+  SEARCH: "Search",
+  PERFORMANCE_MAX: "PMax",
+  DEMAND_GEN: "Demand Gen",
+  DISPLAY: "Display",
+  VIDEO: "Video",
+  SHOPPING: "Shopping",
+  DISCOVERY: "Discovery",
+  MULTI_CHANNEL: "Multi-channel",
+  LOCAL: "Local",
+  LOCAL_SERVICES: "Local Services",
+  SMART: "Smart",
+  TRAVEL: "Travel",
+};
+const channelLabel = (c: string) => CHANNEL_LABELS[c] || c;
+const isActive = (status?: string) => !status || status === "ENABLED";
 
 const REPORT_TABS = [
   { value: "LAST_30_DAYS", label: "Last 30 Days" },
@@ -130,11 +151,19 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState("");
   const [isClearing, setIsClearing] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<string>("all");
+  const [selectedChannel, setSelectedChannel] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all"); // "all" | "active"
   const [selectedMetric, setSelectedMetric] = useState<string>("conversions");
   const userPickedTabRef = useRef(false);
 
-  const loadCachedData = async (accountId: string, campaignFilter = "all") => {
+  const loadCachedData = async (
+    accountId: string,
+    campaignFilter = "all",
+    channelFilter = "all",
+    statusFilterVal = "all",
+  ) => {
     if (!userId || !accountId) {
       setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty() });
       return;
@@ -146,7 +175,10 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
         try {
           const { data } = await withAuthRetry(() =>
             axios.post(`${API_BASE}/cached`,
-              { user_id: userId, customer_id: accountId, report_type: value, campaign_id: campaignFilter },
+              {
+                user_id: userId, customer_id: accountId, report_type: value,
+                campaign_id: campaignFilter, channel_type: channelFilter, status_filter: statusFilterVal,
+              },
               getAuthHeaders())
           );
           return { value, data: data as PeriodData };
@@ -158,9 +190,9 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
     setReportData((prev) => {
       const next = { ...prev };
       for (const { value, data } of results) {
-        if (data?.cells?.length) {
+        if (data) {
           next[value] = data;
-          if (!firstAvailable) firstAvailable = value;
+          if (data.cells?.length && !firstAvailable) firstAvailable = value;
         }
       }
       return next;
@@ -171,16 +203,51 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
   useEffect(() => {
     userPickedTabRef.current = false;
     setSelectedCampaign("all");
-    loadCachedData(selectedAccountId, "all");
+    setSelectedChannel("all");
+    setStatusFilter("all");
+    loadCachedData(selectedAccountId, "all", "all", "all");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAccountId, userId]);
 
-  // Reload when campaign filter changes
+  // Reload when any filter changes
   useEffect(() => {
     if (!selectedAccountId) return;
-    loadCachedData(selectedAccountId, selectedCampaign);
+    loadCachedData(selectedAccountId, selectedCampaign, selectedChannel, statusFilter);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCampaign]);
+  }, [selectedCampaign, selectedChannel, statusFilter]);
+
+  // Changing channel/status can invalidate the picked campaign — reset to "all".
+  const handleChannelChange = (v: string) => { setSelectedCampaign("all"); setSelectedChannel(v); };
+  const handleStatusChange = (v: string) => { setSelectedCampaign("all"); setStatusFilter(v); };
+
+  const handleExport = async () => {
+    if (!selectedAccountId) return;
+    setIsExporting(true);
+    try {
+      const res = await withAuthRetry(() =>
+        axios.post(`${API_BASE}/export`,
+          { user_id: userId, customer_id: selectedAccountId },
+          { ...getAuthHeaders(), responseType: "blob" })
+      );
+      const blob = new Blob([res.data], { type: "text/csv;charset=utf-8" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `heatmap_${selectedAccountId}_${new Date().toISOString().split("T")[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      toast({ title: "Downloaded", description: "All heat map data exported as CSV." });
+    } catch (e: any) {
+      const notFound = e?.response?.status === 404;
+      toast({
+        title: "Export failed",
+        description: notFound ? "No data yet — click Generate Reports first." : (e.message || "Try again."),
+        variant: "destructive",
+      });
+    } finally { setIsExporting(false); }
+  };
 
   const pollUntilDone = async (accountId: string): Promise<any> => {
     const POLL_INTERVAL_MS = 4000;
@@ -261,6 +328,16 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
 
   const periodData = reportData[activeTab] || empty();
   const metric = METRICS.find((m) => m.key === selectedMetric) || METRICS[0];
+
+  // Channel-type options present in this account + campaign list narrowed by
+  // the active channel/status filters (the aggregate itself is filtered server-side).
+  const availableChannels = periodData.available_channels || [];
+  const visibleCampaigns = periodData.per_campaign.filter(
+    (c) =>
+      (selectedChannel === "all" || c.channel_type === selectedChannel) &&
+      (statusFilter === "all" || isActive(c.status))
+  );
+  const allCount = periodData.filtered_campaign_count ?? periodData.total_campaigns;
 
   // Build [day][hour] grid for fast lookup + min/max for color scaling
   const { grid, vmin, vmax, topActionable, bottomActionable } = useMemo(() => {
@@ -348,6 +425,10 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                   {isGenerating ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
                   {isGenerating ? "Generating..." : "Generate Reports"}
                 </Button>
+                <Button onClick={handleExport} disabled={isExporting || isGenerating} variant="outline" className="text-emerald-700 border-emerald-300 hover:bg-emerald-50">
+                  {isExporting ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+                  {isExporting ? "Exporting..." : "Download Data (CSV)"}
+                </Button>
                 <Button onClick={handleClear} disabled={isClearing || isGenerating || !periodData.cells.length} variant="outline" className="text-red-600 border-red-300 hover:bg-red-50">
                   <Trash2 className="w-4 h-4 mr-2" /> Clear Reports
                 </Button>
@@ -375,7 +456,7 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
 
           {REPORT_TABS.map((t) => (
             <TabsContent key={t.value} value={t.value} className="space-y-6">
-              {periodData.cells.length === 0 ? (
+              {periodData.per_campaign.length === 0 ? (
                 <Card>
                   <CardContent className="py-12 text-center text-gray-500">
                     <Clock className="w-12 h-12 mx-auto mb-3 text-gray-300" />
@@ -387,15 +468,45 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                 <>
                   {/* Filters */}
                   <div className="flex flex-wrap gap-3 items-center">
+                    {/* Channel-type filter: Search / PMax / Demand Gen / … */}
+                    <Select value={selectedChannel} onValueChange={handleChannelChange}>
+                      <SelectTrigger className="w-48">
+                        <span className="flex items-center gap-2 truncate">
+                          <Filter className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                          <SelectValue placeholder="Campaign type" />
+                        </span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All types</SelectItem>
+                        {availableChannels.map((ch) => (
+                          <SelectItem key={ch} value={ch}>{channelLabel(ch)}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {/* Active-only vs all (active + paused) */}
+                    <Select value={statusFilter} onValueChange={handleStatusChange}>
+                      <SelectTrigger className="w-44">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Active + Paused</SelectItem>
+                        <SelectItem value="active">Active only</SelectItem>
+                      </SelectContent>
+                    </Select>
+
                     <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
                       <SelectTrigger className="w-72">
                         <SelectValue placeholder="Campaign filter" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All campaigns ({periodData.total_campaigns})</SelectItem>
-                        {periodData.per_campaign.map((c) => (
+                        <SelectItem value="all">All campaigns ({allCount})</SelectItem>
+                        {visibleCampaigns.map((c) => (
                           <SelectItem key={c.id} value={c.id}>
-                            {c.name} <span className="text-gray-400 ml-1">({c.channel_type})</span>
+                            {c.name}{" "}
+                            <span className="text-gray-400 ml-1">
+                              ({channelLabel(c.channel_type)}{!isActive(c.status) ? " · Paused" : ""})
+                            </span>
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -421,6 +532,16 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                     )}
                   </div>
 
+                  {periodData.cells.length === 0 ? (
+                    <Card>
+                      <CardContent className="py-12 text-center text-gray-500">
+                        <Filter className="w-10 h-10 mx-auto mb-3 text-gray-300" />
+                        <p>No campaigns match the current filters.</p>
+                        <p className="text-sm mt-1">Try <strong>All types</strong> / <strong>Active + Paused</strong>, or a different period.</p>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                   <>
                   {/* Warning banner, show when multipliers won't be honored */}
                   {!periodData.supports_bid_multiplier && (
                     <div className="flex gap-3 p-4 bg-amber-50 border border-amber-300 rounded-lg">
@@ -555,6 +676,8 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                         </div>
                       </CardContent>
                     </Card>
+                  )}
+                   </>
                   )}
                 </>
               )}
