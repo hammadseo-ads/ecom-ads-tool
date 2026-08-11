@@ -24,7 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/hooks/useUser";
 import {
   ArrowLeft, RefreshCw, Trash2, MapPin, Trophy, TrendingDown, Layers,
-  Save, Download, Sparkles, ChevronUp, ChevronDown, AlertTriangle,
+  Save, Download, Sparkles, ChevronUp, ChevronDown, AlertTriangle, Filter,
 } from "lucide-react";
 import SEO from "@/components/SEO";
 import DashboardShell from "@/components/DashboardShell";
@@ -35,6 +35,7 @@ interface CampaignContrib {
   campaign_id: string;
   campaign_name: string;
   channel_type: string;
+  status?: string;
   impressions: number;
   clicks: number;
   cost: number;
@@ -93,6 +94,35 @@ const BUCKET_META: Record<string, { color: string; icon: any; description: strin
   Sparse: { color: "text-gray-600 bg-gray-50 border-gray-300", icon: Layers, description: "Below min-spend, not enough data yet" },
 };
 const BUCKET_ORDER = ["Winner", "Loser", "Sparse"];
+
+// Friendly labels for advertising_channel_type — keyed by enum name AND numeric
+// code (older cached reports may store the raw number).
+const CHANNEL_LABELS: Record<string, string> = {
+  SEARCH: "Search", "2": "Search",
+  DISPLAY: "Display", "3": "Display",
+  SHOPPING: "Shopping", "4": "Shopping",
+  HOTEL: "Hotel", "5": "Hotel",
+  VIDEO: "Video", "6": "Video",
+  MULTI_CHANNEL: "Multi-channel", "7": "Multi-channel",
+  LOCAL: "Local", "8": "Local",
+  SMART: "Smart", "9": "Smart",
+  PERFORMANCE_MAX: "PMax", "10": "PMax",
+  LOCAL_SERVICES: "Local Services", "11": "Local Services",
+  DISCOVERY: "Discovery", "12": "Discovery",
+  TRAVEL: "Travel", "13": "Travel",
+  DEMAND_GEN: "Demand Gen", "14": "Demand Gen",
+};
+const channelLabel = (c: string) => CHANNEL_LABELS[c] || c;
+const isActive = (status?: string) => !status || status === "ENABLED";
+
+// Client-side re-bucketing (mirrors backend bucketize) so a filtered view
+// (by campaign / channel / status) re-buckets from just the matching spend.
+const bucketizeClient = (cost: number, roas: number, t: Thresholds): string => {
+  if (cost < t.minSpend) return "Sparse";
+  if (roas >= t.targetRoas) return "Winner";
+  if (roas < t.maxLoserRoas) return "Loser";
+  return "Sparse";
+};
 
 const empty = (): PeriodData => ({ rows: [], summary_table: [], total_locations: 0, granularity: "postal_code" });
 
@@ -158,6 +188,9 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
   const [progress, setProgress] = useState("");
   const [isClearing, setIsClearing] = useState(false);
   const [selectedBucket, setSelectedBucket] = useState<string>("all");
+  const [selectedChannel, setSelectedChannel] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all"); // "all" | "active"
+  const [selectedCampaign, setSelectedCampaign] = useState<string>("all");
   const [sortBy, setSortBy] = useState<keyof GeoRow>("total_cost");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const userPickedTabRef = useRef(false);
@@ -187,6 +220,9 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
     }
     setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty() });
     setSelectedBucket("all");
+    setSelectedChannel("all");
+    setStatusFilter("all");
+    setSelectedCampaign("all");
 
     const results = await Promise.all(
       REPORT_TABS.map(async ({ value }) => {
@@ -310,8 +346,75 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
 
   const periodData = reportData[activeTab] || empty();
 
+  // Every campaign that contributed to any location (for the campaign dropdown
+  // + channel-type options). Each location embeds a per-campaign breakdown.
+  const campaignIndex = useMemo(() => {
+    const m = new Map<string, { id: string; name: string; channel_type: string; status?: string }>();
+    for (const r of periodData.rows || []) {
+      for (const c of r.campaigns || []) {
+        if (!m.has(c.campaign_id)) {
+          m.set(c.campaign_id, { id: c.campaign_id, name: c.campaign_name, channel_type: c.channel_type, status: c.status });
+        }
+      }
+    }
+    return m;
+  }, [periodData]);
+
+  const availableChannels = useMemo(() => {
+    const s = new Set<string>();
+    for (const c of campaignIndex.values()) if (c.channel_type) s.add(c.channel_type);
+    return Array.from(s).sort();
+  }, [campaignIndex]);
+
+  const visibleCampaigns = useMemo(
+    () => Array.from(campaignIndex.values()).filter(
+      (c) =>
+        (selectedChannel === "all" || c.channel_type === selectedChannel) &&
+        (statusFilter === "all" || isActive(c.status))
+    ),
+    [campaignIndex, selectedChannel, statusFilter]
+  );
+
+  // Re-aggregate each location from only the campaign contributions matching
+  // the channel / status / campaign filters, then re-bucket from that subset.
+  const processedRows = useMemo(() => {
+    const noFilter = selectedChannel === "all" && statusFilter === "all" && selectedCampaign === "all";
+    if (noFilter) return periodData.rows || [];
+    const out: GeoRow[] = [];
+    for (const r of periodData.rows || []) {
+      const contribs = (r.campaigns || []).filter(
+        (c) =>
+          (selectedChannel === "all" || c.channel_type === selectedChannel) &&
+          (statusFilter === "all" || isActive(c.status)) &&
+          (selectedCampaign === "all" || c.campaign_id === selectedCampaign)
+      );
+      if (contribs.length === 0) continue;
+      const impr = contribs.reduce((s, c) => s + (c.impressions || 0), 0);
+      const clicks = contribs.reduce((s, c) => s + (c.clicks || 0), 0);
+      const cost = contribs.reduce((s, c) => s + (c.cost || 0), 0);
+      const conv = contribs.reduce((s, c) => s + (c.conversions || 0), 0);
+      const convVal = contribs.reduce((s, c) => s + (c.conversion_value || 0), 0);
+      const roas = cost > 0 ? convVal / cost : 0;
+      out.push({
+        ...r,
+        total_impressions: impr,
+        total_clicks: clicks,
+        total_cost: cost,
+        total_conversions: conv,
+        total_conversion_value: convVal,
+        ctr: impr > 0 ? (clicks / impr) * 100 : 0,
+        conv_rate: clicks > 0 ? (conv / clicks) * 100 : 0,
+        roas,
+        cpa: conv > 0 ? cost / conv : 0,
+        bucket: bucketizeClient(cost, roas, thresholds),
+        campaigns: contribs,
+      });
+    }
+    return out;
+  }, [periodData, selectedChannel, statusFilter, selectedCampaign, thresholds]);
+
   const filteredRows = useMemo(() => {
-    let rows = periodData.rows || [];
+    let rows = processedRows;
     if (selectedBucket !== "all") rows = rows.filter((r) => r.bucket === selectedBucket);
     return [...rows].sort((a, b) => {
       const av = a[sortBy] as number;
@@ -319,7 +422,31 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
       const cmp = (av || 0) - (bv || 0);
       return sortDir === "asc" ? cmp : -cmp;
     });
-  }, [periodData, selectedBucket, sortBy, sortDir]);
+  }, [processedRows, selectedBucket, sortBy, sortDir]);
+
+  // Bucket summary computed from the (possibly filtered) processed rows.
+  const clientSummary = useMemo(() => {
+    const m = new Map<string, { bucket: string; num_locations: number; total_cost: number; total_conversions: number; total_conversion_value: number }>();
+    for (const r of processedRows) {
+      const b = r.bucket || "Sparse";
+      if (!m.has(b)) m.set(b, { bucket: b, num_locations: 0, total_cost: 0, total_conversions: 0, total_conversion_value: 0 });
+      const s = m.get(b)!;
+      s.num_locations += 1;
+      s.total_cost += r.total_cost;
+      s.total_conversions += r.total_conversions;
+      s.total_conversion_value += r.total_conversion_value;
+    }
+    return Array.from(m.values()).map((s) => ({
+      ...s,
+      roas: s.total_cost > 0 ? s.total_conversion_value / s.total_cost : 0,
+      cpa: s.total_conversions > 0 ? s.total_cost / s.total_conversions : 0,
+    }));
+  }, [processedRows]);
+
+  const totalProcessed = processedRows.length;
+
+  const handleChannelChange = (v: string) => { setSelectedCampaign("all"); setSelectedChannel(v); };
+  const handleStatusChange = (v: string) => { setSelectedCampaign("all"); setStatusFilter(v); };
 
   const SortHeader = ({ col, label }: { col: keyof GeoRow; label: string }) => (
     <th
@@ -336,27 +463,71 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
     </th>
   );
 
+  const csv = (v: any) => {
+    const s = v == null ? "" : String(v);
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+
+  // Current-view export: one row per location, respecting active filters.
   const exportCsv = () => {
     if (!filteredRows.length) return;
-    const headers = ["criterion_id", "name", "canonical_name", "country", "bucket", "impressions", "clicks", "ctr_pct", "cost", "conversions", "conv_value", "roas", "cpa", "channels"];
+    const headers = ["criterion_id", "name", "canonical_name", "country", "bucket", "impressions", "clicks", "ctr_pct", "cost", "conversions", "conv_value", "roas", "cpl", "channels"];
     const lines = [headers.join(",")];
     for (const r of filteredRows) {
-      const channels = Array.from(new Set(r.campaigns.map((c) => c.channel_type))).join("|");
+      const channels = Array.from(new Set(r.campaigns.map((c) => channelLabel(c.channel_type)))).join("|");
       lines.push([
-        r.criterion_id, `"${r.name}"`, `"${r.canonical_name}"`, r.country_code, r.bucket,
+        csv(r.criterion_id), csv(r.name), csv(r.canonical_name), csv(r.country_code), csv(r.bucket),
         r.total_impressions, r.total_clicks, r.ctr.toFixed(2),
         r.total_cost.toFixed(2), r.total_conversions.toFixed(2),
         r.total_conversion_value.toFixed(2), r.roas.toFixed(2), r.cpa.toFixed(2),
-        channels,
+        csv(channels),
       ].join(","));
     }
-    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+    const blob = new Blob(["﻿" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = `geo-${selectedAccountId}-${activeTab}-${granularity}-${selectedBucket}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  // Full export for AI analysis: every period × location × campaign contribution.
+  const handleDownloadAll = () => {
+    const headers = ["report_period", "granularity", "criterion_id", "location", "canonical_name", "country", "bucket",
+      "campaign_id", "campaign_name", "channel_type", "status", "impressions", "clicks", "cost", "conversions", "conv_value", "ctr_pct", "roas", "cpl"];
+    const lines = [headers.join(",")];
+    let any = false;
+    for (const tab of REPORT_TABS) {
+      const pd = reportData[tab.value];
+      for (const r of pd?.rows || []) {
+        for (const c of r.campaigns || []) {
+          any = true;
+          const impr = c.impressions || 0, clicks = c.clicks || 0, cost = c.cost || 0;
+          const conv = c.conversions || 0, convVal = c.conversion_value || 0;
+          lines.push([
+            csv(tab.label), csv(granularity), csv(r.criterion_id), csv(r.name), csv(r.canonical_name), csv(r.country_code), csv(r.bucket),
+            csv(c.campaign_id), csv(c.campaign_name), csv(channelLabel(c.channel_type)), csv(c.status || ""),
+            impr, clicks, cost.toFixed(2), conv, convVal.toFixed(2),
+            impr > 0 ? ((clicks / impr) * 100).toFixed(2) : "0",
+            cost > 0 ? (convVal / cost).toFixed(2) : "0",
+            conv > 0 ? (cost / conv).toFixed(2) : "",
+          ].join(","));
+        }
+      }
+    }
+    if (!any) {
+      toast({ title: "Nothing to download", description: "Generate reports first.", variant: "destructive" });
+      return;
+    }
+    const blob = new Blob(["﻿" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `geo-all-${selectedAccountId}-${granularity}-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "Downloaded", description: "All geo data (30/60/90 days) exported as CSV." });
   };
 
   return (
@@ -393,6 +564,9 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
                 <Button onClick={handleGenerate} disabled={isGenerating} className="bg-emerald-600 hover:bg-emerald-700 mt-5">
                   {isGenerating ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
                   {isGenerating ? "Generating..." : "Generate Reports"}
+                </Button>
+                <Button onClick={handleDownloadAll} disabled={isGenerating} variant="outline" className="text-emerald-700 border-emerald-300 hover:bg-emerald-50 mt-5">
+                  <Download className="w-4 h-4 mr-2" /> Download Data (CSV)
                 </Button>
                 <Button onClick={handleClear} disabled={isClearing || isGenerating || !periodData.total_locations} variant="outline" className="text-red-600 border-red-300 hover:bg-red-50 mt-5">
                   <Trash2 className="w-4 h-4 mr-2" /> Clear Reports
@@ -466,9 +640,9 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
                 </Card>
               ) : (
                 <>
-                  {/* Bucket cards */}
+                  {/* Bucket cards (reflect the current campaign/channel/status filters) */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {periodData.summary_table
+                    {clientSummary
                       .sort((a, b) => BUCKET_ORDER.indexOf(a.bucket) - BUCKET_ORDER.indexOf(b.bucket))
                       .map((s) => {
                         const meta = BUCKET_META[s.bucket];
@@ -495,7 +669,7 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
                     <Card className="border-2 border-gray-400 bg-gray-100">
                       <CardContent className="p-3">
                         <div className="text-xs font-semibold uppercase tracking-wide opacity-80">Total</div>
-                        <div className="text-2xl font-bold mt-1">{periodData.total_locations}</div>
+                        <div className="text-2xl font-bold mt-1">{totalProcessed}</div>
                         <div className="text-xs opacity-70 mt-1">locations</div>
                       </CardContent>
                     </Card>
@@ -513,20 +687,68 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
 
                   {/* Filters */}
                   <div className="flex flex-wrap gap-3 items-center">
+                    {/* Campaign-type filter: Search / PMax / Demand Gen / … */}
+                    <Select value={selectedChannel} onValueChange={handleChannelChange}>
+                      <SelectTrigger className="w-44">
+                        <span className="flex items-center gap-2 truncate">
+                          <Filter className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                          <SelectValue placeholder="Campaign type" />
+                        </span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All types</SelectItem>
+                        {availableChannels.map((ch) => (
+                          <SelectItem key={ch} value={ch}>{channelLabel(ch)}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {/* Active-only vs all */}
+                    <Select value={statusFilter} onValueChange={handleStatusChange}>
+                      <SelectTrigger className="w-44"><SelectValue placeholder="Status" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Active + Paused</SelectItem>
+                        <SelectItem value="active">Active only</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    {/* Campaign-level segregation */}
+                    <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
+                      <SelectTrigger className="w-72"><SelectValue placeholder="Filter by campaign" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All campaigns ({visibleCampaigns.length})</SelectItem>
+                        {visibleCampaigns.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {c.name}{" "}
+                            <span className="text-gray-400 ml-1">
+                              ({channelLabel(c.channel_type)}{!isActive(c.status) ? " · Paused" : ""})
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
                     <Select value={selectedBucket} onValueChange={setSelectedBucket}>
-                      <SelectTrigger className="w-64"><SelectValue placeholder="Filter by bucket" /></SelectTrigger>
+                      <SelectTrigger className="w-48"><SelectValue placeholder="Filter by bucket" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">All buckets</SelectItem>
                         {BUCKET_ORDER.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
                       </SelectContent>
                     </Select>
+
                     <Button onClick={exportCsv} variant="outline" disabled={!filteredRows.length}>
-                      <Download className="w-4 h-4 mr-2" /> Export CSV
+                      <Download className="w-4 h-4 mr-2" /> Export view
                     </Button>
                     <div className="text-sm text-gray-600 self-center ml-auto">
-                      Showing <span className="font-semibold">{filteredRows.length}</span> of {periodData.total_locations} locations
+                      Showing <span className="font-semibold">{filteredRows.length}</span> of {totalProcessed} locations
                     </div>
                   </div>
+
+                  {totalProcessed === 0 && (
+                    <div className="text-sm text-gray-500 border rounded-lg p-4 text-center">
+                      No locations match the current filters. Try <strong>All types</strong> / <strong>Active + Paused</strong> / <strong>All campaigns</strong>.
+                    </div>
+                  )}
 
                   {/* Table */}
                   <div className="bg-white rounded-lg border overflow-hidden">

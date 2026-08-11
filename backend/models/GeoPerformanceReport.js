@@ -35,6 +35,7 @@ const geoRowSchema = new mongoose.Schema({
     campaign_id: String,
     campaign_name: String,
     channel_type: String,
+    status: String,            // ENABLED | PAUSED — for the active-only toggle
     impressions: Number,
     clicks: Number,
     cost: Number,

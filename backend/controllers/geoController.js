@@ -17,7 +17,7 @@
 import GeoPerformanceReport from "../models/GeoPerformanceReport.js";
 import GoogleAdsToken from "../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../utils/googleAdsClient.js";
-import { CHANNEL_TYPE, enumName } from "../utils/googleAdsEnums.js";
+import { CHANNEL_TYPE, CAMPAIGN_STATUS, enumName } from "../utils/googleAdsEnums.js";
 
 const REPORT_TYPES = [
   { type: "LAST_30_DAYS", days: 30 },
@@ -94,7 +94,7 @@ const getJob = (userId, customerId, granularity) => jobs.get(jobKey(userId, cust
 const fetchCampaignTypeMap = async (tokenDoc, customerId, loginCustomerId) => {
   const client = getGoogleAdsClient(tokenDoc.refreshToken, customerId, loginCustomerId);
   const resp = await client.query(`
-    SELECT campaign.id, campaign.name, campaign.advertising_channel_type
+    SELECT campaign.id, campaign.name, campaign.advertising_channel_type, campaign.status
     FROM campaign WHERE campaign.status IN ('ENABLED', 'PAUSED')
   `);
   const map = new Map();
@@ -107,6 +107,7 @@ const fetchCampaignTypeMap = async (tokenDoc, customerId, loginCustomerId) => {
       campaign_id: String(c.id),
       campaign_name: c.name || `Campaign ${c.id}`,
       channel_type: ct,
+      status: enumName(CAMPAIGN_STATUS, c?.status),
     });
   }
   return map;
