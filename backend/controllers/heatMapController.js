@@ -21,6 +21,7 @@
 import HeatMapReport from "../models/HeatMapReport.js";
 import GoogleAdsToken from "../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../utils/googleAdsClient.js";
+import { CHANNEL_TYPE, BIDDING_STRATEGY_TYPE, CAMPAIGN_STATUS, enumName } from "../utils/googleAdsEnums.js";
 
 const REPORT_TYPES = [
   { type: "LAST_30_DAYS", days: 30 },
@@ -119,15 +120,12 @@ const listCampaignsWithBidding = async (tokenDoc, customerId, loginCustomerId) =
   `);
   return toArray(resp).map((row) => {
     const c = row.campaign || row;
-    const channelType = c?.advertising_channel_type ?? c?.advertisingChannelType;
-    const biddingType = c?.bidding_strategy_type ?? c?.biddingStrategyType;
-    const statusRaw = c?.status;
-    const channel = typeof channelType === "string" ? channelType : String(channelType);
-    const bidding = typeof biddingType === "string" ? biddingType : String(biddingType);
-    // Google Ads returns status as enum string ("ENABLED"/"PAUSED") or numeric
-    // (2=ENABLED, 3=PAUSED, 4=REMOVED). Normalize to the string form.
-    const STATUS_MAP = { 2: "ENABLED", 3: "PAUSED", 4: "REMOVED" };
-    const status = typeof statusRaw === "string" ? statusRaw : (STATUS_MAP[statusRaw] || String(statusRaw ?? ""));
+    // The google-ads-api client returns enum fields numerically (e.g. 2, 10),
+    // NOT as names. Decode them to canonical strings so channel filters, status
+    // toggles, and bidding badges read correctly (and match string comparisons).
+    const channel = enumName(CHANNEL_TYPE, c?.advertising_channel_type ?? c?.advertisingChannelType);
+    const bidding = enumName(BIDDING_STRATEGY_TYPE, c?.bidding_strategy_type ?? c?.biddingStrategyType);
+    const status = enumName(CAMPAIGN_STATUS, c?.status);
     return {
       id: String(c?.id || ""),
       name: c?.name || `Campaign ${c?.id || ""}`,

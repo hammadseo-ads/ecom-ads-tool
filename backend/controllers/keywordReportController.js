@@ -200,11 +200,13 @@ const fetchClassicSearchTerms = async (
       search_term: v.search_term || v.searchTerm || "(unknown)",
       campaign_id: String(camp.id || ""),
       campaign_name: camp.name || `Campaign ${camp.id || ""}`,
-      channel_type: typeof camp.advertising_channel_type === "string"
-        ? camp.advertising_channel_type
-        : typeof camp.advertisingChannelType === "string"
-        ? camp.advertisingChannelType
-        : "SEARCH",
+      // Decode numeric enums too — otherwise Shopping/Display terms would all
+      // fall back to "SEARCH", breaking the Lead-Gen Shopping exclusion.
+      channel_type: (() => {
+        const raw = camp.advertising_channel_type ?? camp.advertisingChannelType;
+        if (typeof raw === "string" && !/^\d+$/.test(raw)) return raw;
+        return CHANNEL_ENUM[Number(raw)] || "SEARCH";
+      })(),
       impressions: num(m.impressions),
       clicks: num(m.clicks),
       cost: num(m.cost_micros) / 1e6,

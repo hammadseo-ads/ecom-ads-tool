@@ -17,6 +17,7 @@
 import GeoPerformanceReport from "../models/GeoPerformanceReport.js";
 import GoogleAdsToken from "../models/GoogleAdsToken.js";
 import { getGoogleAdsClient, refreshGoogleToken } from "../utils/googleAdsClient.js";
+import { CHANNEL_TYPE, enumName } from "../utils/googleAdsEnums.js";
 
 const REPORT_TYPES = [
   { type: "LAST_30_DAYS", days: 30 },
@@ -99,11 +100,13 @@ const fetchCampaignTypeMap = async (tokenDoc, customerId, loginCustomerId) => {
   const map = new Map();
   for (const row of toArray(resp)) {
     const c = row.campaign || row;
-    const ct = c?.advertising_channel_type ?? c?.advertisingChannelType;
+    // Decode numeric enum (e.g. 10) → "PERFORMANCE_MAX" so per-row action
+    // labels (which test channel_type === "PERFORMANCE_MAX") work correctly.
+    const ct = enumName(CHANNEL_TYPE, c?.advertising_channel_type ?? c?.advertisingChannelType);
     map.set(String(c.id), {
       campaign_id: String(c.id),
       campaign_name: c.name || `Campaign ${c.id}`,
-      channel_type: typeof ct === "string" ? ct : String(ct),
+      channel_type: ct,
     });
   }
   return map;

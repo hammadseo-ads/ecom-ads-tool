@@ -65,20 +65,23 @@ interface PeriodData {
   report_end_date?: string;
 }
 
-// Friendly labels for Google Ads advertising_channel_type enum values.
+// Friendly labels for Google Ads advertising_channel_type. Keyed by both the
+// enum NAME and its numeric code, because older cached reports may store the
+// raw number (e.g. "10") the API returned before it was decoded server-side.
 const CHANNEL_LABELS: Record<string, string> = {
-  SEARCH: "Search",
-  PERFORMANCE_MAX: "PMax",
-  DEMAND_GEN: "Demand Gen",
-  DISPLAY: "Display",
-  VIDEO: "Video",
-  SHOPPING: "Shopping",
-  DISCOVERY: "Discovery",
-  MULTI_CHANNEL: "Multi-channel",
-  LOCAL: "Local",
-  LOCAL_SERVICES: "Local Services",
-  SMART: "Smart",
-  TRAVEL: "Travel",
+  SEARCH: "Search", "2": "Search",
+  DISPLAY: "Display", "3": "Display",
+  SHOPPING: "Shopping", "4": "Shopping",
+  HOTEL: "Hotel", "5": "Hotel",
+  VIDEO: "Video", "6": "Video",
+  MULTI_CHANNEL: "Multi-channel", "7": "Multi-channel",
+  LOCAL: "Local", "8": "Local",
+  SMART: "Smart", "9": "Smart",
+  PERFORMANCE_MAX: "PMax", "10": "PMax",
+  LOCAL_SERVICES: "Local Services", "11": "Local Services",
+  DISCOVERY: "Discovery", "12": "Discovery",
+  TRAVEL: "Travel", "13": "Travel",
+  DEMAND_GEN: "Demand Gen", "14": "Demand Gen",
 };
 const channelLabel = (c: string) => CHANNEL_LABELS[c] || c;
 const isActive = (status?: string) => !status || status === "ENABLED";
