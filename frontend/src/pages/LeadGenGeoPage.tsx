@@ -63,7 +63,7 @@ interface GeoRow {
 
 interface PeriodData {
   rows: GeoRow[];
-  summary_table: { bucket: string; num_locations: number; total_cost: number; total_conversions: number; total_conversion_value: number; roas: number; ctr: number }[];
+  summary_table: { bucket: string; num_locations: number; total_cost: number; total_conversions: number; total_conversion_value: number; roas: number; cpa: number; ctr: number }[];
   total_locations: number;
   granularity: string;
 }
@@ -483,7 +483,10 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
                               </div>
                               <div className="text-2xl font-bold">{s.num_locations}</div>
                               <div className="text-xs opacity-70 mt-1">
-                                {fmtMoney(s.total_cost)} · ROAS {s.roas.toFixed(2)}
+                                {fmtMoney(s.total_cost)} · {Math.round(s.total_conversions)} leads
+                              </div>
+                              <div className="text-xs opacity-70">
+                                CPL {s.cpa > 0 ? fmtMoney(s.cpa) : "-"} · ROAS {s.roas.toFixed(2)}
                               </div>
                             </CardContent>
                           </Card>
@@ -539,7 +542,7 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
                             <SortHeader col="total_cost" label="Cost" />
                             <SortHeader col="total_conversions" label="Conv" />
                             <SortHeader col="roas" label="ROAS" />
-                            <SortHeader col="cpa" label="CPA" />
+                            <SortHeader col="cpa" label="CPL" />
                           </tr>
                         </thead>
                         <tbody>

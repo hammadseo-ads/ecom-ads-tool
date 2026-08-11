@@ -205,7 +205,7 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
       toast({
         title: "Generation failed",
         description: e.response?.data?.error || e.message ||
-          "Try generating Keyword Reports first (Dashboard → Negative Keywords & Search Terms).",
+          "Try generating Lead Gen Keyword Reports first (Dashboard → Lead Gen → Keyword Reports).",
         variant: "destructive",
       });
     } finally { setIsGenerating(false); setProgress(""); }
@@ -300,7 +300,7 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
               Computed from your Keyword Analysis data, no Google API calls. Run{" "}
               <button
                 className="text-emerald-700 underline"
-                onClick={() => navigate("/dashboard/keywords")}
+                onClick={() => navigate("/dashboard/lead-gen/keywords")}
               >Keyword Reports</button>{" "}
               first, then Generate here.
             </span>
@@ -342,7 +342,7 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
                   <Select value={sourceType} onValueChange={(v: any) => setSourceType(v)}>
                     <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="SEARCH">Search / Shopping</SelectItem>
+                      <SelectItem value="SEARCH">Search</SelectItem>
                       <SelectItem value="PMAX">Performance Max</SelectItem>
                     </SelectContent>
                   </Select>
@@ -397,7 +397,7 @@ const LeadGenNGramInner = ({ selectedAccountId, selectedAccountName }: InnerProp
                       <p>No n-grams for {t.label.toLowerCase()} ({sourceType}, {ngramSize}-gram).</p>
                       <p className="text-sm mt-1">
                         Either no source data yet, run{" "}
-                        <button className="text-emerald-700 underline" onClick={() => navigate("/dashboard/keywords")}>
+                        <button className="text-emerald-700 underline" onClick={() => navigate("/dashboard/lead-gen/keywords")}>
                           Keyword Reports
                         </button>{" "}
                         first, or click <strong>Generate N-Grams</strong> above.

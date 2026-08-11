@@ -153,6 +153,18 @@ const ECOM_TOOLS: ToolCardSpec[] = [
 
 const LEADGEN_TOOLS: ToolCardSpec[] = [
   {
+    title: "Keyword & Search Terms",
+    description:
+      "Search terms bucketed by conversions and cost-per-lead (CPL) — not ROAS. Excludes Shopping. This is the source data for the Lead Gen N-Gram tool: run it first.",
+    icon: Search,
+    iconBg: "bg-emerald-100",
+    iconColor: "text-emerald-700",
+    buttonClass: "bg-emerald-600 hover:bg-emerald-700",
+    ctaLabel: "Open Keyword Reports",
+    to: "/dashboard/lead-gen/keywords",
+    requiresAccount: true,
+  },
+  {
     title: "Budget Wastage by Keywords",
     description:
       "Find search terms over the last 30 / 60 / 90 days that spent budget but produced zero conversions, the cleanest list of negative-keyword candidates for lead-gen accounts.",

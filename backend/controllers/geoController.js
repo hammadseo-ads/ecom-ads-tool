@@ -416,6 +416,8 @@ export const getCachedGeo = async (req, res) => {
       ...b,
       ctr: b.total_impressions > 0 ? (b.total_clicks / b.total_impressions) * 100 : 0,
       roas: b.total_cost > 0 ? b.total_conversion_value / b.total_cost : 0,
+      // CPL (cost per lead) — for lead-gen analysis where ROAS is ~0.
+      cpa: b.total_conversions > 0 ? b.total_cost / b.total_conversions : 0,
     }));
 
     res.json({

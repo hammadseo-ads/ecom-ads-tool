@@ -33,6 +33,7 @@ import LeadGenWastedKeywordsPage from "./pages/LeadGenWastedKeywordsPage";
 import LeadGenHeatMapPage from "./pages/LeadGenHeatMapPage";
 import LeadGenGeoPage from "./pages/LeadGenGeoPage";
 import LeadGenNGramPage from "./pages/LeadGenNGramPage";
+import LeadGenKeywordsReportPage from "./pages/LeadGenKeywordsReportPage";
 import LeadGenNegativeKeywordsGuide from "./pages/LeadGenNegativeKeywordsGuide";
 import WhiteLabelGoogleAds from "./pages/WhiteLabelGoogleAds";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -106,6 +107,7 @@ const App = () => {
                   <Route path="/dashboard/lead-gen/heatmap" element={<LeadGenHeatMapPage />} />
                   <Route path="/dashboard/lead-gen/geo" element={<LeadGenGeoPage />} />
                   <Route path="/dashboard/lead-gen/ngrams" element={<LeadGenNGramPage />} />
+                  <Route path="/dashboard/lead-gen/keywords" element={<LeadGenKeywordsReportPage />} />
                   <Route path="/account" element={<Account />} />
 
                   {/* Public */}
