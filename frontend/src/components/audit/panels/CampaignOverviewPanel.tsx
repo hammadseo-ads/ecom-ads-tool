@@ -120,9 +120,9 @@ const BIDDING_ABBREV: Record<string, string> = {
 const statusPill = (status: string, servingStatus: string, isBudgetLimited: boolean, biddingStatus: string) => {
   if (status === "PAUSED") return <Badge variant="outline" className="bg-gray-100 text-gray-700 border-gray-200">Paused</Badge>;
   if (status === "REMOVED") return <Badge variant="outline" className="bg-gray-50 text-gray-500 border-gray-200">Removed</Badge>;
-  if (isBudgetLimited) return <Badge variant="outline" className="bg-amber-50 text-amber-900 border-amber-200">Limited by Budget</Badge>;
-  if (biddingStatus === "LEARNING") return <Badge variant="outline" className="bg-blue-50 text-blue-800 border-blue-200">Learning</Badge>;
-  if (/^LIMITED_BY_/.test(biddingStatus || "")) return <Badge variant="outline" className="bg-amber-50 text-amber-900 border-amber-200">{biddingStatus.replace(/_/g, " ").toLowerCase()}</Badge>;
+  if (isBudgetLimited) return <Badge variant="outline" className="bg-slate-50 text-slate-900 border-slate-200">Limited by Budget</Badge>;
+  if (biddingStatus === "LEARNING") return <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200">Learning</Badge>;
+  if (/^LIMITED_BY_/.test(biddingStatus || "")) return <Badge variant="outline" className="bg-slate-50 text-slate-900 border-slate-200">{biddingStatus.replace(/_/g, " ").toLowerCase()}</Badge>;
   return <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200">Eligible</Badge>;
 };
 
@@ -135,7 +135,7 @@ const deltaChip = (pct: number | null) => {
     pct > 0
       ? isBig ? "text-emerald-700 font-semibold" : "text-emerald-600"
       : pct < 0
-      ? isBig ? "text-red-700 font-semibold" : "text-red-600"
+      ? isBig ? "text-slate-700 font-semibold" : "text-slate-600"
       : "text-gray-500";
   return (
     <span className={`inline-flex items-center gap-1 text-xs tabular-nums ${color}`}>
@@ -372,11 +372,11 @@ function CampaignRow({ r, striped, muted }: { r: CampaignRow; striped?: boolean;
         {r.cost > 0 ? fmtNum(r.actual_roas) : "—"}
       </td>
       <td className="py-2 px-3 text-right text-xs tabular-nums">
-        <span className={r.search_budget_lost_is != null && r.search_budget_lost_is >= 0.05 ? "text-amber-800 font-semibold" : "text-gray-500"}>
+        <span className={r.search_budget_lost_is != null && r.search_budget_lost_is >= 0.05 ? "text-slate-800 font-semibold" : "text-gray-500"}>
           {r.search_budget_lost_is != null ? fmtPct(r.search_budget_lost_is * 100, 0) : "—"}
         </span>
         {" / "}
-        <span className={r.search_rank_lost_is != null && r.search_rank_lost_is >= 0.3 ? "text-amber-800 font-semibold" : "text-gray-500"}>
+        <span className={r.search_rank_lost_is != null && r.search_rank_lost_is >= 0.3 ? "text-slate-800 font-semibold" : "text-gray-500"}>
           {r.search_rank_lost_is != null ? fmtPct(r.search_rank_lost_is * 100, 0) : "—"}
         </span>
       </td>

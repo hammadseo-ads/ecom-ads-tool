@@ -76,10 +76,10 @@ const fmtNum = (n: number, d = 2) => n.toFixed(d);
 
 const STRENGTH_META: Record<string, { label: string; className: string }> = {
   EXCELLENT: { label: "Excellent", className: "bg-emerald-50 text-emerald-800 border-emerald-200" },
-  GOOD: { label: "Good", className: "bg-blue-50 text-blue-800 border-blue-200" },
+  GOOD: { label: "Good", className: "bg-emerald-50 text-emerald-800 border-emerald-200" },
   AVERAGE: { label: "Average", className: "bg-gray-100 text-gray-700 border-gray-200" },
-  POOR: { label: "Poor", className: "bg-red-50 text-red-800 border-red-200" },
-  NO_ADS: { label: "No ads", className: "bg-red-50 text-red-800 border-red-200" },
+  POOR: { label: "Poor", className: "bg-slate-50 text-slate-800 border-slate-200" },
+  NO_ADS: { label: "No ads", className: "bg-slate-50 text-slate-800 border-slate-200" },
   UNSPECIFIED: { label: "—", className: "bg-gray-50 text-gray-500 border-gray-200" },
 };
 
@@ -136,12 +136,12 @@ export function StructurePanel({ snapshot, clientName }: Props) {
         </div>
         <div className="border border-gray-200 rounded-lg p-3">
           <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">No primary goal</div>
-          <div className={`text-2xl font-bold mt-1 ${active.summary.campaigns_no_primary > 0 ? "text-red-700" : "text-emerald-700"}`}>{active.summary.campaigns_no_primary}</div>
+          <div className={`text-2xl font-bold mt-1 ${active.summary.campaigns_no_primary > 0 ? "text-slate-700" : "text-emerald-700"}`}>{active.summary.campaigns_no_primary}</div>
           <div className="text-[11px] text-gray-500">campaigns</div>
         </div>
         <div className="border border-gray-200 rounded-lg p-3">
           <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Multi-primary goal</div>
-          <div className={`text-2xl font-bold mt-1 ${active.summary.campaigns_multi_primary > 0 ? "text-amber-800" : "text-emerald-700"}`}>{active.summary.campaigns_multi_primary}</div>
+          <div className={`text-2xl font-bold mt-1 ${active.summary.campaigns_multi_primary > 0 ? "text-slate-800" : "text-emerald-700"}`}>{active.summary.campaigns_multi_primary}</div>
           <div className="text-[11px] text-gray-500">campaigns</div>
         </div>
       </div>
@@ -284,11 +284,11 @@ export function StructurePanel({ snapshot, clientName }: Props) {
                   </td>
                   <td className="py-2 px-3 text-center">
                     {g.primary_count === 0 ? (
-                      <Badge variant="outline" className="bg-red-50 text-red-800 border-red-200 gap-1"><AlertTriangle className="w-3 h-3" />0</Badge>
+                      <Badge variant="outline" className="bg-slate-50 text-slate-800 border-slate-200 gap-1"><AlertTriangle className="w-3 h-3" />0</Badge>
                     ) : g.primary_count === 1 ? (
                       <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200 gap-1"><CheckCircle2 className="w-3 h-3" />1</Badge>
                     ) : (
-                      <Badge variant="outline" className="bg-amber-50 text-amber-900 border-amber-200 gap-1"><AlertTriangle className="w-3 h-3" />{g.primary_count}</Badge>
+                      <Badge variant="outline" className="bg-slate-50 text-slate-900 border-slate-200 gap-1"><AlertTriangle className="w-3 h-3" />{g.primary_count}</Badge>
                     )}
                   </td>
                   <td className="py-2 px-3 text-xs text-gray-600">

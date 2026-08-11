@@ -55,12 +55,12 @@ export function SearchTermsPanel({ snapshot, clientName }: Props) {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="border border-gray-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Search terms</div><div className="text-2xl font-bold text-gray-900 mt-1">{active.summary.total_search_terms.toLocaleString()}</div><div className="text-[11px] text-gray-500">Search / Shopping campaigns</div></div>
-        <div className="border border-gray-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Wasted (&gt;$50, 0 conv)</div><div className={`text-2xl font-bold mt-1 ${active.summary.wasted_search_terms > 0 ? "text-amber-800" : "text-emerald-700"}`}>{active.summary.wasted_search_terms}</div></div>
-        <div className="border border-gray-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Candidate keywords</div><div className="text-2xl font-bold text-blue-700 mt-1">{active.summary.candidate_keywords}</div><div className="text-[11px] text-gray-500">converted, not in keywords</div></div>
+        <div className="border border-gray-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Wasted (&gt;$50, 0 conv)</div><div className={`text-2xl font-bold mt-1 ${active.summary.wasted_search_terms > 0 ? "text-slate-800" : "text-emerald-700"}`}>{active.summary.wasted_search_terms}</div></div>
+        <div className="border border-gray-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Candidate keywords</div><div className="text-2xl font-bold text-emerald-700 mt-1">{active.summary.candidate_keywords}</div><div className="text-[11px] text-gray-500">converted, not in keywords</div></div>
         <div className="border border-gray-200 rounded-lg p-3"><div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">PMax categories</div><div className="text-2xl font-bold text-gray-900 mt-1">{active.summary.total_pmax_categories}</div></div>
       </div>
 
-      <div className="rounded-lg border border-blue-200 bg-blue-50/50 px-4 py-3 text-xs text-blue-900 flex items-start gap-2">
+      <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 px-4 py-3 text-xs text-emerald-900 flex items-start gap-2">
         <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
         <div>
           <div>{active.pmax_cost_note}</div>
@@ -104,7 +104,7 @@ export function SearchTermsPanel({ snapshot, clientName }: Props) {
                   <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(t.impressions)}</td>
                   <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(t.clicks)}</td>
                   <td className="py-2 px-3 text-right tabular-nums font-medium">{fmtCurrency(t.cost)}</td>
-                  <td className={`py-2 px-3 text-right tabular-nums text-xs ${t.conversions === 0 && t.cost >= 50 ? "text-amber-800 font-semibold" : ""}`}>{t.conversions.toFixed(1)}</td>
+                  <td className={`py-2 px-3 text-right tabular-nums text-xs ${t.conversions === 0 && t.cost >= 50 ? "text-slate-800 font-semibold" : ""}`}>{t.conversions.toFixed(1)}</td>
                   <td className="py-2 px-3 text-right tabular-nums font-medium text-emerald-700">{t.cost > 0 ? t.roas.toFixed(2) : "—"}</td>
                 </tr>
               ))}

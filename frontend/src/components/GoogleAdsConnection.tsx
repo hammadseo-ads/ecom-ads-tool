@@ -313,8 +313,8 @@ const GoogleAdsConnection: React.FC<GoogleAdsConnectionProps> = ({
   const statusBadge = (s: string) => {
     const map: Record<string, string> = {
       ENABLED: "bg-green-100 text-green-800",
-      PAUSED: "bg-yellow-100 text-yellow-800",
-      REMOVED: "bg-red-100 text-red-800",
+      PAUSED: "bg-slate-100 text-slate-800",
+      REMOVED: "bg-slate-100 text-slate-800",
     };
     return <Badge className={map[s] ?? "bg-gray-100 text-gray-800"}>{s}</Badge>;
   };
@@ -323,8 +323,8 @@ const GoogleAdsConnection: React.FC<GoogleAdsConnectionProps> = ({
     const map: Record<string, string> = {
       SERVING: "bg-green-100 text-green-800",
       ENDED: "bg-gray-100 text-gray-800",
-      PENDING: "bg-blue-100 text-blue-800",
-      SUSPENDED: "bg-red-100 text-red-800",
+      PENDING: "bg-emerald-100 text-emerald-800",
+      SUSPENDED: "bg-slate-100 text-slate-800",
     };
     return <Badge className={map[s] ?? "bg-gray-100 text-gray-800"}>{s}</Badge>;
   };
@@ -338,7 +338,7 @@ const GoogleAdsConnection: React.FC<GoogleAdsConnectionProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center space-x-2">
-                <ExternalLink className="w-5 h-5 text-blue-600" />
+                <ExternalLink className="w-5 h-5 text-emerald-600" />
                 <span>Google Ads Connections</span>
               </CardTitle>
               <CardDescription>
@@ -350,7 +350,7 @@ const GoogleAdsConnection: React.FC<GoogleAdsConnectionProps> = ({
               <Button
                 onClick={handleConnectGoogleAds}
                 disabled={isConnecting}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                className="bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-700 hover:to-indigo-700"
               >
                 {isConnecting ? (
                   <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
@@ -387,10 +387,10 @@ const GoogleAdsConnection: React.FC<GoogleAdsConnectionProps> = ({
           ) : (
             <div className="space-y-4">
               {accounts.length > 0 && clientAccounts.length === 0 && (
-                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg">
                   <div className="flex items-center space-x-2">
-                    <AlertCircle className="w-5 h-5 text-yellow-600" />
-                    <p className="text-sm text-yellow-800">
+                    <AlertCircle className="w-5 h-5 text-slate-600" />
+                    <p className="text-sm text-slate-800">
                       Only manager accounts found. You need client account access.
                     </p>
                   </div>
@@ -507,7 +507,7 @@ const GoogleAdsConnection: React.FC<GoogleAdsConnectionProps> = ({
                         if (!camp) return null;
                         return (
                           <TableRow key={camp.id ?? i}>
-                            <TableCell className="font-medium text-blue-600">
+                            <TableCell className="font-medium text-emerald-600">
                               {camp.name || "Unnamed"}
                             </TableCell>
                             <TableCell>{statusBadge(camp.status)}</TableCell>

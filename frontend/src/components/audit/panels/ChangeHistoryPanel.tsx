@@ -53,8 +53,8 @@ interface Props {
 
 const OP_LABEL: Record<string, { label: string; className: string }> = {
   CREATE: { label: "Create", className: "bg-emerald-50 text-emerald-800 border-emerald-200" },
-  UPDATE: { label: "Update", className: "bg-blue-50 text-blue-800 border-blue-200" },
-  REMOVE: { label: "Remove", className: "bg-red-50 text-red-800 border-red-200" },
+  UPDATE: { label: "Update", className: "bg-emerald-50 text-emerald-800 border-emerald-200" },
+  REMOVE: { label: "Remove", className: "bg-slate-50 text-slate-800 border-slate-200" },
 };
 
 const RESOURCE_LABEL: Record<string, string> = {
@@ -153,7 +153,7 @@ export function ChangeHistoryPanel({ snapshot, clientName }: Props) {
   return (
     <div className="p-5 space-y-4">
       {/* API cap boundary */}
-      <div className="rounded-lg border border-blue-200 bg-blue-50/50 px-4 py-2 text-xs text-blue-900 flex items-start gap-2">
+      <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 px-4 py-2 text-xs text-emerald-900 flex items-start gap-2">
         <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
         <div>
           Google's API caps this resource at the last <strong>{snapshot.api_cap_days} days</strong>, independent of the audit's time frame.
@@ -181,11 +181,11 @@ export function ChangeHistoryPanel({ snapshot, clientName }: Props) {
         </div>
         <div className="border border-gray-200 rounded-lg p-3">
           <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Updates</div>
-          <div className="text-2xl font-bold text-blue-700 mt-1">{snapshot.summary.by_operation.UPDATE}</div>
+          <div className="text-2xl font-bold text-emerald-700 mt-1">{snapshot.summary.by_operation.UPDATE}</div>
         </div>
         <div className="border border-gray-200 rounded-lg p-3">
           <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Removes</div>
-          <div className="text-2xl font-bold text-red-700 mt-1">{snapshot.summary.by_operation.REMOVE}</div>
+          <div className="text-2xl font-bold text-slate-700 mt-1">{snapshot.summary.by_operation.REMOVE}</div>
         </div>
       </div>
 
@@ -270,7 +270,7 @@ export function ChangeHistoryPanel({ snapshot, clientName }: Props) {
                       <span className="truncate max-w-[140px]" title={shortActor(e)}>{shortActor(e)}</span>
                     </div>
                     {e.material && (
-                      <div className="text-[10px] text-amber-800 font-semibold mt-0.5">Material</div>
+                      <div className="text-[10px] text-slate-800 font-semibold mt-0.5">Material</div>
                     )}
                   </td>
                   <td className="py-2 px-3 text-xs">

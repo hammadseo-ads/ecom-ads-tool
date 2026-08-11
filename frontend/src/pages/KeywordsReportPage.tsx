@@ -17,6 +17,7 @@ import {
   ChevronUp,
   ChevronDown,
   CheckCircle,
+  Download,
 } from "lucide-react";
 import DashboardShell from "@/components/DashboardShell";
 
@@ -74,12 +75,12 @@ const BUCKET_ORDER = [
 
 const BUCKET_COLOR: Record<string, string> = {
   Profitable: "text-green-700 bg-green-50 border-green-300",
-  "Costly Conversions": "text-yellow-700 bg-yellow-50 border-yellow-300",
-  "Wasteful Spend": "text-red-700 bg-red-50 border-red-300",
+  "Costly Conversions": "text-slate-700 bg-slate-50 border-slate-300",
+  "Wasteful Spend": "text-slate-700 bg-slate-50 border-slate-300",
   "Wasteful Clicks": "text-orange-700 bg-orange-50 border-orange-300",
-  "High Engagement, No Conversion": "text-amber-800 bg-amber-50 border-amber-300",
+  "High Engagement, No Conversion": "text-slate-800 bg-slate-50 border-slate-300",
   "Low Visibility": "text-gray-600 bg-gray-50 border-gray-300",
-  Other: "text-blue-700 bg-blue-50 border-blue-300",
+  Other: "text-emerald-700 bg-emerald-50 border-emerald-300",
 };
 
 const empty = (): PeriodData => ({
@@ -353,9 +354,36 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
     }
   }, [selectedCampaign, filteredTerms, periodData.term_details?.length]);
 
+  // Export the current (filtered) search-term table as CSV.
+  const exportCsv = () => {
+    if (!filteredTerms.length) return;
+    const csv = (v: any) => {
+      const s = v == null ? "" : String(v);
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const headers = ["search_term", "bucket", "source", "impressions", "clicks", "ctr_pct", "cost", "conversions", "conv_value", "roas"];
+    const lines = [headers.join(",")];
+    for (const r of filteredTerms) {
+      lines.push([
+        csv(r.search_term), csv(r.category), csv((r.channel_types || []).join("|")),
+        r.total_impressions, r.total_clicks, r.ctr.toFixed(2),
+        r.has_cost_data ? r.total_cost.toFixed(2) : "",
+        r.total_conversions.toFixed(2), r.total_conversion_value.toFixed(2),
+        r.has_cost_data && r.total_cost > 0 ? r.roas.toFixed(2) : "",
+      ].join(","));
+    }
+    const blob = new Blob(["﻿" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `search-terms-${selectedAccountId}-${activeTab}-${selectedBucket}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const SortHeader = ({ col, label }: { col: keyof TermRow; label: string }) => (
     <th
-      className="text-right px-3 py-2 cursor-pointer hover:text-blue-700 select-none"
+      className="text-right px-3 py-2 cursor-pointer hover:text-emerald-700 select-none"
       onClick={() => {
         if (sortBy === col) setSortDir(sortDir === "asc" ? "desc" : "asc");
         else { setSortBy(col); setSortDir("desc"); }
@@ -428,7 +456,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Search className="w-6 h-6 text-blue-600" />
+            <Search className="w-6 h-6 text-emerald-600" />
             <CardTitle className="text-2xl">Search Terms Analysis</CardTitle>
           </div>
           <CardDescription>
@@ -442,7 +470,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
           {selectedAccountId ? (
             <div className="space-y-3">
               <div className="flex flex-wrap gap-3">
-                <Button onClick={handleGenerate} disabled={isGenerating} className="bg-blue-600 hover:bg-blue-700">
+                <Button onClick={handleGenerate} disabled={isGenerating} className="bg-emerald-600 hover:bg-emerald-700">
                   {isGenerating ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
                   {isGenerating ? "Generating..." : "Generate Reports"}
                 </Button>
@@ -451,7 +479,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                 </Button>
               </div>
               {isGenerating && (
-                <div className="flex items-center gap-3 p-3 bg-blue-50 border border-blue-300 rounded text-sm text-blue-900">
+                <div className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-300 rounded text-sm text-emerald-900">
                   <RefreshCw className="w-4 h-4 animate-spin flex-shrink-0" />
                   <span>
                     <strong>Working in background:</strong> {generationProgress || "Starting..."}
@@ -467,9 +495,9 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
       </Card>
 
       {/* Warning banner */}
-      <div className="flex gap-3 p-4 bg-amber-50 border border-amber-300 rounded-lg">
-        <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-        <div className="text-sm text-amber-900">
+      <div className="flex gap-3 p-4 bg-slate-50 border border-slate-300 rounded-lg">
+        <AlertTriangle className="w-5 h-5 text-slate-600 flex-shrink-0 mt-0.5" />
+        <div className="text-sm text-slate-900">
           <p className="font-semibold mb-1">Before adding any term as a negative keyword, review it first.</p>
           <p>
             Some search terms may be highly relevant to your business but haven't converted yet (small sample, long sales cycle, indirect intent).
@@ -524,17 +552,17 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
 
                       {/* Wasted Spend (Search/Shopping cost-based) */}
                       {insightSections.hasCostData && insightSections.wastedSpendPct > 0 && (
-                        <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
+                        <div className="bg-slate-50 border-l-4 border-slate-500 p-6 rounded-r-lg">
                           <div className="flex items-start justify-between mb-3">
-                            <h4 className="text-lg font-semibold text-red-800">Wasted Spend</h4>
-                            <div className="bg-red-100 px-3 py-1 rounded-full">
-                              <span className="text-red-800 font-bold text-lg">{fmtPct(insightSections.wastedSpendPct)}</span>
+                            <h4 className="text-lg font-semibold text-slate-800">Wasted Spend</h4>
+                            <div className="bg-slate-100 px-3 py-1 rounded-full">
+                              <span className="text-slate-800 font-bold text-lg">{fmtPct(insightSections.wastedSpendPct)}</span>
                             </div>
                           </div>
-                          <p className="text-red-700">
+                          <p className="text-slate-700">
                             <strong>{fmtMoney(insightSections.wastedSpend)}</strong> of <strong>{fmtMoney(insightSections.totalCost)}</strong> went to search terms with no conversions over the past {tabLabel}.
                           </p>
-                          <p className="text-red-700 text-sm mt-2">
+                          <p className="text-slate-700 text-sm mt-2">
                             These are strong negative-keyword candidates. Filter the table to "Wasteful Spend", review each term, and add the irrelevant ones as exact-match negatives.
                           </p>
                         </div>
@@ -560,17 +588,17 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
 
                       {/* Review Candidates */}
                       {insightSections.reviewCount > 0 && (
-                        <div className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg">
+                        <div className="bg-slate-50 border-l-4 border-slate-500 p-6 rounded-r-lg">
                           <div className="flex items-start justify-between mb-3">
-                            <h4 className="text-lg font-semibold text-amber-900">Review Before Negativing</h4>
-                            <div className="bg-amber-100 px-3 py-1 rounded-full">
-                              <span className="text-amber-900 font-bold text-lg">{insightSections.reviewCount}</span>
+                            <h4 className="text-lg font-semibold text-slate-900">Review Before Negativing</h4>
+                            <div className="bg-slate-100 px-3 py-1 rounded-full">
+                              <span className="text-slate-900 font-bold text-lg">{insightSections.reviewCount}</span>
                             </div>
                           </div>
-                          <p className="text-amber-900">
+                          <p className="text-slate-900">
                             <strong>{insightSections.reviewCount} terms</strong> ({fmtPct(insightSections.reviewPct)} of total) have decent CTR but no conversions yet. They got <strong>{insightSections.reviewClicks.toLocaleString()}</strong> clicks total.
                           </p>
-                          <p className="text-amber-900 text-sm mt-2">
+                          <p className="text-slate-900 text-sm mt-2">
                             These look engaged, read each one. Some may be relevant terms with a long sales cycle, slow attribution, or just a small sample. Don't bulk-negative them.
                           </p>
                         </div>
@@ -578,17 +606,17 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
 
                       {/* Costly conversions */}
                       {insightSections.hasCostData && insightSections.costlyCount > 0 && (
-                        <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
+                        <div className="bg-slate-50 border-l-4 border-slate-500 p-6 rounded-r-lg">
                           <div className="flex items-start justify-between mb-3">
-                            <h4 className="text-lg font-semibold text-yellow-800">Costly Conversions (low ROAS)</h4>
-                            <div className="bg-yellow-100 px-3 py-1 rounded-full">
-                              <span className="text-yellow-800 font-bold text-lg">{insightSections.costlyCount}</span>
+                            <h4 className="text-lg font-semibold text-slate-800">Costly Conversions (low ROAS)</h4>
+                            <div className="bg-slate-100 px-3 py-1 rounded-full">
+                              <span className="text-slate-800 font-bold text-lg">{insightSections.costlyCount}</span>
                             </div>
                           </div>
-                          <p className="text-yellow-700">
+                          <p className="text-slate-700">
                             <strong>{insightSections.costlyCount} terms</strong> are converting but at low ROAS (&lt; 2.0). They burned <strong>{fmtMoney(insightSections.costlyCost)}</strong>.
                           </p>
-                          <p className="text-yellow-700 text-sm mt-2">
+                          <p className="text-slate-700 text-sm mt-2">
                             Consider lowering bids on the keywords that match these terms, or checking your landing-page conversion rate for them.
                           </p>
                         </div>
@@ -606,11 +634,11 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                             <span>Filter the table to <strong>"Wasteful Spend"</strong> and add the obviously irrelevant terms as exact-match negatives.</span>
                           </li>
                           <li className="flex items-start gap-2">
-                            <span className="font-semibold text-amber-700 whitespace-nowrap">• Same week:</span>
+                            <span className="font-semibold text-slate-700 whitespace-nowrap">• Same week:</span>
                             <span>Review every term in <strong>"High Engagement, No Conversion"</strong>. Don't bulk-negative, decide per term.</span>
                           </li>
                           <li className="flex items-start gap-2">
-                            <span className="font-semibold text-blue-700 whitespace-nowrap">• Long-term:</span>
+                            <span className="font-semibold text-emerald-700 whitespace-nowrap">• Long-term:</span>
                             <span>Build dedicated ad groups around themes from <strong>"Profitable"</strong> terms.</span>
                           </li>
                         </ul>
@@ -668,13 +696,16 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                         </SelectContent>
                       </Select>
                     )}
+                    <Button onClick={exportCsv} variant="outline" disabled={!filteredTerms.length}>
+                      <Download className="w-4 h-4 mr-2" /> Download CSV
+                    </Button>
                     <div className="text-sm text-gray-600 self-center ml-auto">
                       Showing <span className="font-semibold">{filteredTerms.length}</span> of {periodData.total_terms} terms
                     </div>
                   </div>
 
                   {selectedCampaign !== "all" && (
-                    <div className="bg-blue-50 border border-blue-300 rounded p-3 text-sm text-blue-900">
+                    <div className="bg-emerald-50 border border-emerald-300 rounded p-3 text-sm text-emerald-900">
                       🔍 <strong>Per-campaign view active.</strong> Metrics in the table below are the contribution
                       from <span className="font-mono">{periodData.campaign_list.find(c => c.id === selectedCampaign)?.name || selectedCampaign}</span> only, not the cross-campaign total. If you don't see numbers change after picking a campaign, your browser is still running the old build (hard refresh with Cmd/Ctrl+Shift+Delete → clear cached files for localhost, then reload).
                     </div>
@@ -706,7 +737,7 @@ const KeywordsReportInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                                   {r.search_term}
                                   {r.category === "High Engagement, No Conversion" && (
                                     <span title="May be a relevant term, review manually before negativing">
-                                      <Info className="w-3.5 h-3.5 text-amber-500" />
+                                      <Info className="w-3.5 h-3.5 text-slate-500" />
                                     </span>
                                   )}
                                 </span>

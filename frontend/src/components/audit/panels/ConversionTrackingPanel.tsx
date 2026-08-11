@@ -99,7 +99,7 @@ export function ConversionTrackingPanel({ snapshot, clientName }: Props) {
         </div>
       )}
 
-      <div className="rounded-lg border border-blue-200 bg-blue-50/50 px-4 py-3 text-xs text-blue-900 flex items-start gap-2">
+      <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 px-4 py-3 text-xs text-emerald-900 flex items-start gap-2">
         <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
         <div>{active.note}</div>
       </div>
@@ -116,7 +116,7 @@ export function ConversionTrackingPanel({ snapshot, clientName }: Props) {
         </div>
         <div className="border border-gray-200 rounded-lg p-3">
           <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Zero firing</div>
-          <div className={`text-2xl font-bold mt-1 ${active.summary.zero_firing > 0 ? "text-amber-800" : "text-emerald-700"}`}>{active.summary.zero_firing}</div>
+          <div className={`text-2xl font-bold mt-1 ${active.summary.zero_firing > 0 ? "text-slate-800" : "text-emerald-700"}`}>{active.summary.zero_firing}</div>
         </div>
         <div className="border border-gray-200 rounded-lg p-3">
           <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Total conv in window</div>
@@ -176,7 +176,7 @@ export function ConversionTrackingPanel({ snapshot, clientName }: Props) {
                     ? <Check className="w-4 h-4 text-emerald-600 inline-block" />
                     : <X className="w-4 h-4 text-gray-300 inline-block" />}
                 </td>
-                <td className={`py-2 px-3 text-right tabular-nums text-xs ${a.recent_conversions === 0 && a.status === "ENABLED" ? "text-amber-800 font-semibold" : ""}`}>
+                <td className={`py-2 px-3 text-right tabular-nums text-xs ${a.recent_conversions === 0 && a.status === "ENABLED" ? "text-slate-800 font-semibold" : ""}`}>
                   {a.recent_conversions.toFixed(1)}
                   {a.primary_conversions !== undefined && a.primary_conversions !== a.recent_conversions && (
                     <div className="text-[10px] text-gray-500">primary {a.primary_conversions.toFixed(1)}</div>

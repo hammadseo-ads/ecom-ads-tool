@@ -519,10 +519,10 @@ const UnifiedOnDemandReport: React.FC<UnifiedOnDemandReportProps> = ({
   const getCategoryBadgeColor = (cat: string) => {
     const map: Record<string, string> = {
       Profitable: 'bg-green-100 text-green-800',
-      Costly: 'bg-yellow-100 text-yellow-800',
+      Costly: 'bg-slate-100 text-slate-800',
       'Zero-Conversion': 'bg-red-100 text-red-800',
       Zombie: 'bg-gray-100 text-gray-800',
-      Uncategorized: 'bg-blue-100 text-blue-800',
+      Uncategorized: 'bg-emerald-100 text-emerald-800',
       TOTAL: 'bg-purple-100 text-purple-800 font-bold',
     };
     return map[cat] || 'bg-gray-100 text-gray-800';
@@ -587,7 +587,7 @@ const UnifiedOnDemandReport: React.FC<UnifiedOnDemandReportProps> = ({
                 with children other than itself. If list-accounts only returns
                 the selected account, it's a leaf, no need to ask again. */}
             {childAccounts.filter((a) => a.id !== selectedAccountId).length > 0 && (
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Select Child Account (MCC)
                 </label>
@@ -804,7 +804,7 @@ const UnifiedOnDemandReport: React.FC<UnifiedOnDemandReportProps> = ({
                               <TableRow key={`${p.product_item_id}-${p.campaign_id}-${i}`}>
                                 <TableCell className="min-w-[300px]">
                                   {p.product_link ? (
-                                    <a href={p.product_link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
+                                    <a href={p.product_link} target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline flex items-center gap-1">
                                       <span className="truncate max-w-md">{p.product_title}</span>
                                       <ExternalLink className="w-3 h-3 flex-shrink-0" />
                                     </a>

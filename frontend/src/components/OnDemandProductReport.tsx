@@ -156,10 +156,10 @@ const OnDemandProductReport: React.FC<OnDemandProductReportProps> = ({
   const getCategoryBadgeColor = (category: string) => {
     const colors: Record<string, string> = {
       'Profitable': 'bg-green-100 text-green-800',
-      'Costly': 'bg-yellow-100 text-yellow-800',
+      'Costly': 'bg-slate-100 text-slate-800',
       'Zero-Conversion': 'bg-red-100 text-red-800',
       'Zombie': 'bg-gray-100 text-gray-800',
-      'Uncategorized': 'bg-blue-100 text-blue-800'
+      'Uncategorized': 'bg-emerald-100 text-emerald-800'
     };
     return colors[category] || 'bg-gray-100 text-gray-800';
   };
@@ -333,7 +333,7 @@ const OnDemandProductReport: React.FC<OnDemandProductReportProps> = ({
                           <TableCell className="max-w-xs">
                             {p.product_link ? (
                               <a href={p.product_link} target="_blank" rel="noopener noreferrer"
-                                className="text-blue-600 hover:underline flex items-center gap-1">
+                                className="text-emerald-600 hover:underline flex items-center gap-1">
                                 <span className="truncate">{p.product_title}</span>
                                 <ExternalLink className="w-3 h-3" />
                               </a>

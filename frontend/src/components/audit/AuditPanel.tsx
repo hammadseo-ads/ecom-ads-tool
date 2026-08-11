@@ -65,14 +65,14 @@ interface AuditPanelProps {
 const STATUS_META: Record<PanelStatus, { label: string; icon: React.ElementType; className: string }> = {
   not_reviewed: { label: "Not reviewed", icon: CircleDot, className: "bg-gray-100 text-gray-700 border-gray-200" },
   reviewed: { label: "Reviewed", icon: CheckCircle2, className: "bg-emerald-50 text-emerald-800 border-emerald-200" },
-  flagged: { label: "Flagged for client fix", icon: AlertTriangle, className: "bg-amber-50 text-amber-900 border-amber-200" },
+  flagged: { label: "Flagged for client fix", icon: AlertTriangle, className: "bg-slate-50 text-slate-900 border-slate-200" },
   not_applicable: { label: "Not applicable", icon: MinusCircle, className: "bg-gray-50 text-gray-500 border-gray-200" },
 };
 
 const SEVERITY_META: Record<AuditFlag["severity"], { className: string; label: string }> = {
-  info: { className: "bg-blue-50 text-blue-800 border-blue-200", label: "Info" },
-  warn: { className: "bg-amber-50 text-amber-900 border-amber-200", label: "Warn" },
-  critical: { className: "bg-red-50 text-red-800 border-red-200", label: "Critical" },
+  info: { className: "bg-emerald-50 text-emerald-800 border-emerald-200", label: "Info" },
+  warn: { className: "bg-slate-50 text-slate-900 border-slate-200", label: "Warn" },
+  critical: { className: "bg-slate-50 text-slate-800 border-slate-200", label: "Critical" },
 };
 
 export function AuditPanel({
@@ -159,19 +159,19 @@ export function AuditPanel({
             <span className="text-xs font-bold text-gray-400 tabular-nums">Panel {String(panelNumber).padStart(2, "0")}</span>
             <h3 className="font-semibold text-gray-900 text-base">{title}</h3>
             {flags.length > 0 && (
-              <Badge variant="outline" className="bg-amber-50 text-amber-900 border-amber-200 gap-1">
+              <Badge variant="outline" className="bg-slate-50 text-slate-900 border-slate-200 gap-1">
                 <AlertTriangle className="w-3 h-3" />
                 {flags.length} flag{flags.length !== 1 ? "s" : ""}
               </Badge>
             )}
             {fetchStatus === "failed" && (
-              <Badge variant="outline" className="bg-red-50 text-red-800 border-red-200 gap-1">
+              <Badge variant="outline" className="bg-slate-50 text-slate-800 border-slate-200 gap-1">
                 <AlertTriangle className="w-3 h-3" />
                 Fetch failed
               </Badge>
             )}
             {fetchStatus === "partial" && (
-              <Badge variant="outline" className="bg-amber-50 text-amber-900 border-amber-200 gap-1">
+              <Badge variant="outline" className="bg-slate-50 text-slate-900 border-slate-200 gap-1">
                 <AlertTriangle className="w-3 h-3" />
                 Partial
               </Badge>
@@ -210,8 +210,8 @@ export function AuditPanel({
 
           {/* Flags */}
           {flags.length > 0 && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-4">
-              <div className="text-xs font-bold uppercase tracking-widest text-amber-900 mb-3">
+            <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-4">
+              <div className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-3">
                 Flags for this section ({flags.length})
               </div>
               <ul className="space-y-2">
@@ -239,21 +239,21 @@ export function AuditPanel({
               snapshot to the child component. Prevents the browser from
               choking on `undefined.length` etc. */}
           {fetchStatus === "failed" ? (
-            <div className="rounded-lg border border-red-200 bg-red-50/40 p-6">
+            <div className="rounded-lg border border-slate-200 bg-slate-50/40 p-6">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <AlertTriangle className="w-5 h-5 text-slate-600 flex-shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold text-red-900 mb-1">Fetch failed</div>
-                  <div className="text-sm text-red-800">
+                  <div className="text-sm font-bold text-slate-900 mb-1">Fetch failed</div>
+                  <div className="text-sm text-slate-800">
                     This panel's data couldn't be retrieved from Google Ads.
                     {dataFetchedAt && <> Last attempt: {new Date(dataFetchedAt).toLocaleString()}.</>}
                   </div>
                   {fetchError && (
-                    <div className="mt-2 rounded border border-red-200 bg-white/70 px-3 py-2 font-mono text-xs text-red-900 break-all">
+                    <div className="mt-2 rounded border border-slate-200 bg-white/70 px-3 py-2 font-mono text-xs text-slate-900 break-all">
                       {fetchError}
                     </div>
                   )}
-                  <div className="text-xs text-red-700/80 mt-2">
+                  <div className="text-xs text-slate-700/80 mt-2">
                     Try clicking Fetch again above. If the error persists, share the message.
                   </div>
                 </div>

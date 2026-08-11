@@ -11,17 +11,17 @@ interface Snapshot { time_frame: string; text_assets: TextAsset[]; images: Image
 interface Props { snapshot: Snapshot | null; clientName?: string; }
 const LABEL_META: Record<string, { className: string }> = {
   BEST: { className: "bg-emerald-50 text-emerald-800 border-emerald-200" },
-  GOOD: { className: "bg-blue-50 text-blue-800 border-blue-200" },
-  LOW: { className: "bg-red-50 text-red-800 border-red-200" },
-  LEARNING: { className: "bg-amber-50 text-amber-900 border-amber-200" },
+  GOOD: { className: "bg-emerald-50 text-emerald-800 border-emerald-200" },
+  LOW: { className: "bg-slate-50 text-slate-800 border-slate-200" },
+  LEARNING: { className: "bg-slate-50 text-slate-900 border-slate-200" },
   PENDING: { className: "bg-gray-50 text-gray-500 border-gray-200" },
   UNSPECIFIED: { className: "bg-gray-50 text-gray-500 border-gray-200" },
 };
 const APPROVAL_META: Record<string, { label: string; className: string }> = {
   APPROVED: { label: "Approved", className: "bg-emerald-50 text-emerald-800 border-emerald-200" },
-  APPROVED_LIMITED: { label: "Approved (limited)", className: "bg-amber-50 text-amber-900 border-amber-200" },
-  DISAPPROVED: { label: "Disapproved", className: "bg-red-50 text-red-800 border-red-200" },
-  UNDER_REVIEW: { label: "Under review", className: "bg-blue-50 text-blue-800 border-blue-200" },
+  APPROVED_LIMITED: { label: "Approved (limited)", className: "bg-slate-50 text-slate-900 border-slate-200" },
+  DISAPPROVED: { label: "Disapproved", className: "bg-slate-50 text-slate-800 border-slate-200" },
+  UNDER_REVIEW: { label: "Under review", className: "bg-emerald-50 text-emerald-800 border-emerald-200" },
   AREA_OF_INTEREST_ONLY: { label: "AOI only", className: "bg-gray-50 text-gray-500 border-gray-200" },
 };
 
@@ -54,21 +54,21 @@ export function CreativeAssetsPanel({ snapshot, clientName }: Props) {
           <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Headlines</div>
           <div className="text-2xl font-bold text-gray-900 mt-1">{snapshot.summary.headlines.total}</div>
           <div className="text-[11px] text-gray-500 mt-0.5">
-            BEST {snapshot.summary.headlines.by_label.BEST || 0} · LOW <span className={(snapshot.summary.headlines.by_label.LOW || 0) > 0 ? "text-red-700 font-semibold" : ""}>{snapshot.summary.headlines.by_label.LOW || 0}</span>
+            BEST {snapshot.summary.headlines.by_label.BEST || 0} · LOW <span className={(snapshot.summary.headlines.by_label.LOW || 0) > 0 ? "text-slate-700 font-semibold" : ""}>{snapshot.summary.headlines.by_label.LOW || 0}</span>
           </div>
         </div>
         <div className="border border-gray-200 rounded-lg p-3">
           <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Descriptions</div>
           <div className="text-2xl font-bold text-gray-900 mt-1">{snapshot.summary.descriptions.total}</div>
           <div className="text-[11px] text-gray-500 mt-0.5">
-            BEST {snapshot.summary.descriptions.by_label.BEST || 0} · LOW <span className={(snapshot.summary.descriptions.by_label.LOW || 0) > 0 ? "text-red-700 font-semibold" : ""}>{snapshot.summary.descriptions.by_label.LOW || 0}</span>
+            BEST {snapshot.summary.descriptions.by_label.BEST || 0} · LOW <span className={(snapshot.summary.descriptions.by_label.LOW || 0) > 0 ? "text-slate-700 font-semibold" : ""}>{snapshot.summary.descriptions.by_label.LOW || 0}</span>
           </div>
         </div>
         <div className="border border-gray-200 rounded-lg p-3">
           <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Images</div>
           <div className="text-2xl font-bold text-gray-900 mt-1">{snapshot.summary.images.total}</div>
           <div className="text-[11px] text-gray-500 mt-0.5">
-            <span className={snapshot.summary.images.disapproved > 0 ? "text-red-700 font-semibold" : ""}>{snapshot.summary.images.disapproved} disapproved</span> · {snapshot.summary.images.limited} limited
+            <span className={snapshot.summary.images.disapproved > 0 ? "text-slate-700 font-semibold" : ""}>{snapshot.summary.images.disapproved} disapproved</span> · {snapshot.summary.images.limited} limited
           </div>
         </div>
         <div className="border border-gray-200 rounded-lg p-3">
@@ -82,7 +82,7 @@ export function CreativeAssetsPanel({ snapshot, clientName }: Props) {
         </div>
       </div>
 
-      <div className="rounded-lg border border-blue-200 bg-blue-50/50 px-4 py-3 text-xs text-blue-900 flex items-start gap-2">
+      <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 px-4 py-3 text-xs text-emerald-900 flex items-start gap-2">
         <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" /><div>{snapshot.note}</div>
       </div>
 
@@ -128,8 +128,8 @@ export function CreativeAssetsPanel({ snapshot, clientName }: Props) {
                     <td className="py-2 px-3 max-w-[380px]"><div className="text-gray-900 truncate" title={a.text}>{a.text}</div></td>
                     <td className="py-2 px-3 text-xs"><Badge variant="outline" className={label.className}>{a.performance_label}</Badge></td>
                     <td className="py-2 px-3 text-xs max-w-[240px]"><div className="text-gray-800 truncate" title={a.ad_group_name}>{a.ad_group_name}</div><div className="text-[10px] text-gray-500 truncate" title={a.campaign_name}>{a.campaign_name}</div></td>
-                    <td className={`py-2 px-3 text-right tabular-nums text-xs ${a.char_count > a.char_limit ? "text-red-700 font-semibold" : ""}`}>{a.char_count} / {a.char_limit}</td>
-                    <td className="py-2 px-3 text-center">{a.is_pinned ? <Pin className="w-3.5 h-3.5 text-amber-700 inline-block" /> : ""}</td>
+                    <td className={`py-2 px-3 text-right tabular-nums text-xs ${a.char_count > a.char_limit ? "text-slate-700 font-semibold" : ""}`}>{a.char_count} / {a.char_limit}</td>
+                    <td className="py-2 px-3 text-center">{a.is_pinned ? <Pin className="w-3.5 h-3.5 text-slate-700 inline-block" /> : ""}</td>
                   </tr>
                 );
               })}

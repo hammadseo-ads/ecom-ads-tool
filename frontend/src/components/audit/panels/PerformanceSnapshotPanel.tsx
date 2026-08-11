@@ -102,7 +102,7 @@ const DeltaChip = ({ pct, invert = false }: { pct: number | null; invert?: boole
   const color = isPositive
     ? isBig ? "text-emerald-700 font-semibold" : "text-emerald-600"
     : isNegative
-    ? isBig ? "text-red-700 font-semibold" : "text-red-600"
+    ? isBig ? "text-slate-700 font-semibold" : "text-slate-600"
     : "text-gray-500";
   return (
     <span className={`inline-flex items-center gap-1 text-xs tabular-nums ${color}`}>

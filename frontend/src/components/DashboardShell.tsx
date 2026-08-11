@@ -196,11 +196,11 @@ const DashboardShell = ({ children, requireAccount = true }: DashboardShellProps
       )}
 
       {hasConnection && requireAccount && !selectedAccountId && (
-        <section className="bg-blue-50 border-b border-blue-200 py-8">
+        <section className="bg-emerald-50 border-b border-emerald-200 py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-blue-900 mb-4">Connected Already!</h2>
-              <p className="text-lg text-blue-800 mb-2">
+              <h2 className="text-2xl font-bold text-emerald-900 mb-4">Connected Already!</h2>
+              <p className="text-lg text-emerald-800 mb-2">
                 Select your Google Ads account from the dropdown above to continue.
               </p>
               <Button onClick={() => navigate("/dashboard")} variant="outline" className="mt-4">

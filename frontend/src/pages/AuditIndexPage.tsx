@@ -258,7 +258,7 @@ const AuditIndexInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
                       {a.title || `Audit — ${new Date(a.createdAt).toLocaleDateString()}`}
                     </span>
                     {a.status === "draft" && <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">Draft</Badge>}
-                    {a.status === "in_progress" && <Badge variant="outline" className="bg-blue-50 text-blue-800 border-blue-200">In progress</Badge>}
+                    {a.status === "in_progress" && <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200">In progress</Badge>}
                     {a.status === "sealed" && (
                       <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200 gap-1">
                         <Lock className="w-3 h-3" />
@@ -280,7 +280,7 @@ const AuditIndexInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {a.total_flags > 0 && (
-                    <Badge variant="outline" className="bg-amber-50 text-amber-900 border-amber-200 gap-1">
+                    <Badge variant="outline" className="bg-slate-50 text-slate-900 border-slate-200 gap-1">
                       <AlertTriangle className="w-3 h-3" />
                       {a.total_flags} flag{a.total_flags !== 1 ? "s" : ""}
                     </Badge>
@@ -315,7 +315,7 @@ const AuditIndexInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
                           <br />
                           Time frame: {TIME_FRAME_LABELS[a.time_frame] || a.time_frame}. All panel snapshots and notes will be permanently removed. This cannot be undone.
                           {a.status === "sealed" && (
-                            <span className="block mt-2 text-amber-800 font-medium">
+                            <span className="block mt-2 text-slate-800 font-medium">
                               This audit is <strong>sealed</strong>. Deleting removes the finalised deliverable.
                             </span>
                           )}
@@ -347,7 +347,7 @@ const AuditIndexInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
             <AlertDialogDescription>
               This permanently removes <strong>{audits.length}</strong> audit{audits.length !== 1 ? "s" : ""} for <strong>{selectedAccountName || selectedAccountId}</strong>, including all panel snapshots and notes. Audits for other Google Ads accounts are not affected. This cannot be undone.
               {audits.some((a) => a.status === "sealed") && (
-                <span className="block mt-2 text-amber-800 font-medium">
+                <span className="block mt-2 text-slate-800 font-medium">
                   {audits.filter((a) => a.status === "sealed").length} sealed audit{audits.filter((a) => a.status === "sealed").length !== 1 ? "s" : ""} will also be deleted.
                 </span>
               )}

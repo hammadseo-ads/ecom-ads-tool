@@ -182,7 +182,7 @@ const ProductPerformanceSection: React.FC<ProductPerformanceSectionProps> = ({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
-          <Calendar className="w-5 h-5 text-blue-600" />
+          <Calendar className="w-5 h-5 text-emerald-600" />
           <span>Product Performance Data</span>
         </CardTitle>
         <CardDescription>
@@ -196,7 +196,7 @@ const ProductPerformanceSection: React.FC<ProductPerformanceSectionProps> = ({
             <Button
               onClick={handleFetchProductData}
               disabled={!selectedAccountId || isFetching}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+              className="bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-700 hover:to-indigo-700 text-white"
             >
               {isFetching ? (
                 <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
@@ -223,17 +223,17 @@ const ProductPerformanceSection: React.FC<ProductPerformanceSectionProps> = ({
 
           {/* Progress Bar */}
           {isFetching && (
-            <div className="space-y-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="space-y-3 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
               <div className="flex justify-between text-sm">
-                <span className="font-medium text-blue-900">{fetchStatus}</span>
-                <span className="text-blue-700">{Math.round(fetchProgress)}%</span>
+                <span className="font-medium text-emerald-900">{fetchStatus}</span>
+                <span className="text-emerald-700">{Math.round(fetchProgress)}%</span>
               </div>
               <Progress value={fetchProgress} className="h-3" />
             </div>
           )}
 
           {/* Instructions */}
-          <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-5 rounded-lg border border-indigo-200">
+          <div className="bg-gradient-to-br from-indigo-50 to-emerald-50 p-5 rounded-lg border border-indigo-200">
             <h4 className="font-semibold text-indigo-900 mb-3">How to Use:</h4>
             <ol className="space-y-2 text-sm text-indigo-800 list-decimal list-inside">
               <li>Select your Google Ads account from the header above</li>

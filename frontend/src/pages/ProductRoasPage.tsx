@@ -106,13 +106,13 @@ const BUCKET_ORDER = ["Heroes", "Costly", "Zombies", "Sleepers", "Low Volume"];
 const BUCKET_META: Record<string, { color: string; icon: any; description: string }> = {
   Heroes: { color: "text-green-700 bg-green-50 border-green-300", icon: Trophy,
     description: "High ROAS, high spend, protect & scale" },
-  Costly: { color: "text-red-700 bg-red-50 border-red-300", icon: TrendingDown,
+  Costly: { color: "text-slate-700 bg-slate-50 border-slate-300", icon: TrendingDown,
     description: "High spend, weak ROAS, cut or restructure" },
   Zombies: { color: "text-gray-700 bg-gray-100 border-gray-400", icon: Skull,
     description: "Impressions but ZERO clicks, title/image issue" },
-  Sleepers: { color: "text-amber-800 bg-amber-50 border-amber-300", icon: Clock,
+  Sleepers: { color: "text-slate-800 bg-slate-50 border-slate-300", icon: Clock,
     description: "Clicks but ZERO conversions, funnel issue" },
-  "Low Volume": { color: "text-blue-700 bg-blue-50 border-blue-300", icon: Layers,
+  "Low Volume": { color: "text-emerald-700 bg-emerald-50 border-emerald-300", icon: Layers,
     description: "Below min-spend, insufficient data" },
 };
 

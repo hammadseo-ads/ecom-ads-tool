@@ -37,10 +37,10 @@ export function EmailVerificationBanner({ onDismiss }: EmailVerificationBannerPr
   };
 
   return (
-    <Alert className="border-yellow-200 bg-yellow-50 mb-4">
-      <Mail className="h-4 w-4 text-yellow-600" />
+    <Alert className="border-slate-200 bg-slate-50 mb-4">
+      <Mail className="h-4 w-4 text-slate-600" />
       <AlertDescription className="flex items-center justify-between w-full">
-        <div className="text-yellow-800">
+        <div className="text-slate-800">
           <strong>Email verification required:</strong> Please check your inbox (and spam folder) for a verification link.
         </div>
         <div className="flex items-center space-x-2 ml-4">
@@ -49,7 +49,7 @@ export function EmailVerificationBanner({ onDismiss }: EmailVerificationBannerPr
             size="sm"
             onClick={handleResendVerification}
             disabled={isResending}
-            className="border-yellow-300 text-yellow-700 hover:bg-yellow-100"
+            className="border-slate-300 text-slate-700 hover:bg-slate-100"
           >
             {isResending ? (
               <RefreshCw className="w-4 h-4 mr-1 animate-spin" />
@@ -62,7 +62,7 @@ export function EmailVerificationBanner({ onDismiss }: EmailVerificationBannerPr
             variant="ghost"
             size="sm"
             onClick={onDismiss}
-            className="text-yellow-600 hover:bg-yellow-100"
+            className="text-slate-600 hover:bg-slate-100"
           >
             <X className="w-4 h-4" />
           </Button>

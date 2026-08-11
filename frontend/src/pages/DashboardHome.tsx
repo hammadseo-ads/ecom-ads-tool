@@ -515,7 +515,7 @@ const DashboardHome = () => {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5 text-amber-600" />
+                    <AlertCircle className="w-5 h-5 text-slate-600" />
                     Pick a Google Ads account first
                   </DialogTitle>
                   <DialogDescription className="pt-2">

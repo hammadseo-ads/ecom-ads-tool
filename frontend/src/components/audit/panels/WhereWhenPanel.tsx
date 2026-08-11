@@ -231,7 +231,7 @@ export function WhereWhenPanel({ snapshot, clientName }: Props) {
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="rounded-lg border border-blue-200 bg-blue-50/50 px-3 py-2 text-xs text-blue-900 flex items-start gap-2">
+            <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 px-3 py-2 text-xs text-emerald-900 flex items-start gap-2">
               <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
               Google API v23+ exposes cost per ad-network for PMax. This is one of the few places you can see where PMax spend actually goes.
             </div>

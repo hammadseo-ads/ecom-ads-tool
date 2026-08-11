@@ -85,8 +85,8 @@ const BUCKET_ORDER = [
 
 const BUCKET_COLOR: Record<string, string> = {
   Converting: "text-green-700 bg-green-50 border-green-300",
-  "Wasteful Spend": "text-red-700 bg-red-50 border-red-300",
-  "High Engagement, No Conversion": "text-amber-800 bg-amber-50 border-amber-300",
+  "Wasteful Spend": "text-slate-700 bg-slate-50 border-slate-300",
+  "High Engagement, No Conversion": "text-slate-800 bg-slate-50 border-slate-300",
   "Low Visibility": "text-gray-600 bg-gray-50 border-gray-300",
 };
 
@@ -489,9 +489,9 @@ const LeadGenKeywordsInner = ({ selectedAccountId, selectedAccountName }: InnerP
       </Card>
 
       {/* Warning banner */}
-      <div className="flex gap-3 p-4 bg-amber-50 border border-amber-300 rounded-lg">
-        <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-        <div className="text-sm text-amber-900">
+      <div className="flex gap-3 p-4 bg-slate-50 border border-slate-300 rounded-lg">
+        <AlertTriangle className="w-5 h-5 text-slate-600 flex-shrink-0 mt-0.5" />
+        <div className="text-sm text-slate-900">
           <p className="font-semibold mb-1">Before adding any term as a negative keyword, review it first.</p>
           <p>
             Some search terms may be highly relevant but haven't converted yet (small sample, long sales cycle, indirect intent).
@@ -546,18 +546,18 @@ const LeadGenKeywordsInner = ({ selectedAccountId, selectedAccountName }: InnerP
                       )}
 
                       {insights.wastedPct > 0 && (
-                        <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
+                        <div className="bg-slate-50 border-l-4 border-slate-500 p-6 rounded-r-lg">
                           <div className="flex items-start justify-between mb-3">
-                            <h4 className="text-lg font-semibold text-red-800">Wasted spend</h4>
-                            <div className="bg-red-100 px-3 py-1 rounded-full">
-                              <span className="text-red-800 font-bold text-lg">{insights.wastedPct.toFixed(1)}%</span>
+                            <h4 className="text-lg font-semibold text-slate-800">Wasted spend</h4>
+                            <div className="bg-slate-100 px-3 py-1 rounded-full">
+                              <span className="text-slate-800 font-bold text-lg">{insights.wastedPct.toFixed(1)}%</span>
                             </div>
                           </div>
-                          <p className="text-red-700">
+                          <p className="text-slate-700">
                             <strong>{fmtMoney(insights.wastedCost)}</strong> of <strong>{fmtMoney(insights.totalCost)}</strong> went to{" "}
                             <strong>{insights.wastedTerms} terms</strong> with zero leads over the past {tabLabel}.
                           </p>
-                          <p className="text-red-700 text-sm mt-2">
+                          <p className="text-slate-700 text-sm mt-2">
                             These are your strongest negative-keyword candidates. Filter to "Wasteful Spend", review each, and add the
                             irrelevant ones as exact-match negatives.
                           </p>
@@ -565,14 +565,14 @@ const LeadGenKeywordsInner = ({ selectedAccountId, selectedAccountName }: InnerP
                       )}
 
                       {insights.reviewTerms > 0 && (
-                        <div className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg">
+                        <div className="bg-slate-50 border-l-4 border-slate-500 p-6 rounded-r-lg">
                           <div className="flex items-start justify-between mb-3">
-                            <h4 className="text-lg font-semibold text-amber-900">Review before negativing</h4>
-                            <div className="bg-amber-100 px-3 py-1 rounded-full">
-                              <span className="text-amber-900 font-bold text-lg">{insights.reviewTerms}</span>
+                            <h4 className="text-lg font-semibold text-slate-900">Review before negativing</h4>
+                            <div className="bg-slate-100 px-3 py-1 rounded-full">
+                              <span className="text-slate-900 font-bold text-lg">{insights.reviewTerms}</span>
                             </div>
                           </div>
-                          <p className="text-amber-900">
+                          <p className="text-slate-900">
                             <strong>{insights.reviewTerms} terms</strong> got clicks ({insights.reviewClicks.toLocaleString()} total) but
                             no leads yet. Some may be relevant with a slow sales cycle - read each before negativing.
                           </p>
@@ -586,7 +586,7 @@ const LeadGenKeywordsInner = ({ selectedAccountId, selectedAccountName }: InnerP
                         </div>
                         <ul className="space-y-2 text-sm text-gray-700">
                           <li className="flex items-start gap-2">
-                            <span className="font-semibold text-red-700 whitespace-nowrap">• Immediate:</span>
+                            <span className="font-semibold text-slate-700 whitespace-nowrap">• Immediate:</span>
                             <span>Filter to <strong>"Wasteful Spend"</strong> and add clearly irrelevant terms as exact-match negatives.</span>
                           </li>
                           <li className="flex items-start gap-2">
@@ -594,7 +594,7 @@ const LeadGenKeywordsInner = ({ selectedAccountId, selectedAccountName }: InnerP
                             <span>Sort <strong>"Converting"</strong> by CPL and rein in the high-CPL leads.</span>
                           </li>
                           <li className="flex items-start gap-2">
-                            <span className="font-semibold text-amber-700 whitespace-nowrap">• Review:</span>
+                            <span className="font-semibold text-slate-700 whitespace-nowrap">• Review:</span>
                             <span>Go through <strong>"High Engagement, No Conversion"</strong> one by one - don't bulk-negative.</span>
                           </li>
                         </ul>
@@ -686,7 +686,7 @@ const LeadGenKeywordsInner = ({ selectedAccountId, selectedAccountName }: InnerP
                                   {r.search_term}
                                   {r.lead_bucket === "High Engagement, No Conversion" && (
                                     <span title="Has clicks but no leads, review manually before negativing">
-                                      <Info className="w-3.5 h-3.5 text-amber-500" />
+                                      <Info className="w-3.5 h-3.5 text-slate-500" />
                                     </span>
                                   )}
                                 </span>

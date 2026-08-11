@@ -368,7 +368,7 @@ const Account = () => {
                 {hasConnection ? (
                   <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
                 ) : (
-                  <AlertCircle className="w-5 h-5 mr-2 text-amber-600" />
+                  <AlertCircle className="w-5 h-5 mr-2 text-slate-600" />
                 )}
                 Google Ads Connect Status
               </div>
@@ -380,7 +380,7 @@ const Account = () => {
                   className={`px-3 py-1 rounded-full text-xs font-medium ${
                     hasConnection
                       ? "bg-green-100 text-green-800 border border-green-200"
-                      : "bg-amber-100 text-amber-800 border border-amber-200"
+                      : "bg-slate-100 text-slate-800 border border-slate-200"
                   }`}
                 >
                   {hasConnection ? "Connected" : "Not Connected"}
@@ -409,7 +409,7 @@ const Account = () => {
                       onClick={handleRefreshAccounts}
                       disabled={isRefreshingAccounts}
                       variant="outline"
-                      className="w-full border-blue-300 text-blue-700 hover:bg-blue-50"
+                      className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-50"
                     >
                       {isRefreshingAccounts ? (
                         <RefreshCw className="w-4 h-4 mr-2 animate-spin" />

@@ -316,7 +316,7 @@ const AuditWorkspaceInner = ({ auditId }: { auditId: string }) => {
             {panelsReviewed} / {totalPanels} reviewed
           </Badge>
           {totalFlags > 0 && (
-            <Badge variant="outline" className="bg-amber-50 text-amber-900 border-amber-200">
+            <Badge variant="outline" className="bg-slate-50 text-slate-900 border-slate-200">
               {totalFlags} flag{totalFlags !== 1 ? "s" : ""}
             </Badge>
           )}

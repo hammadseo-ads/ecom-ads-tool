@@ -367,9 +367,9 @@ const NGramInner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
           </Card>
 
           {sourceType === "PMAX" && (
-            <div className="flex gap-3 p-4 bg-amber-50 border border-amber-300 rounded-lg">
-              <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-amber-900">
+            <div className="flex gap-3 p-4 bg-slate-50 border border-slate-300 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-slate-600 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-slate-900">
                 <p className="font-semibold mb-1">PMax n-grams have no cost data.</p>
                 <p>
                   Google does not expose cost-per-search-term for Performance Max. Conversions and
@@ -464,7 +464,7 @@ const NGramInner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
                     <Card>
                       <CardHeader>
                         <CardTitle className="text-lg flex items-center gap-2">
-                          <TrendingDown className="w-5 h-5 text-red-600" />
+                          <TrendingDown className="w-5 h-5 text-slate-600" />
                           Wasted {sourceType === "SEARCH" ? "Spend" : "Clicks"} N-Grams
                         </CardTitle>
                         <CardDescription>
@@ -500,7 +500,7 @@ const NGramInner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
                                   <td className="text-right px-3 py-2 tabular-nums">{r.total_impressions.toLocaleString()}</td>
                                   <td className="text-right px-3 py-2 tabular-nums">{r.total_clicks.toLocaleString()}</td>
                                   {sourceType === "SEARCH" && (
-                                    <td className="text-right px-3 py-2 tabular-nums font-semibold text-red-700">
+                                    <td className="text-right px-3 py-2 tabular-nums font-semibold text-slate-700">
                                       {r.has_cost_data ? fmtMoney(r.total_cost) : <span className="text-gray-300">-</span>}
                                     </td>
                                   )}

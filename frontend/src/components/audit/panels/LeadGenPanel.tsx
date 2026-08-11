@@ -114,7 +114,7 @@ export function LeadGenPanel({ snapshot, clientName }: Props) {
                 <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(f.impressions)}</td>
                 <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(f.clicks)}</td>
                 <td className="py-2 px-3 text-right tabular-nums text-xs font-medium">{f.submissions.toFixed(1)}</td>
-                <td className={`py-2 px-3 text-right tabular-nums text-xs font-medium ${f.submission_rate < 15 && f.clicks >= 100 ? "text-amber-800" : "text-emerald-700"}`}>{f.submission_rate.toFixed(1)}%</td>
+                <td className={`py-2 px-3 text-right tabular-nums text-xs font-medium ${f.submission_rate < 15 && f.clicks >= 100 ? "text-slate-800" : "text-emerald-700"}`}>{f.submission_rate.toFixed(1)}%</td>
                 <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtCurrency(f.cost)}</td>
                 <td className="py-2 px-3 text-right tabular-nums text-xs">{f.submissions > 0 ? fmtCurrency(f.cost_per_submission) : "—"}</td>
               </tr>

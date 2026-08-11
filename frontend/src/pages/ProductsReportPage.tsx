@@ -41,28 +41,28 @@ const ProductsReportPage = () => {
                 </Button>
               </div>
 
-              <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
+              <div className="bg-slate-50 border-l-4 border-slate-500 p-6 rounded-r-lg">
                 <div className="flex items-center mb-3">
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
-                  <h3 className="text-lg font-semibold text-yellow-800">Costly</h3>
+                  <div className="w-3 h-3 bg-slate-500 rounded-full mr-2"></div>
+                  <h3 className="text-lg font-semibold text-slate-800">Costly</h3>
                 </div>
-                <p className="text-yellow-700 mb-4">
+                <p className="text-slate-700 mb-4">
                   Products with ROAS between 0.0-3.0, breaking even but room for improvement.
                 </p>
-                <Button variant="outline" className="border-yellow-500 text-yellow-700 hover:bg-yellow-50" onClick={() => navigate("/guides/costly-products")}>
+                <Button variant="outline" className="border-slate-500 text-slate-700 hover:bg-slate-50" onClick={() => navigate("/guides/costly-products")}>
                   Optimization Guide
                 </Button>
               </div>
 
-              <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
+              <div className="bg-slate-50 border-l-4 border-slate-500 p-6 rounded-r-lg">
                 <div className="flex items-center mb-3">
-                  <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-                  <h3 className="text-lg font-semibold text-red-800">Zero-Conversion</h3>
+                  <div className="w-3 h-3 bg-slate-500 rounded-full mr-2"></div>
+                  <h3 className="text-lg font-semibold text-slate-800">Zero-Conversion</h3>
                 </div>
-                <p className="text-red-700 mb-4">
+                <p className="text-slate-700 mb-4">
                   Products spending money but generating no conversions. Consider pausing or optimizing.
                 </p>
-                <Button variant="outline" className="border-red-500 text-red-700 hover:bg-red-50" onClick={() => navigate("/guides/zero-conversion")}>
+                <Button variant="outline" className="border-slate-500 text-slate-700 hover:bg-slate-50" onClick={() => navigate("/guides/zero-conversion")}>
                   Diagnostic Guide
                 </Button>
               </div>
@@ -83,12 +83,12 @@ const ProductsReportPage = () => {
           </section>
 
           {/* Disclaimer */}
-          <section className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+          <section className="bg-slate-50 border border-slate-200 rounded-lg p-6">
             <div className="flex items-start">
-              <AlertTriangle className="w-6 h-6 text-yellow-600 mt-1 mr-3 flex-shrink-0" />
+              <AlertTriangle className="w-6 h-6 text-slate-600 mt-1 mr-3 flex-shrink-0" />
               <div>
-                <h3 className="text-lg font-semibold text-yellow-800 mb-2">Important Disclaimer</h3>
-                <p className="text-yellow-700">
+                <h3 className="text-lg font-semibold text-slate-800 mb-2">Important Disclaimer</h3>
+                <p className="text-slate-700">
                   <strong>Data Scope:</strong> This data calculation is specifically for shopping placements within your Shopping and Performance Max campaigns. If you are using Search Ads, Display Ads, or Video Ads, this data does not include segregation for those campaign types.
                 </p>
               </div>

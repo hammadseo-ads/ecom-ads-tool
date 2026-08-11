@@ -136,10 +136,10 @@ export function TargetingPanel({ snapshot, clientName }: Props) {
                   <td className="py-2 px-3 max-w-[280px]"><div className="text-gray-900 truncate" title={k.text}>{k.text}</div></td>
                   <td className="py-2 px-3 text-xs"><Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">{k.match_type}</Badge></td>
                   <td className="py-2 px-3 max-w-[220px] text-xs"><div className="text-gray-800 truncate" title={k.campaign_name}>{k.campaign_name}</div><div className="text-[10px] text-gray-500 truncate" title={k.ad_group_name}>{k.ad_group_name}</div></td>
-                  <td className={`py-2 px-3 text-right tabular-nums text-xs ${k.quality_score && k.quality_score <= 4 ? "text-amber-800 font-semibold" : ""}`}>{k.quality_score ?? "—"}</td>
+                  <td className={`py-2 px-3 text-right tabular-nums text-xs ${k.quality_score && k.quality_score <= 4 ? "text-slate-800 font-semibold" : ""}`}>{k.quality_score ?? "—"}</td>
                   <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(k.impressions)}</td>
                   <td className="py-2 px-3 text-right tabular-nums font-medium">{fmtCurrency(k.cost)}</td>
-                  <td className={`py-2 px-3 text-right tabular-nums text-xs ${k.match_type === "BROAD" && k.conversions === 0 && k.cost >= 50 ? "text-amber-800 font-semibold" : ""}`}>{k.conversions.toFixed(1)}</td>
+                  <td className={`py-2 px-3 text-right tabular-nums text-xs ${k.match_type === "BROAD" && k.conversions === 0 && k.cost >= 50 ? "text-slate-800 font-semibold" : ""}`}>{k.conversions.toFixed(1)}</td>
                   <td className="py-2 px-3 text-right tabular-nums font-medium text-emerald-700">{k.cost > 0 ? k.roas.toFixed(2) : "—"}</td>
                 </tr>
               ))}
@@ -216,7 +216,7 @@ export function TargetingPanel({ snapshot, clientName }: Props) {
       {tab === "user_locations" && (
         <div>
           {active.user_location_note && (
-            <div className="rounded-lg border border-blue-200 bg-blue-50/50 px-3 py-2 text-xs text-blue-900 mb-3 flex items-start gap-2">
+            <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 px-3 py-2 text-xs text-emerald-900 mb-3 flex items-start gap-2">
               <span>ℹ️</span><div>{active.user_location_note}</div>
             </div>
           )}
@@ -263,7 +263,7 @@ export function TargetingPanel({ snapshot, clientName }: Props) {
                     </td>
                     <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(l.impressions)}</td>
                     <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(l.clicks)}</td>
-                    <td className={`py-2 px-3 text-right tabular-nums font-medium ${l.cost > 50 && l.conversions === 0 ? "text-amber-800" : ""}`}>{fmtCurrency(l.cost)}</td>
+                    <td className={`py-2 px-3 text-right tabular-nums font-medium ${l.cost > 50 && l.conversions === 0 ? "text-slate-800" : ""}`}>{fmtCurrency(l.cost)}</td>
                     <td className="py-2 px-3 text-right tabular-nums text-xs">{l.conversions.toFixed(1)}</td>
                     <td className="py-2 px-3 text-right tabular-nums font-medium text-emerald-700">{l.cost > 0 ? l.roas.toFixed(2) : "—"}</td>
                     <td className="py-2 px-3 text-xs">

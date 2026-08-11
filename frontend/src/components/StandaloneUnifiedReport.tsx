@@ -117,17 +117,17 @@ const StandaloneUnifiedReport: React.FC<StandaloneUnifiedReportProps> = ({
 
         {/* Untapped Products */}
         {untappedPercentage > 0 && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-r-lg">
+        <div className="bg-slate-50 border-l-4 border-slate-500 p-6 rounded-r-lg">
           <div className="flex items-start justify-between mb-4">
-            <h4 className="text-lg font-semibold text-yellow-800">Untapped Products</h4>
-            <div className="bg-yellow-100 px-3 py-1 rounded-full">
-              <span className="text-yellow-800 font-bold text-lg">{formatPercentage(untappedPercentage)}</span>
+            <h4 className="text-lg font-semibold text-slate-800">Untapped Products</h4>
+            <div className="bg-slate-100 px-3 py-1 rounded-full">
+              <span className="text-slate-800 font-bold text-lg">{formatPercentage(untappedPercentage)}</span>
             </div>
           </div>
-          <p className="text-yellow-700 mb-4">
+          <p className="text-slate-700 mb-4">
             <strong>{zombieCount}</strong> out of <strong>{totalProducts}</strong> products are classified as "Zombie" products - meaning they have minimal visibility and spend in your campaigns.
           </p>
-          <p className="text-yellow-700 text-sm">
+          <p className="text-slate-700 text-sm">
             These products represent untapped potential. By strategically increasing spend on these items, you could discover hidden gems that drive additional sales for your store.
           </p>
         </div>
@@ -135,9 +135,9 @@ const StandaloneUnifiedReport: React.FC<StandaloneUnifiedReportProps> = ({
 
         {/* No Data Message */}
         {profitableBudgetPercentage === 0 && wastedPercentage === 0 && untappedPercentage === 0 && (
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
-          <h4 className="text-lg font-semibold text-blue-800 mb-2">No Significant Data Available</h4>
-          <p className="text-blue-700 text-sm">
+        <div className="bg-emerald-50 border-l-4 border-emerald-500 p-6 rounded-r-lg">
+          <h4 className="text-lg font-semibold text-emerald-800 mb-2">No Significant Data Available</h4>
+          <p className="text-emerald-700 text-sm">
             There is currently no data to analyze for this period or campaign. Generate reports to see insights about your campaign performance, budget allocation, and product profitability.
           </p>
         </div>
@@ -160,7 +160,7 @@ const StandaloneUnifiedReport: React.FC<StandaloneUnifiedReportProps> = ({
               <span>Pause or reduce spend on zero-conversion products to stop budget waste</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="font-semibold text-yellow-700">• Long-term:</span>
+              <span className="font-semibold text-slate-700">• Long-term:</span>
               <span>Test increased spend on zombie products to uncover hidden opportunities</span>
             </li>
           </ul>

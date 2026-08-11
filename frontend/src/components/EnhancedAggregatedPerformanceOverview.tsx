@@ -123,8 +123,8 @@ const EnhancedAggregatedPerformanceOverview: React.FC<Props> = ({
       profitable: "bg-green-100 text-green-800",
       costly: "bg-red-100 text-red-800",
       "zero-conversion": "bg-gray-100 text-gray-800",
-      zombie: "bg-yellow-100 text-yellow-800",
-      uncategorized: "bg-blue-100 text-blue-800",
+      zombie: "bg-slate-100 text-slate-800",
+      uncategorized: "bg-emerald-100 text-emerald-800",
     };
     return map[b.toLowerCase()] ?? "bg-gray-100 text-gray-800";
   };
@@ -346,7 +346,7 @@ const EnhancedAggregatedPerformanceOverview: React.FC<Props> = ({
         </div>
 
         {hasData && startDate && endDate && (
-          <div className="bg-blue-50 p-3 rounded-lg text-sm">
+          <div className="bg-emerald-50 p-3 rounded-lg text-sm">
             <strong>Data for:</strong> {startDate} – {endDate}
           </div>
         )}
@@ -423,7 +423,7 @@ const EnhancedAggregatedPerformanceOverview: React.FC<Props> = ({
                       <TableCell className="text-center font-bold text-2xl text-green-600">
                         {fmtROAS(topSummaryData.overall_roas)}
                       </TableCell>
-                      <TableCell className="text-center font-bold text-2xl text-blue-600">
+                      <TableCell className="text-center font-bold text-2xl text-emerald-600">
                         {fmtNum(topSummaryData.total_conversions)}
                       </TableCell>
                       <TableCell className="text-center font-bold text-2xl text-red-600">
@@ -482,7 +482,7 @@ const EnhancedAggregatedPerformanceOverview: React.FC<Props> = ({
                   <TableBody>
                     {paginated.map((p, i) => (
                       <TableRow key={`${p.product_id}-${i}`}>
-                        <TableCell className="font-medium text-blue-600">{p.product_id}</TableCell>
+                        <TableCell className="font-medium text-emerald-600">{p.product_id}</TableCell>
                         <TableCell className="max-w-xs truncate" title={p.product_title}>
                           {p.product_title}
                         </TableCell>

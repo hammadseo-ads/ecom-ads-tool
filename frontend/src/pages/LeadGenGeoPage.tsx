@@ -91,7 +91,7 @@ const GRANULARITIES = [
 
 const BUCKET_META: Record<string, { color: string; icon: any; description: string }> = {
   Winner: { color: "text-green-700 bg-green-50 border-green-300", icon: Trophy, description: "ROAS ≥ target, bid up or focus more here" },
-  Loser:  { color: "text-red-700 bg-red-50 border-red-300", icon: TrendingDown, description: "Spending without return, exclude or bid down" },
+  Loser:  { color: "text-slate-700 bg-slate-50 border-slate-300", icon: TrendingDown, description: "Spending without return, exclude or bid down" },
   Sparse: { color: "text-gray-600 bg-gray-50 border-gray-300", icon: Layers, description: "Below min-spend, not enough data yet" },
 };
 const BUCKET_ORDER = ["Winner", "Loser", "Sparse"];
@@ -161,9 +161,9 @@ const actionLabel = (row: GeoRow): { text: string; color: string } => {
     return { text: "Bid UP or focus more", color: "text-emerald-700" };
   }
   if (row.bucket === "Loser") {
-    if (hasPMax && !hasOther) return { text: "Exclude (PMax bid-down not allowed)", color: "text-red-700" };
-    if (hasPMax && hasOther) return { text: "Bid down on Search/Shopping; exclude in PMax", color: "text-red-700" };
-    return { text: "Bid DOWN or exclude", color: "text-red-700" };
+    if (hasPMax && !hasOther) return { text: "Exclude (PMax bid-down not allowed)", color: "text-slate-700" };
+    if (hasPMax && hasOther) return { text: "Bid down on Search/Shopping; exclude in PMax", color: "text-slate-700" };
+    return { text: "Bid DOWN or exclude", color: "text-slate-700" };
   }
   return { text: "Wait for more data", color: "text-gray-500" };
 };
@@ -690,9 +690,9 @@ const LeadGenGeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps)
                   </div>
 
                   {/* PMax warning */}
-                  <div className="flex gap-3 p-4 bg-amber-50 border border-amber-300 rounded-lg">
-                    <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-amber-900">
+                  <div className="flex gap-3 p-4 bg-slate-50 border border-slate-300 rounded-lg">
+                    <AlertTriangle className="w-5 h-5 text-slate-600 flex-shrink-0 mt-0.5" />
+                    <div className="text-sm text-slate-900">
                       <span className="font-semibold">Important:</span> PMax campaigns don't support
                       location-based bid adjustments, only full <em>exclusion</em>. Action labels
                       below are tailored per row based on which campaign types contributed.

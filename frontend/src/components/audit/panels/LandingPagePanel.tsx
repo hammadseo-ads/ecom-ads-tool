@@ -91,7 +91,7 @@ export function LandingPagePanel({ snapshot, clientName }: Props) {
         </div>
       )}
 
-      <div className="rounded-lg border border-blue-200 bg-blue-50/50 px-4 py-3 text-xs text-blue-900 flex items-start gap-2">
+      <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 px-4 py-3 text-xs text-emerald-900 flex items-start gap-2">
         <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
         <div>{active.note}</div>
       </div>

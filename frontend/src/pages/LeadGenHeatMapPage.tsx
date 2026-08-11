@@ -386,15 +386,16 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
   const cellColor = (val: number | null): string => {
     if (val == null) return "bg-gray-100 text-gray-400";
     if (selectedMetric === "suggested_bid_multiplier") {
-      // Diverging scale: -35% → red, 0 → neutral, +35% → green
+      // Diverging scale: positive → emerald (good hours), negative → slate.
+      // Static classes (not template literals) so Tailwind's purge keeps them.
       if (val > 0.001) {
         const intensity = Math.min(1, val / 0.35);
         const opacity = Math.round(intensity * 90);
-        return `bg-emerald-${opacity > 60 ? "500" : opacity > 30 ? "300" : "100"} text-emerald-900`;
+        return opacity > 60 ? "bg-emerald-500 text-white" : opacity > 30 ? "bg-emerald-300 text-emerald-900" : "bg-emerald-100 text-emerald-900";
       } else if (val < -0.001) {
         const intensity = Math.min(1, -val / 0.35);
         const opacity = Math.round(intensity * 90);
-        return `bg-red-${opacity > 60 ? "500" : opacity > 30 ? "300" : "100"} text-red-900`;
+        return opacity > 60 ? "bg-slate-500 text-white" : opacity > 30 ? "bg-slate-300 text-slate-900" : "bg-slate-100 text-slate-900";
       }
       return "bg-gray-50 text-gray-700";
     }
@@ -563,9 +564,9 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                    <>
                   {/* Warning banner, show when multipliers won't be honored */}
                   {!periodData.supports_bid_multiplier && (
-                    <div className="flex gap-3 p-4 bg-amber-50 border border-amber-300 rounded-lg">
-                      <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                      <div className="text-sm text-amber-900">
+                    <div className="flex gap-3 p-4 bg-slate-50 border border-slate-300 rounded-lg">
+                      <AlertTriangle className="w-5 h-5 text-slate-600 flex-shrink-0 mt-0.5" />
+                      <div className="text-sm text-slate-900">
                         <p className="font-semibold mb-1">
                           Bid-by-hour adjustments are NOT actionable for{" "}
                           {periodData.selected_campaign
@@ -677,11 +678,11 @@ const LeadGenHeatMapInner = ({ selectedAccountId, selectedAccountName }: InnerPr
                               ))}
                             </ul>
                           </div>
-                          <div className="border border-red-200 bg-red-50/40 rounded-lg p-4">
-                            <h4 className="font-semibold text-red-900 mb-2 text-sm flex items-center gap-2">
+                          <div className="border border-slate-200 bg-slate-50/40 rounded-lg p-4">
+                            <h4 className="font-semibold text-slate-900 mb-2 text-sm flex items-center gap-2">
                               <ChevronDown className="w-4 h-4" /> Bid DOWN these hours
                             </h4>
-                            <ul className="text-sm text-red-900 space-y-1">
+                            <ul className="text-sm text-slate-900 space-y-1">
                               {bottomActionable.length === 0 ? (
                                 <li className="text-gray-500 text-xs">Not enough variation to recommend bid-downs.</li>
                               ) : bottomActionable.map((c, i) => (

@@ -248,7 +248,7 @@ const AggregatedPerformanceOverview: React.FC<AggregatedPerformanceOverviewProps
                         <TableCell className="text-center font-bold text-2xl text-green-600">
                           {formatRoas(topSummaryData.overall_roas)}
                         </TableCell>
-                        <TableCell className="text-center font-bold text-2xl text-blue-600">
+                        <TableCell className="text-center font-bold text-2xl text-emerald-600">
                           {formatNumber(topSummaryData.total_conversions)}
                         </TableCell>
                         <TableCell className="text-center font-bold text-2xl text-red-600">
@@ -287,7 +287,7 @@ const AggregatedPerformanceOverview: React.FC<AggregatedPerformanceOverviewProps
                       <TableBody>
                         {productSummary.map((p, i) => (
                           <TableRow key={`${p.product_id}-${i}`}>
-                            <TableCell className="font-medium text-blue-600">
+                            <TableCell className="font-medium text-emerald-600">
                               {p.product_id}
                             </TableCell>
                             <TableCell className="max-w-xs truncate" title={p.product_title}>

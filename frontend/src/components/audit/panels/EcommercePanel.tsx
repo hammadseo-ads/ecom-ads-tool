@@ -130,8 +130,8 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="border border-emerald-200 rounded-lg p-3 bg-emerald-50/40"><div className="text-[10px] font-bold uppercase tracking-widest text-emerald-800">Heroes</div><div className="text-2xl font-bold text-emerald-700 mt-1">{s.heroes}</div><div className="text-[11px] text-gray-500">high ROAS + spend</div></div>
-        <div className="border border-red-200 rounded-lg p-3 bg-red-50/40"><div className="text-[10px] font-bold uppercase tracking-widest text-red-800">Costly</div><div className="text-2xl font-bold text-red-700 mt-1">{s.costly}</div><div className="text-[11px] text-gray-500">high spend, low ROAS</div></div>
-        <div className="border border-amber-200 rounded-lg p-3 bg-amber-50/40"><div className="text-[10px] font-bold uppercase tracking-widest text-amber-900">Zombies</div><div className="text-2xl font-bold text-amber-800 mt-1">{s.zombies}</div><div className="text-[11px] text-gray-500">impr, no clicks</div></div>
+        <div className="border border-slate-200 rounded-lg p-3 bg-slate-50/40"><div className="text-[10px] font-bold uppercase tracking-widest text-slate-800">Costly</div><div className="text-2xl font-bold text-slate-700 mt-1">{s.costly}</div><div className="text-[11px] text-gray-500">high spend, low ROAS</div></div>
+        <div className="border border-slate-200 rounded-lg p-3 bg-slate-50/40"><div className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Zombies</div><div className="text-2xl font-bold text-slate-800 mt-1">{s.zombies}</div><div className="text-[11px] text-gray-500">impr, no clicks</div></div>
         <div className="border border-orange-200 rounded-lg p-3 bg-orange-50/40"><div className="text-[10px] font-bold uppercase tracking-widest text-orange-900">Sleepers</div><div className="text-2xl font-bold text-orange-800 mt-1">{s.sleepers}</div><div className="text-[11px] text-gray-500">clicks, no conv</div></div>
       </div>
 
@@ -169,7 +169,7 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
               <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Account ROAS</div>
               <div className="text-2xl font-bold text-emerald-700 mt-1">{s.total_cost > 0 ? s.account_roas.toFixed(2) : "—"}</div>
               {s.breakeven_roas != null && (
-                <div className={`text-[11px] mt-0.5 ${(s.account_roas_vs_breakeven_pct ?? 0) < 0 ? "text-red-700 font-semibold" : "text-emerald-700"}`}>
+                <div className={`text-[11px] mt-0.5 ${(s.account_roas_vs_breakeven_pct ?? 0) < 0 ? "text-slate-700 font-semibold" : "text-emerald-700"}`}>
                   breakeven {s.breakeven_roas.toFixed(2)}× · {(s.account_roas_vs_breakeven_pct ?? 0) >= 0 ? "+" : ""}{(s.account_roas_vs_breakeven_pct ?? 0).toFixed(1)}% vs breakeven
                 </div>
               )}
@@ -180,7 +180,7 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
               Margin <strong>{((s.blended_margin_pct ?? 0) * 100).toFixed(0)}%</strong> → Breakeven ROAS <strong>{s.breakeven_roas.toFixed(2)}×</strong>. Account ROAS <strong>{s.account_roas.toFixed(2)}×</strong> means the ad account is currently <strong>{(s.account_roas_vs_breakeven_pct ?? 0) >= 0 ? "profitable" : "losing money"}</strong> on paid clicks.
             </div>
           )}
-          <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50/50 px-4 py-3 text-xs text-blue-900 flex items-start gap-2">
+          <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50/50 px-4 py-3 text-xs text-emerald-900 flex items-start gap-2">
             <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
             <div>{active.per_asset_group_note}</div>
           </div>
@@ -260,7 +260,7 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
           };
           return (
             <div>
-              <div className="rounded-lg border border-blue-200 bg-blue-50/50 px-3 py-2 text-xs text-blue-900 mb-3 flex items-start gap-2">
+              <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 px-3 py-2 text-xs text-emerald-900 mb-3 flex items-start gap-2">
                 <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
                 <div>
                   Per-product performance broken down by PMax asset group. Same view as Google Ads UI → Products → filter by asset group → Download. Google enforces one product per asset group per campaign, so no double-counting.
@@ -342,7 +342,7 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
                             </td>
                             <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(p.impressions)}</td>
                             <td className="py-2 px-3 text-right tabular-nums text-xs">{fmtInt(p.clicks)}</td>
-                            <td className={`py-2 px-3 text-right tabular-nums font-medium ${p.cost > 50 && p.conversions === 0 ? "text-amber-800" : ""}`}>{fmtCurrency(p.cost)}</td>
+                            <td className={`py-2 px-3 text-right tabular-nums font-medium ${p.cost > 50 && p.conversions === 0 ? "text-slate-800" : ""}`}>{fmtCurrency(p.cost)}</td>
                             <td className="py-2 px-3 text-right tabular-nums text-xs">{p.conversions.toFixed(1)}</td>
                             <td className="py-2 px-3 text-right tabular-nums text-xs">{p.conversions_value > 0 ? fmtCurrency(p.conversions_value) : "—"}</td>
                             <td className="py-2 px-3 text-right tabular-nums font-medium text-emerald-700">{p.cost > 0 ? p.roas.toFixed(2) : "—"}</td>
@@ -375,25 +375,25 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
             <Button size="sm" variant="outline" onClick={downloadEligibility}><Download className="w-3.5 h-3.5 mr-1.5" /> CSV</Button>
           </div>
           {active.issue_codes_summary && active.issue_codes_summary.length > 0 && (
-            <div className="mb-3 border border-amber-200 rounded-lg bg-amber-50/40 p-3">
-              <div className="text-xs font-bold uppercase tracking-widest text-amber-900 mb-2">Issue codes breakdown</div>
+            <div className="mb-3 border border-slate-200 rounded-lg bg-slate-50/40 p-3">
+              <div className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-2">Issue codes breakdown</div>
               <div className="space-y-1 text-xs">
                 {active.issue_codes_summary.slice(0, 15).map((ic) => (
                   <div key={ic.code} className="flex items-start gap-2">
-                    <Badge variant="outline" className="bg-white text-amber-900 border-amber-300 tabular-nums font-mono text-[10px] flex-shrink-0">
+                    <Badge variant="outline" className="bg-white text-slate-900 border-slate-300 tabular-nums font-mono text-[10px] flex-shrink-0">
                       {ic.count}×
                     </Badge>
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-gray-900 truncate" title={ic.code}>{ic.code}</div>
                       {ic.description && <div className="text-gray-600 text-[11px]">{ic.description}</div>}
                     </div>
-                    <Badge variant="outline" className={ic.severity === "error" ? "bg-red-50 text-red-800 border-red-200" : ic.severity === "warning" ? "bg-amber-50 text-amber-900 border-amber-200" : "bg-gray-50 text-gray-600 border-gray-200"}>
+                    <Badge variant="outline" className={ic.severity === "error" ? "bg-slate-50 text-slate-800 border-slate-200" : ic.severity === "warning" ? "bg-slate-50 text-slate-900 border-slate-200" : "bg-gray-50 text-gray-600 border-gray-200"}>
                       {ic.severity || "—"}
                     </Badge>
                   </div>
                 ))}
                 {active.issue_codes_summary.length > 15 && (
-                  <div className="text-[11px] text-amber-700 pt-1">
+                  <div className="text-[11px] text-slate-700 pt-1">
                     +{active.issue_codes_summary.length - 15} more issue types. Full data in CSV.
                   </div>
                 )}
@@ -423,12 +423,12 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
                       {p.status === "READY_TO_SERVE" ? (
                         <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200">Ready</Badge>
                       ) : p.status === "NOT_ELIGIBLE" ? (
-                        <Badge variant="outline" className="bg-red-50 text-red-800 border-red-200">Not eligible</Badge>
+                        <Badge variant="outline" className="bg-slate-50 text-slate-800 border-slate-200">Not eligible</Badge>
                       ) : (
                         <Badge variant="outline" className="bg-gray-50 text-gray-600 border-gray-200">{p.status}</Badge>
                       )}
                     </td>
-                    <td className={`py-2 px-3 text-right tabular-nums text-xs ${p.issues.length > 0 ? "text-amber-800 font-semibold" : "text-gray-400"}`}>{p.issues.length}</td>
+                    <td className={`py-2 px-3 text-right tabular-nums text-xs ${p.issues.length > 0 ? "text-slate-800 font-semibold" : "text-gray-400"}`}>{p.issues.length}</td>
                   </tr>
                 ))}
               </tbody>
@@ -446,7 +446,7 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
             </div>
           ) : (
             <div className="space-y-2">
-              <div className="text-xs text-red-800 border border-red-200 bg-red-50/50 rounded-lg p-3">
+              <div className="text-xs text-slate-800 border border-slate-200 bg-slate-50/50 rounded-lg p-3">
                 <strong>{overlaps.length} products</strong> appear in more than one asset group within the same campaign. Google's own guidance is that this shouldn't happen — it usually indicates a feed / listing-group misconfig where asset groups compete against each other in the auction.
               </div>
               {overlaps.slice(0, 100).map((o) => (
@@ -455,7 +455,7 @@ export function EcommercePanel({ snapshot, clientName }: Props) {
                   <div className="text-xs text-gray-500 mb-2 truncate" title={o.campaign_name}>Campaign: {o.campaign_name}</div>
                   <div className="space-y-1">
                     {o.asset_groups.map((ag) => (
-                      <div key={ag.asset_group_id} className="text-xs flex justify-between border-l-2 border-red-200 pl-2">
+                      <div key={ag.asset_group_id} className="text-xs flex justify-between border-l-2 border-slate-200 pl-2">
                         <span className="text-gray-800 truncate">{ag.asset_group_name}</span>
                         <span className="tabular-nums text-gray-600">{fmtInt(ag.impressions)} impr · {fmtCurrency(ag.cost)}</span>
                       </div>
