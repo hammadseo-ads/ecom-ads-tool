@@ -140,7 +140,7 @@ async function exchangeCodeForTokens(code) {
 async function listAccessibleCustomers(accessToken) {
   logger.info("📞 Calling listAccessibleCustomers...");
 
-  const url = "https://googleads.googleapis.com/v20/customers:listAccessibleCustomers";
+  const url = "https://googleads.googleapis.com/v24/customers:listAccessibleCustomers";
 
   const res = await fetch(url, {
     method: "GET",  // GET request - no body allowed
@@ -847,7 +847,7 @@ export const debugAccounts = async (req, res) => {
 
     // 3. Call listAccessibleCustomers — RAW
     out.step = "calling_listAccessibleCustomers";
-    const url = "https://googleads.googleapis.com/v20/customers:listAccessibleCustomers";
+    const url = "https://googleads.googleapis.com/v24/customers:listAccessibleCustomers";
     const resp = await fetch(url, {
       method: "GET",
       headers: {
