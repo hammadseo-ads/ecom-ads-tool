@@ -25,6 +25,10 @@ const REPORT_TYPES = [
   { type: "LAST_90_DAYS", days: 90 },
 ];
 
+// Opt-in only (geo lookups over a full year are heavy) — generated separately
+// when the user explicitly clicks "Generate 1-Year", never in the default run.
+const YEAR_REPORT_TYPE = { type: "LAST_365_DAYS", days: 365 };
+
 const DEFAULT_THRESHOLDS = {
   targetRoas: 3,
   maxLoserRoas: 1.5,
@@ -191,7 +195,7 @@ const resolveGeoNames = async (tokenDoc, customerId, loginCustomerId, criterionI
 };
 
 // ============= MAIN GENERATION =============
-async function runGeoGeneration(userId, cid, granularity) {
+async function runGeoGeneration(userId, cid, granularity, reportTypes = REPORT_TYPES) {
   const tokenDoc = await GoogleAdsToken.findOne({ user: userId });
   if (!tokenDoc) throw new Error("Google Ads not connected");
 
@@ -214,7 +218,7 @@ async function runGeoGeneration(userId, cid, granularity) {
   const thresholds = resolveThresholds(tokenDoc, cid);
   const allReports = [];
 
-  for (const rpt of REPORT_TYPES) {
+  for (const rpt of reportTypes) {
     setJob(userId, cid, granularity, { progress: `Fetching ${granularity} for ${rpt.type}...` });
 
     const endDate = new Date();
@@ -326,12 +330,15 @@ async function runGeoGeneration(userId, cid, granularity) {
 
 export const generateGeoReports = async (req, res) => {
   const userId = req.user._id;
-  const { customer_id, granularity = "postal_code" } = req.body;
+  const { customer_id, granularity = "postal_code", scope } = req.body;
   if (!customer_id) return res.status(400).json({ error: "Missing customer_id" });
   if (!GRANULARITY_TO_SEGMENT[granularity]) {
     return res.status(400).json({ error: `Unknown granularity: ${granularity}` });
   }
   const cid = formatCustomerId(customer_id);
+
+  // scope="year" → only the 1-year report (opt-in). Anything else → 30/60/90.
+  const reportTypes = scope === "year" ? [YEAR_REPORT_TYPE] : REPORT_TYPES;
 
   const existing = getJob(userId, cid, granularity);
   if (existing?.status === "RUNNING") {
@@ -347,9 +354,9 @@ export const generateGeoReports = async (req, res) => {
   });
   res.status(202).json({ status: "STARTED" });
 
-  runGeoGeneration(userId, cid, granularity)
+  runGeoGeneration(userId, cid, granularity, reportTypes)
     .then((result) => {
-      console.log(`✅ [geo] ${cid} (${granularity}): complete — ${result.total_locations} locations`);
+      console.log(`✅ [geo] ${cid} (${granularity}): complete — ${result.total_locations} locations (scope=${scope || "standard"})`);
       setJob(userId, cid, granularity, { status: "COMPLETED", completedAt: Date.now(), result });
     })
     .catch((err) => {

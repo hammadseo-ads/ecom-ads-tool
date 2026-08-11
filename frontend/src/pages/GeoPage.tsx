@@ -75,6 +75,7 @@ const REPORT_TABS = [
   { value: "LAST_30_DAYS", label: "Last 30 Days" },
   { value: "LAST_60_DAYS", label: "Last 60 Days" },
   { value: "LAST_90_DAYS", label: "Last 90 Days" },
+  { value: "LAST_365_DAYS", label: "Last 1 Year" }, // opt-in — generated only on demand
 ];
 
 const GRANULARITIES = [
@@ -150,8 +151,10 @@ const GeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
     LAST_30_DAYS: empty(),
     LAST_60_DAYS: empty(),
     LAST_90_DAYS: empty(),
+    LAST_365_DAYS: empty(),
   });
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isGeneratingYear, setIsGeneratingYear] = useState(false);
   const [progress, setProgress] = useState("");
   const [isClearing, setIsClearing] = useState(false);
   const [selectedBucket, setSelectedBucket] = useState<string>("all");
@@ -179,10 +182,10 @@ const GeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
 
   const loadCachedData = async (accountId: string, gran: string) => {
     if (!userId || !accountId) {
-      setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty() });
+      setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty(), LAST_365_DAYS: empty() });
       return;
     }
-    setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty() });
+    setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty(), LAST_365_DAYS: empty() });
     setSelectedBucket("all");
 
     const results = await Promise.all(
@@ -252,22 +255,25 @@ const GeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
     } finally { setIsSavingThresholds(false); }
   };
 
-  const handleGenerate = async () => {
+  const runGeneration = async (scope: "standard" | "year") => {
     if (!selectedAccountId) {
       toast({ title: "Pick an account", description: "Select an account first.", variant: "destructive" });
       return;
     }
-    setIsGenerating(true);
+    const isYear = scope === "year";
+    (isYear ? setIsGeneratingYear : setIsGenerating)(true);
     setProgress("Starting...");
     toast({
-      title: "Generating",
-      description: `Pulling ${granularity.replace("_", " ")} performance for 30/60/90 days. Can take 1-3 min (geo lookups are slow).`,
+      title: isYear ? "Generating 1-Year report" : "Generating",
+      description: isYear
+        ? `Pulling a full year of ${granularity.replace("_", " ")} performance. This is much heavier — can take several minutes.`
+        : `Pulling ${granularity.replace("_", " ")} performance for 30/60/90 days. Can take 1-3 min (geo lookups are slow).`,
       duration: 8000,
     });
     try {
       const { data: kicked } = await withAuthRetry(() =>
         axios.post(`${API_BASE}/generate`,
-          { user_id: userId, customer_id: selectedAccountId, granularity },
+          { user_id: userId, customer_id: selectedAccountId, granularity, ...(isYear ? { scope: "year" } : {}) },
           getAuthHeaders())
       );
       if (kicked?.status === "ALREADY_RUNNING") {
@@ -279,14 +285,18 @@ const GeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
         description: `Loaded ${final?.count ?? 0} locations.`,
       });
       await loadCachedData(selectedAccountId, granularity);
+      if (isYear) { userPickedTabRef.current = true; setActiveTab("LAST_365_DAYS"); }
     } catch (e: any) {
       toast({
         title: "Generation failed",
         description: e.response?.data?.error || e.message || "Try again.",
         variant: "destructive",
       });
-    } finally { setIsGenerating(false); setProgress(""); }
+    } finally { (isYear ? setIsGeneratingYear : setIsGenerating)(false); setProgress(""); }
   };
+
+  const handleGenerate = () => runGeneration("standard");
+  const handleGenerateYear = () => runGeneration("year");
 
   const handleClear = async () => {
     if (!selectedAccountId) return;
@@ -298,7 +308,7 @@ const GeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
           ...getAuthHeaders(),
         })
       );
-      setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty() });
+      setReportData({ LAST_30_DAYS: empty(), LAST_60_DAYS: empty(), LAST_90_DAYS: empty(), LAST_365_DAYS: empty() });
       toast({ title: "Cleared", description: "Geo data removed for this account." });
     } catch (e: any) {
       toast({ title: "Clear failed", description: e.message, variant: "destructive" });
@@ -387,9 +397,13 @@ const GeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={handleGenerate} disabled={isGenerating} className="bg-emerald-600 hover:bg-emerald-700 mt-5">
+                <Button onClick={handleGenerate} disabled={isGenerating || isGeneratingYear} className="bg-emerald-600 hover:bg-emerald-700 mt-5">
                   {isGenerating ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
                   {isGenerating ? "Generating..." : "Generate Reports"}
+                </Button>
+                <Button onClick={handleGenerateYear} disabled={isGenerating || isGeneratingYear} variant="outline" className="text-emerald-700 border-emerald-400 hover:bg-emerald-50 mt-5" title="Fetches a full year of geo data — only when you click this">
+                  {isGeneratingYear ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+                  {isGeneratingYear ? "Generating 1-Year..." : "Generate 1-Year"}
                 </Button>
                 <Button onClick={handleClear} disabled={isClearing || isGenerating || !periodData.total_locations} variant="outline" className="text-red-600 border-red-300 hover:bg-red-50 mt-5">
                   <Trash2 className="w-4 h-4 mr-2" /> Clear Reports
@@ -448,7 +462,7 @@ const GeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
 
       {selectedAccountId && (
         <Tabs value={activeTab} onValueChange={(v) => { userPickedTabRef.current = true; setActiveTab(v); }}>
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             {REPORT_TABS.map((t) => <TabsTrigger key={t.value} value={t.value}>{t.label}</TabsTrigger>)}
           </TabsList>
           {REPORT_TABS.map((t) => (
@@ -458,7 +472,7 @@ const GeoInner = ({ selectedAccountId, selectedAccountName }: InnerProps) => {
                   <CardContent className="py-12 text-center text-gray-500">
                     <MapPin className="w-12 h-12 mx-auto mb-3 text-gray-300" />
                     <p>No {GRANULARITIES.find(g => g.value === granularity)?.label} data for {t.label.toLowerCase()}.</p>
-                    <p className="text-sm mt-1">Click <strong>Generate Reports</strong> above.</p>
+                    <p className="text-sm mt-1">Click <strong>{t.value === "LAST_365_DAYS" ? "Generate 1-Year" : "Generate Reports"}</strong> above.</p>
                   </CardContent>
                 </Card>
               ) : (
