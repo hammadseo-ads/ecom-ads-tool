@@ -409,7 +409,7 @@ const PublicHeader = () => {
 
         {/* Mobile Menu */}
         {isMobile && isMobileMenuOpen && (
-          <div className="py-4 border-t space-y-3">
+          <div className="py-4 border-t space-y-3 max-h-[calc(100vh-5rem)] overflow-y-auto overscroll-contain">
             {/* Always-visible public nav (matches desktop behavior) */}
             <>
                 <Link to="/case-studies" className="block">
