@@ -51,10 +51,6 @@ import {
 const CALENDLY_URL =
   "https://calendly.com/managingseo-hammad/client-management-and-meetings";
 
-// Main video-sales-letter at the top. Set the YouTube ID once recorded.
-// Leave null to render the "coming soon" placeholder.
-const MAIN_VSL_YOUTUBE_ID: string | null = null;
-
 // Five sample explainer videos (the first-step CRO walkthroughs we send
 // to a prospect's end client).
 const SAMPLE_VIDEOS = [
@@ -144,7 +140,7 @@ const LiteYouTube = ({ id, title }: { id: string; title: string }) => {
       type="button"
       onClick={() => setPlaying(true)}
       aria-label={`Play ${title}`}
-      className="group absolute inset-0 w-full h-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-400"
+      className="group absolute inset-0 w-full h-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-400"
     >
       <img
         src={`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`}
@@ -160,7 +156,7 @@ const LiteYouTube = ({ id, title }: { id: string; title: string }) => {
       />
       <div className="absolute inset-0 bg-black/5 group-hover:bg-black/15 transition-colors" />
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-[68px] h-[48px] rounded-[14px] bg-emerald-600 group-hover:bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-900/40 transition-all group-hover:scale-110">
+        <div className="w-[68px] h-[48px] rounded-[14px] bg-green-600 group-hover:bg-green-500 flex items-center justify-center shadow-lg shadow-green-900/40 transition-all group-hover:scale-110">
           <svg
             viewBox="0 0 24 24"
             fill="currentColor"
@@ -210,16 +206,16 @@ const WhiteLabelGoogleAds = () => {
             {/* Animated emerald orbs */}
             <div
               aria-hidden
-              className="absolute -top-32 -left-20 w-[28rem] h-[28rem] bg-emerald-500/30 rounded-full blur-3xl animate-orb-float"
+              className="absolute -top-32 -left-20 w-[28rem] h-[28rem] bg-green-500/30 rounded-full blur-3xl animate-orb-float"
             />
             <div
               aria-hidden
-              className="absolute top-1/3 -right-32 w-[32rem] h-[32rem] bg-emerald-400/20 rounded-full blur-3xl animate-orb-float"
+              className="absolute top-1/3 -right-32 w-[32rem] h-[32rem] bg-green-400/20 rounded-full blur-3xl animate-orb-float"
               style={{ animationDelay: "4s" }}
             />
             <div
               aria-hidden
-              className="absolute -bottom-24 left-1/3 w-80 h-80 bg-emerald-300/15 rounded-full blur-3xl animate-float"
+              className="absolute -bottom-24 left-1/3 w-80 h-80 bg-green-300/15 rounded-full blur-3xl animate-float"
               style={{ animationDelay: "2s" }}
             />
             {/* Faint grid pattern overlay */}
@@ -235,10 +231,10 @@ const WhiteLabelGoogleAds = () => {
           </div>
 
           <div className="relative max-w-7xl mx-auto isolate">
-            <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-              {/* LEFT, text */}
-              <div className="lg:col-span-7 text-white">
-                <div className="inline-flex items-center gap-2 bg-emerald-500/15 border border-emerald-400/30 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-[0.18em] uppercase text-emerald-100 mb-6">
+            <div className="max-w-3xl">
+              {/* Hero text */}
+              <div className="text-white">
+                <div className="inline-flex items-center gap-2 bg-green-500/15 border border-green-400/30 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-[0.18em] uppercase text-green-100 mb-6">
                   <Handshake className="w-3.5 h-3.5" />
                   White Label Google Ads Partnership
                 </div>
@@ -247,9 +243,9 @@ const WhiteLabelGoogleAds = () => {
                   <span className="relative inline-block">
                     <span
                       aria-hidden
-                      className="absolute -inset-x-4 -inset-y-1 md:-inset-y-2 bg-emerald-400 -rotate-[1.5deg] -z-10 rounded-md"
+                      className="absolute -inset-x-4 -inset-y-1 md:-inset-y-2 bg-green-400 -rotate-[1.5deg] -z-10 rounded-md"
                     />
-                    <span className="relative text-emerald-950">
+                    <span className="relative text-green-950">
                       Google Ads &amp; CRO
                     </span>
                   </span>{" "}
@@ -257,14 +253,14 @@ const WhiteLabelGoogleAds = () => {
                   <span className="relative inline-block mt-2">
                     <span
                       aria-hidden
-                      className="absolute -inset-x-4 -inset-y-1 md:-inset-y-2 bg-emerald-300 rotate-[-0.8deg] -z-10 rounded-md"
+                      className="absolute -inset-x-4 -inset-y-1 md:-inset-y-2 bg-green-300 rotate-[-0.8deg] -z-10 rounded-md"
                     />
-                    <span className="relative text-emerald-950">
+                    <span className="relative text-green-950">
                       without doing the work.
                     </span>
                   </span>
                 </h1>
-                <p className="text-base md:text-lg text-emerald-50/85 max-w-2xl mb-8 leading-relaxed">
+                <p className="text-base md:text-lg text-green-50/85 max-w-2xl mb-8 leading-relaxed">
                   You already have eCommerce clients. We deliver the Google
                   Ads, under your brand or ours, while you earn commission.
                   Every step gives the end client real value before they ever
@@ -273,7 +269,7 @@ const WhiteLabelGoogleAds = () => {
                 <div className="flex flex-wrap gap-3">
                   <Button
                     size="lg"
-                    className="bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-900/40 px-6"
+                    className="bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-900/40 px-6"
                     onClick={bookCall}
                   >
                     <Calendar className="w-4 h-4 mr-2" />
@@ -293,61 +289,25 @@ const WhiteLabelGoogleAds = () => {
                   </Button>
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* RIGHT, VSL */}
-              <div className="lg:col-span-5">
-                <div className="relative">
-                  {/* Floating eyebrow label above video */}
-                  <div className="absolute -top-3 left-4 z-20 inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-100">
-                    <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-                    Watch this first
-                  </div>
-                  {/* Video frame */}
-                  <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/40 border border-emerald-100/15 aspect-video bg-gradient-to-br from-emerald-950 via-gray-900 to-emerald-900">
-                    {MAIN_VSL_YOUTUBE_ID ? (
-                      <LiteYouTube
-                        id={MAIN_VSL_YOUTUBE_ID}
-                        title="White Label Partnership Overview"
-                      />
-                    ) : (
-                      <>
-                        {/* Decorative blurred orbs */}
-                        <div className="absolute -top-20 -left-20 w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl" />
-                        <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl" />
-                        <div
-                          className="absolute inset-0 opacity-[0.08]"
-                          style={{
-                            backgroundImage:
-                              "linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)",
-                            backgroundSize: "40px 40px",
-                          }}
-                        />
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-                          <div className="relative">
-                            <div className="w-[64px] h-[44px] rounded-[12px] bg-emerald-600 flex items-center justify-center shadow-2xl shadow-emerald-900/40">
-                              <svg
-                                viewBox="0 0 24 24"
-                                fill="currentColor"
-                                className="w-6 h-6 text-white ml-1"
-                              >
-                                <path d="M8 5v14l11-7z" />
-                              </svg>
-                            </div>
-                            <div className="absolute inset-0 rounded-[12px] bg-emerald-500 animate-ping opacity-30" />
-                          </div>
-                          <div className="text-white font-semibold text-sm md:text-base mt-4">
-                            Overview video coming soon
-                          </div>
-                          <p className="text-emerald-200/70 text-xs mt-2 max-w-xs">
-                            Book a partnership call and we'll walk you through
-                            it live.
-                          </p>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
+          {/* Offer strip, reinforces the hero promise */}
+          <div className="relative max-w-5xl mx-auto mt-14">
+            <div className="rounded-2xl border border-green-400/25 bg-green-500/10 backdrop-blur-sm px-6 py-5 sm:px-8 sm:py-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+              <div className="flex items-center gap-3 flex-shrink-0">
+                <span className="text-3xl md:text-4xl font-black text-green-300 leading-none">50%</span>
+                <span className="text-green-100/80 text-xs font-semibold uppercase tracking-widest leading-tight">
+                  Your share,<br />no work
+                </span>
               </div>
+              <p className="text-green-50/90 text-sm md:text-[15px] leading-relaxed">
+                Upsell Google Ads and CRO to your existing clients and keep{" "}
+                <span className="font-semibold text-white">50% of the revenue</span>{" "}
+                without doing the work. We are your white label team: we manage the
+                quality and deliver the service under your brand. You just introduce
+                the clients and we take it from there.
+              </p>
             </div>
           </div>
         </section>
@@ -359,8 +319,8 @@ const WhiteLabelGoogleAds = () => {
             aria-hidden
             className="absolute inset-0 -z-10 pointer-events-none"
           >
-            <div className="absolute top-1/3 -left-32 w-96 h-96 bg-emerald-100/60 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 right-0 w-72 h-72 bg-emerald-50 rounded-full blur-3xl" />
+            <div className="absolute top-1/3 -left-32 w-96 h-96 bg-green-100/60 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-0 w-72 h-72 bg-green-50 rounded-full blur-3xl" />
           </div>
 
           <div className="max-w-6xl mx-auto">
@@ -371,10 +331,10 @@ const WhiteLabelGoogleAds = () => {
                   {/* Accent emerald block behind photo */}
                   <div
                     aria-hidden
-                    className="absolute -top-3 -left-3 w-full h-full bg-emerald-500 rounded-2xl -rotate-2 -z-10"
+                    className="absolute -top-3 -left-3 w-full h-full bg-green-500 rounded-2xl -rotate-2 -z-10"
                   />
                   {/* Photo frame */}
-                  <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-gradient-to-br from-emerald-50 to-white">
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-gradient-to-br from-green-50 to-white">
                     <img
                       src="/lovable-uploads/ceo-hammad-cropped.jpg"
                       alt="Hammad, Founder, ManagingSEO"
@@ -383,13 +343,13 @@ const WhiteLabelGoogleAds = () => {
                     />
                     {/* FOUNDER pill, top-left */}
                     <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 bg-black/70 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full">
-                      <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+                      <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
                       Founder
                     </span>
                   </div>
                   {/* Floating credibility card */}
                   <div className="absolute -bottom-5 -right-3 lg:-right-6 bg-white rounded-xl shadow-xl border border-gray-100 px-4 py-3">
-                    <div className="text-2xl font-black text-emerald-700 leading-none">
+                    <div className="text-2xl font-black text-green-700 leading-none">
                       6<span className="text-base font-bold ml-0.5">yrs</span>
                     </div>
                     <div className="text-xs font-semibold text-gray-700 mt-1">
@@ -401,8 +361,8 @@ const WhiteLabelGoogleAds = () => {
 
               {/* TEXT COLUMN */}
               <div className="lg:col-span-7">
-                <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 text-[11px] font-bold uppercase tracking-[0.18em] rounded-full px-3 py-1.5 mb-5">
-                  <span className="w-1.5 h-1.5 bg-emerald-600 rounded-full" />
+                <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 text-[11px] font-bold uppercase tracking-[0.18em] rounded-full px-3 py-1.5 mb-5">
+                  <span className="w-1.5 h-1.5 bg-green-600 rounded-full" />
                   Meet the founder
                 </div>
                 <h2 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight leading-tight mb-6 relative isolate">
@@ -410,9 +370,9 @@ const WhiteLabelGoogleAds = () => {
                   <span className="relative inline-block">
                     <span
                       aria-hidden
-                      className="absolute -inset-x-3 -inset-y-1 md:-inset-y-2 bg-emerald-400 -rotate-[1.5deg] -z-10 rounded-md"
+                      className="absolute -inset-x-3 -inset-y-1 md:-inset-y-2 bg-green-400 -rotate-[1.5deg] -z-10 rounded-md"
                     />
-                    <span className="relative text-emerald-950">Hammad</span>
+                    <span className="relative text-green-950">Hammad</span>
                   </span>
                   .
                 </h2>
@@ -441,7 +401,7 @@ const WhiteLabelGoogleAds = () => {
                   </p>
                 </div>
 
-                <div className="mt-6 flex items-baseline gap-3 text-emerald-700">
+                <div className="mt-6 flex items-baseline gap-3 text-green-700">
                   <span className="font-serif italic text-2xl font-semibold">
                     Hammad
                   </span>
@@ -453,7 +413,7 @@ const WhiteLabelGoogleAds = () => {
                 <div className="mt-7 flex flex-wrap gap-3">
                   <Button
                     size="lg"
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-100"
+                    className="bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-100"
                     onClick={bookCall}
                   >
                     <Calendar className="w-4 h-4 mr-2" />
@@ -481,28 +441,31 @@ const WhiteLabelGoogleAds = () => {
         >
           {/* Soft background mesh */}
           <div className="absolute inset-0 -z-10 pointer-events-none">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-200/40 rounded-full mix-blend-multiply filter blur-3xl" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-100/50 rounded-full mix-blend-multiply filter blur-3xl" />
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-green-200/40 rounded-full mix-blend-multiply filter blur-3xl" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-green-100/50 rounded-full mix-blend-multiply filter blur-3xl" />
           </div>
 
           <div className="max-w-6xl mx-auto relative">
             <div className="text-center mb-14">
-              <span className="inline-block bg-emerald-100 text-emerald-700 text-[11px] font-semibold uppercase tracking-widest rounded-full px-3 py-1 mb-3">
+              <span className="inline-block bg-green-100 text-green-700 text-[11px] font-semibold uppercase tracking-widest rounded-full px-3 py-1 mb-3">
                 The Process
               </span>
               <h2 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight">
-                Three steps, value at every one
+                This is how we convert your clients into customers
               </h2>
               <p className="text-gray-600 mt-4 max-w-2xl mx-auto text-base md:text-lg">
-                We never walk into the end client empty-handed. Each step
-                delivers something useful before any commitment.
+                We lead with value. You send us your client list, and we find who
+                is running Google Ads and whose store is quietly losing sales.
+                Then, before they commit to anything, we show them exactly where
+                their money is leaking and how they can grow. The results do the
+                convincing.
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 relative">
               {/* Connecting dashed line on desktop */}
               <div className="hidden md:block absolute top-[88px] left-[16%] right-[16%] h-px -z-10">
-                <div className="w-full h-full bg-gradient-to-r from-transparent via-emerald-300 to-transparent" />
+                <div className="w-full h-full bg-gradient-to-r from-transparent via-green-300 to-transparent" />
               </div>
 
               {[
@@ -510,52 +473,52 @@ const WhiteLabelGoogleAds = () => {
                   n: 1,
                   Icon: Sparkles,
                   tag: "CRO",
-                  title: "Free CRO analysis",
+                  title: "A real CRO redesign, free",
                   body:
-                    "We analyze the end client's store and record a video that visually redesigns their pages, showing exactly how to convert more of their current visitors into sales. In the same video we preview four Google Ads analyses our software can run to find wasted budget.",
-                  deliverable: "Free CRO video + ads preview",
+                    "We rebuild their store pages and show them a live, updated design, so they can see exactly how many more of their current visitors could become buyers. It is real proof, not a pitch, and it is where they realize the opportunity is genuine.",
+                  deliverable: "A visual CRO redesign of their store",
                 },
                 {
                   n: 2,
                   Icon: TrendingUp,
                   tag: "Ads",
-                  title: "Deep Ads analysis",
+                  title: "A free Google Ads analysis",
                   body:
-                    "Once they're interested, we take read-only Google Ads access and do a full account analysis, finding exactly where budget is being wasted and where the opportunity is.",
-                  deliverable: "Detailed ads audit report",
+                    "Once they are interested, we ask only for view-only access to their Google Ads and run a full analysis. We show them exactly where budget is being wasted and how much they can save, and we walk them through all of it with no obligation.",
+                  deliverable: "A wasted-spend and savings report",
                 },
                 {
                   n: 3,
                   Icon: Handshake,
-                  tag: "Plan",
-                  title: "The growth plan",
+                  tag: "Deliver",
+                  title: "We convert and deliver, results first",
                   body:
-                    "We hand them a clear plan that will actually generate sales. They can have us execute it, or implement it themselves. Either way they win, and you earn commission on the ones we run.",
-                  deliverable: "Concrete growth plan",
+                    "This is how the client converts, on value, not pressure. Before we start, we agree on the results to realistically expect and the timeframe, so nothing is promised that we cannot deliver. We only take on a client if we can genuinely help them.",
+                  deliverable: "A clear, realistic results plan",
                 },
               ].map((step) => {
                 const Icon = step.Icon;
                 return (
                   <div
                     key={step.n}
-                    className="group relative bg-white/80 backdrop-blur-sm border border-emerald-100/80 rounded-2xl p-7 shadow-sm hover:shadow-2xl hover:shadow-emerald-100 hover:-translate-y-1 hover:border-emerald-300 transition-all duration-300 overflow-hidden flex flex-col"
+                    className="group relative bg-white/80 backdrop-blur-sm border border-green-100/80 rounded-2xl p-7 shadow-sm hover:shadow-2xl hover:shadow-green-100 hover:-translate-y-1 hover:border-green-300 transition-all duration-300 overflow-hidden flex flex-col"
                   >
                     {/* Giant faded background number */}
                     <div
                       aria-hidden
-                      className="absolute -top-2 right-3 text-[110px] font-black text-emerald-100/80 leading-none select-none pointer-events-none group-hover:text-emerald-200/80 transition-colors"
+                      className="absolute -top-2 right-3 text-[110px] font-black text-green-100/80 leading-none select-none pointer-events-none group-hover:text-green-200/80 transition-colors"
                     >
                       0{step.n}
                     </div>
 
                     {/* Step pill */}
-                    <div className="inline-flex w-fit items-center gap-2 bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-5 relative shadow-sm">
+                    <div className="inline-flex w-fit items-center gap-2 bg-green-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-5 relative shadow-sm">
                       <span className="w-1.5 h-1.5 bg-white rounded-full" />
                       Step 0{step.n} · {step.tag}
                     </div>
 
                     {/* Icon tile */}
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shadow-lg shadow-emerald-200 mb-4 relative group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center shadow-lg shadow-green-200 mb-4 relative group-hover:scale-110 transition-transform">
                       <Icon className="w-6 h-6 text-white" />
                     </div>
 
@@ -568,12 +531,12 @@ const WhiteLabelGoogleAds = () => {
                     </p>
 
                     {/* Deliverable strip */}
-                    <div className="pt-4 mt-auto border-t border-emerald-100 relative">
-                      <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-700/70 mb-1">
+                    <div className="pt-4 mt-auto border-t border-green-100 relative">
+                      <div className="text-[10px] font-bold uppercase tracking-widest text-green-700/70 mb-1">
                         What you get
                       </div>
                       <div className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
                         <span>{step.deliverable}</span>
                       </div>
                     </div>
@@ -584,7 +547,7 @@ const WhiteLabelGoogleAds = () => {
 
             {/* Upgraded "Why this works" callout */}
             <div className="mt-12 relative max-w-4xl mx-auto">
-              <div className="relative bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 rounded-2xl p-7 md:p-9 shadow-2xl shadow-emerald-200 text-white overflow-hidden">
+              <div className="relative bg-gradient-to-br from-green-600 via-green-700 to-green-800 rounded-2xl p-7 md:p-9 shadow-2xl shadow-green-200 text-white overflow-hidden">
                 {/* Decorative dot pattern */}
                 <div
                   aria-hidden
@@ -605,17 +568,18 @@ const WhiteLabelGoogleAds = () => {
                     </div>
                   </div>
                   <div>
-                    <div className="text-[11px] font-bold uppercase tracking-widest text-emerald-100 mb-2">
+                    <div className="text-[11px] font-bold uppercase tracking-widest text-green-100 mb-2">
                       Why this works
                     </div>
-                    <p className="text-emerald-50 leading-relaxed text-[15px]">
-                      The end client receives genuine value at every step, a
-                      CRO redesign, a detailed Google Ads audit, and a
-                      concrete growth plan, before any money changes hands.
-                      By the time we propose execution, trust is already
-                      built.{" "}
+                    <p className="text-green-50 leading-relaxed text-[15px]">
+                      By this point the client has seen a better-converting store
+                      design and a clear picture of the money their ads are
+                      wasting, all before paying anything, so the decision makes
+                      itself. We stay value-first the whole way. We only work with
+                      a client if we can genuinely move the needle, never to
+                      squeeze out a fee.{" "}
                       <span className="font-semibold text-white">
-                        You introduce the client; we close and deliver; you
+                        You introduce the client, we convert and deliver, and you
                         earn.
                       </span>
                     </p>
@@ -627,7 +591,7 @@ const WhiteLabelGoogleAds = () => {
         </section>
 
         {/* ===================== STEP 1 DETAIL: CRO ===================== */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-emerald-50/40 via-white to-emerald-50/40">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50/40 via-white to-green-50/40">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-10">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
@@ -644,7 +608,7 @@ const WhiteLabelGoogleAds = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-emerald-600" />
+                    <Sparkles className="w-5 h-5 text-green-600" />
                     What we redesign on their site
                   </CardTitle>
                 </CardHeader>
@@ -652,7 +616,7 @@ const WhiteLabelGoogleAds = () => {
                   <ul className="space-y-2">
                     {CRO_POINTS.map((point) => (
                       <li key={point} className="flex items-start gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                        <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
                         <span>{point}</span>
                       </li>
                     ))}
@@ -663,7 +627,7 @@ const WhiteLabelGoogleAds = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-emerald-600" />
+                    <TrendingUp className="w-5 h-5 text-green-600" />
                     The 4 Google Ads analyses we preview
                   </CardTitle>
                 </CardHeader>
@@ -672,8 +636,8 @@ const WhiteLabelGoogleAds = () => {
                     const Icon = a.icon;
                     return (
                       <div key={a.title} className="flex items-start gap-3">
-                        <div className="bg-emerald-100 rounded-lg w-9 h-9 flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-5 h-5 text-emerald-700" />
+                        <div className="bg-green-100 rounded-lg w-9 h-9 flex items-center justify-center flex-shrink-0">
+                          <Icon className="w-5 h-5 text-green-700" />
                         </div>
                         <div>
                           <h4 className="font-semibold text-sm text-gray-900">{a.title}</h4>
@@ -689,7 +653,7 @@ const WhiteLabelGoogleAds = () => {
             {/* CRO redesign screenshots, embedded showcase */}
             <div className="mt-14">
               <div className="text-center mb-8">
-                <div className="text-xs font-semibold uppercase tracking-widest text-emerald-700 mb-2">
+                <div className="text-xs font-semibold uppercase tracking-widest text-green-700 mb-2">
                   See it on a real client
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-900">
@@ -803,7 +767,7 @@ const WhiteLabelGoogleAds = () => {
                     <DialogTrigger asChild>
                       <button
                         type="button"
-                        className="group bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-emerald-300 transition-all text-left w-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className="group bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg hover:border-green-300 transition-all text-left w-full focus:outline-none focus:ring-2 focus:ring-green-500"
                       >
                         <div className="relative w-full aspect-[16/10] bg-gray-100 overflow-hidden">
                           <img
@@ -830,13 +794,13 @@ const WhiteLabelGoogleAds = () => {
                               className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                             />
                           )}
-                          <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
+                          <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-green-600 text-white px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
                             After
                           </span>
                           <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wide bg-white/95 text-gray-700 px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
                             Before
                           </span>
-                          <span className="absolute top-2 right-2 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                          <span className="absolute top-2 right-2 text-[10px] font-bold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
                             {s.n} / 10
                           </span>
                           <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 text-[10px] font-semibold text-white bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
@@ -850,8 +814,8 @@ const WhiteLabelGoogleAds = () => {
                             <span className="font-semibold text-gray-700">Before:</span>{" "}
                             {s.before}
                           </p>
-                          <p className="text-sm text-emerald-800 flex gap-2">
-                            <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                          <p className="text-sm text-green-800 flex gap-2">
+                            <CheckCircle className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
                             <span>
                               <span className="font-semibold">After:</span> {s.after}
                             </span>
@@ -864,7 +828,7 @@ const WhiteLabelGoogleAds = () => {
                         {s.title},before and after
                       </DialogTitle>
                       <div className="px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10">
-                        <div className="text-[11px] font-bold uppercase tracking-widest text-emerald-700 mb-1">
+                        <div className="text-[11px] font-bold uppercase tracking-widest text-green-700 mb-1">
                           {s.n} / 10
                         </div>
                         <h3 className="text-xl md:text-2xl font-bold text-gray-900">
@@ -896,16 +860,16 @@ const WhiteLabelGoogleAds = () => {
                           <p className="text-sm text-gray-600 mt-3">{s.before}</p>
                         </div>
                         <div className="bg-white p-5">
-                          <div className="text-[11px] font-bold uppercase tracking-widest text-emerald-700 mb-3">
+                          <div className="text-[11px] font-bold uppercase tracking-widest text-green-700 mb-3">
                             After
                           </div>
                           <img
                             src={s.afterImg}
                             alt={`${s.title} after`}
-                            className="w-full h-auto rounded-md border border-emerald-100"
+                            className="w-full h-auto rounded-md border border-green-100"
                           />
-                          <p className="text-sm text-emerald-900 mt-3 flex gap-2">
-                            <CheckCircle className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                          <p className="text-sm text-green-900 mt-3 flex gap-2">
+                            <CheckCircle className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
                             <span>{s.after}</span>
                           </p>
                         </div>
@@ -954,7 +918,7 @@ const WhiteLabelGoogleAds = () => {
         </section>
 
         {/* ===================== SAMPLE VIDEOS ===================== */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-emerald-50/40 via-white to-emerald-50/40">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50/40 via-white to-green-50/40">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-10">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
@@ -969,7 +933,7 @@ const WhiteLabelGoogleAds = () => {
               {SAMPLE_VIDEOS.map((v) => (
                 <div
                   key={v.id}
-                  className="rounded-xl overflow-hidden shadow-lg border border-emerald-100 bg-black"
+                  className="rounded-xl overflow-hidden shadow-lg border border-green-100 bg-black"
                 >
                   <div className="relative aspect-video">
                     <LiteYouTube id={v.id} title={v.label} />
@@ -1024,7 +988,7 @@ const WhiteLabelGoogleAds = () => {
               ].map((c) => (
                 <Card
                   key={c.slug}
-                  className="group cursor-pointer hover:shadow-lg hover:border-emerald-400 border-2 transition-all overflow-hidden"
+                  className="group cursor-pointer hover:shadow-lg hover:border-green-400 border-2 transition-all overflow-hidden"
                   onClick={() => navigate(c.slug)}
                 >
                   {/* After by default, swap to Before on hover */}
@@ -1041,7 +1005,7 @@ const WhiteLabelGoogleAds = () => {
                       loading="lazy"
                       className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     />
-                    <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
+                    <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-green-600 text-white px-2 py-0.5 rounded-full shadow-sm group-hover:hidden">
                       After
                     </span>
                     <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-white/90 text-gray-700 px-2 py-0.5 rounded-full shadow-sm hidden group-hover:inline-block">
@@ -1049,7 +1013,7 @@ const WhiteLabelGoogleAds = () => {
                     </span>
                     {/* Hover CTA, appears over the image on hover */}
                     <div className="absolute inset-x-0 bottom-0 p-3 flex items-end justify-center pointer-events-none">
-                      <span className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                      <span className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                         Open case study
                         <ArrowRight className="w-3.5 h-3.5" />
                       </span>
@@ -1057,10 +1021,10 @@ const WhiteLabelGoogleAds = () => {
                   </div>
                   <CardContent className="p-6 text-center">
                     <Badge className="mb-3">{c.name}</Badge>
-                    <div className="text-xl font-bold text-emerald-700 mb-1">
+                    <div className="text-xl font-bold text-green-700 mb-1">
                       {c.result}
                     </div>
-                    <div className="text-xs text-emerald-700 flex items-center justify-center gap-1 mt-3 group-hover:text-emerald-800 transition-colors">
+                    <div className="text-xs text-green-700 flex items-center justify-center gap-1 mt-3 group-hover:text-green-800 transition-colors">
                       View case study <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </CardContent>
@@ -1071,13 +1035,13 @@ const WhiteLabelGoogleAds = () => {
         </section>
 
         {/* ===================== COMMISSION / CTA ===================== */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-emerald-600 to-emerald-800 text-white">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-green-600 to-green-800 text-white">
           <div className="max-w-3xl mx-auto text-center">
-            <DollarSign className="w-12 h-12 mx-auto mb-4 text-emerald-200" />
+            <DollarSign className="w-12 h-12 mx-auto mb-4 text-green-200" />
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               You introduce. We deliver. You earn.
             </h2>
-            <p className="text-emerald-50/95 text-lg mb-8">
+            <p className="text-green-50/95 text-lg mb-8">
               Run it under your brand or ours, your choice. Book a call and
               we'll walk through the partnership, the commission structure, and
               how the first client onboarding works.
@@ -1085,7 +1049,7 @@ const WhiteLabelGoogleAds = () => {
             <div className="flex flex-wrap justify-center gap-3">
               <Button
                 size="lg"
-                className="bg-white text-emerald-700 hover:bg-emerald-50"
+                className="bg-white text-green-700 hover:bg-green-50"
                 onClick={bookCall}
               >
                 <Calendar className="w-4 h-4 mr-2" />
