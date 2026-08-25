@@ -434,11 +434,9 @@ const WhiteLabelGoogleAds = () => {
                 This is how we convert your clients into customers
               </h2>
               <p className="text-gray-600 mt-4 max-w-2xl mx-auto text-base md:text-lg">
-                We lead with value. You send us your client list, and we find who
-                is running Google Ads and whose store is quietly losing sales.
-                Then, before they commit to anything, we show them exactly where
-                their money is leaking and how they can grow. The results do the
-                convincing.
+                First, we find out exactly where your client is weak, so we know
+                where we can genuinely help. Every step delivers value before the
+                client ever pays.
               </p>
             </div>
 
@@ -451,30 +449,27 @@ const WhiteLabelGoogleAds = () => {
               {[
                 {
                   n: 1,
-                  Icon: Sparkles,
-                  tag: "CRO",
-                  title: "A real CRO redesign, free",
-                  body:
-                    "We rebuild their store pages and show them a live, updated design, so they can see exactly how many more of their current visitors could become buyers. It is real proof, not a pitch, and it is where they realize the opportunity is genuine.",
-                  deliverable: "A visual CRO redesign of their store",
+                  Icon: Search,
+                  tag: "Find",
+                  title: "You share your clients' websites",
+                  body: "We check which of them are already running Google Ads.",
+                  why: "If they're spending on ads, there's a high chance money is being wasted. That's where we can help first.",
                 },
                 {
                   n: 2,
-                  Icon: TrendingUp,
-                  tag: "Ads",
-                  title: "A free Google Ads analysis",
-                  body:
-                    "Once they are interested, we ask only for view-only access to their Google Ads and run a full analysis. We show them exactly where budget is being wasted and how much they can save, and we walk them through all of it with no obligation.",
-                  deliverable: "A wasted-spend and savings report",
+                  Icon: Sparkles,
+                  tag: "CRO",
+                  title: "We check their website and CRO",
+                  body: "If the site converts poorly, we build a redesign and show them exactly how to turn more visitors into sales.",
+                  why: "Even great ads leak money if the website doesn't convert. This is the first real value they get, for free.",
                 },
                 {
                   n: 3,
-                  Icon: Handshake,
-                  tag: "Deliver",
-                  title: "We convert and deliver, results first",
-                  body:
-                    "This is how the client converts, on value, not pressure. Before we start, we agree on the results to realistically expect and the timeframe, so nothing is promised that we cannot deliver. We only take on a client if we can genuinely help them.",
-                  deliverable: "A clear, realistic results plan",
+                  Icon: TrendingUp,
+                  tag: "Ads",
+                  title: "We analyze their Google Ads",
+                  body: "After they've seen the redesign, we ask only for view-only access and show them where their budget is being wasted.",
+                  why: "They've already seen we deliver value, so opening the ad account is an easy yes. That's how the client converts.",
                 },
               ].map((step) => {
                 const Icon = step.Icon;
@@ -506,18 +501,17 @@ const WhiteLabelGoogleAds = () => {
                       {step.title}
                     </h3>
 
-                    <p className="text-sm text-gray-600 leading-relaxed mb-5 relative flex-grow">
+                    <p className="text-[15px] font-medium text-gray-800 leading-snug mb-5 relative flex-grow">
                       {step.body}
                     </p>
 
-                    {/* Deliverable strip */}
+                    {/* Why strip, the reason for this step, skimmable */}
                     <div className="pt-4 mt-auto border-t border-green-100 relative">
                       <div className="text-[10px] font-bold uppercase tracking-widest text-green-700/70 mb-1">
-                        What you get
+                        Why
                       </div>
-                      <div className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                        <span>{step.deliverable}</span>
+                      <div className="text-[13px] text-gray-600 leading-snug">
+                        {step.why}
                       </div>
                     </div>
                   </div>
