@@ -213,15 +213,10 @@ const WhiteLabelGoogleAds = () => {
               className="absolute top-1/3 -right-32 w-[32rem] h-[32rem] bg-green-400/20 rounded-full blur-3xl animate-orb-float"
               style={{ animationDelay: "4s" }}
             />
-            <div
-              aria-hidden
-              className="absolute -bottom-24 left-1/3 w-80 h-80 bg-green-300/15 rounded-full blur-3xl animate-float"
-              style={{ animationDelay: "2s" }}
-            />
             {/* Faint grid pattern overlay */}
             <div
               aria-hidden
-              className="absolute inset-0 opacity-[0.07] pointer-events-none"
+              className="absolute inset-0 opacity-[0.05] pointer-events-none"
               style={{
                 backgroundImage:
                   "linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px)",
@@ -230,65 +225,50 @@ const WhiteLabelGoogleAds = () => {
             />
           </div>
 
-          <div className="relative max-w-7xl mx-auto isolate">
-            <div className="max-w-3xl">
-              {/* Hero text */}
-              <div className="text-white">
-                <div className="inline-flex items-center gap-2 bg-green-500/15 border border-green-400/30 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-[0.18em] uppercase text-green-100 mb-6">
-                  <Handshake className="w-3.5 h-3.5" />
-                  White Label Google Ads Partnership
-                </div>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.08] tracking-tight mb-6">
-                  Upsell{" "}
-                  <span className="relative inline-block">
-                    <span
-                      aria-hidden
-                      className="absolute -inset-x-4 -inset-y-1 md:-inset-y-2 bg-green-400 -rotate-[1.5deg] -z-10 rounded-md"
-                    />
-                    <span className="relative text-green-950">
-                      Google Ads &amp; CRO
-                    </span>
-                  </span>{" "}
-                  to your eCommerce clients,{" "}
-                  <span className="relative inline-block mt-2">
-                    <span
-                      aria-hidden
-                      className="absolute -inset-x-4 -inset-y-1 md:-inset-y-2 bg-green-300 rotate-[-0.8deg] -z-10 rounded-md"
-                    />
-                    <span className="relative text-green-950">
-                      without doing the work.
-                    </span>
-                  </span>
-                </h1>
-                <p className="text-base md:text-lg text-green-50/85 max-w-2xl mb-8 leading-relaxed">
-                  You already have eCommerce clients. We deliver the Google
-                  Ads, under your brand or ours, while you earn commission.
-                  Every step gives the end client real value before they ever
-                  pay anything.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <Button
-                    size="lg"
-                    className="bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-900/40 px-6"
-                    onClick={bookCall}
-                  >
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Book a partnership call
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-white/40 text-white bg-white/10 hover:bg-white/20 px-6"
-                    onClick={() =>
-                      document
-                        .getElementById("how-it-works")
-                        ?.scrollIntoView({ behavior: "smooth" })
-                    }
-                  >
-                    See how it works
-                  </Button>
-                </div>
-              </div>
+          <div className="relative max-w-4xl mx-auto isolate text-center text-white">
+            <div className="inline-flex items-center gap-2 bg-green-500/15 border border-green-400/30 rounded-full px-4 py-1.5 text-[11px] font-semibold tracking-[0.18em] uppercase text-green-100 mb-7">
+              <Handshake className="w-3.5 h-3.5" />
+              White Label Google Ads Partnership
+            </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.12] tracking-tight mb-6">
+              Upsell{" "}
+              <span className="relative inline-block">
+                <span
+                  aria-hidden
+                  className="absolute -inset-x-3 -inset-y-1 md:-inset-y-1.5 bg-green-400 -rotate-[1.5deg] -z-10 rounded-md"
+                />
+                <span className="relative text-green-950">
+                  Google Ads &amp; CRO
+                </span>
+              </span>{" "}
+              to your eCommerce clients, without doing the work.
+            </h1>
+            <p className="text-base md:text-lg text-green-50/85 max-w-2xl mx-auto mb-9 leading-relaxed">
+              You already have eCommerce clients. We deliver Google Ads and CRO
+              under your brand or ours, while you earn commission. Every step
+              gives the end client real value before they ever pay anything.
+            </p>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Button
+                size="lg"
+                className="bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-900/40 px-6"
+                onClick={bookCall}
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                Book a partnership call
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white/40 text-white bg-white/10 hover:bg-white/20 px-6"
+                onClick={() =>
+                  document
+                    .getElementById("how-it-works")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+              >
+                See how it works
+              </Button>
             </div>
           </div>
 
